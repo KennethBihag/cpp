@@ -1,4 +1,5 @@
 #include <iostream>
+#define _MYGUID_API_
 #include "MyGUID.hpp"
 using std::cout;
 
