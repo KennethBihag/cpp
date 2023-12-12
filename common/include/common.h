@@ -1,16 +1,23 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#ifdef STATIC_BUILD
+#define API_DECL
+
+#ifdef SHARED_LIB
+	#ifdef EXPORT_LIB
+		#define API_DECL __declspec(dllexport)
+	#else
+		#define API_DECL __declspec(dllimport)
+	#endif
 extern "C" {
 #endif
 
-void libfunc(void);
-int encrypt_char(char ch,int key);
-const char* load_file_to_buffer(const char *filename);
-const char* get_file_ext(const char *filename);
+API_DECL void libfunc(void);
+API_DECL int encrypt_char(char ch,int key);
+API_DECL const char* load_file_to_buffer(const char *filename);
+API_DECL const char* get_file_ext(const char *filename);
 
-#ifdef STATIC_BUILD
+#ifdef SHARED_LIB
 }
 #endif
 

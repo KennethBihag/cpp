@@ -24,17 +24,29 @@ ifeq ($(ostype),Windows_NT)
 else
 	$(eval appName:=$(proj))
 endif
-	@echo BUILDING $(proj)$(extension)
+	@echo BUILDING $(appName)
 	@if [ ! -d $(binDir) ]; then mkdir $(binDir); fi;
-ifeq ($(withStatic),)
-	cd $(objDir);\
-	 $(CC) $(CFLAGS) -o ../$(binDir)/$(appName) $(objs)
-else
+ifneq ($(withStatic),)
+	$(eval objs:=$(objs) ../$(staticDir)/$(withStatic))
+endif
+ifneq ($(withDynamic),)
+	$(eval CFLAGS:=$(CFLAGS) -L../$(libDir) -l$($(subst .*,,withDynamic)))
+endif
 	cd $(objDir);\
 	 $(CC) $(CFLAGS) $(defines) -o ../$(binDir)/$(appName)\
-	 $(objs) ../$(libDir)/$(withStatic)
+	 $(objs)
+	@echo BUILT $(appName) in $(binDir)
+
+dynamic: objects
+ifneq ($(ostype),Windows_NT)
+	$(eval extension=.so)
+else
+	$(eval extension=.dll)
 endif
-	@echo BUILT $(appName) in $(binDir)	
+	@echo BUILDING $(proj)$(extension)
+	@if [ ! -d $(libDir) ]; then mkdir $(libDir); fi;
+	@cd $(objDir); $(CC) $(CFLAGS) -shared -o ../$(libDir)/$(proj)$(extension) $(objs);
+	@echo BUILT $(proj)$(extension) in $(libDir)
 
 static: objects
 ifneq ($(ostype),Windows_NT)
@@ -43,9 +55,9 @@ else
 	$(eval extension=.lib)
 endif
 	@echo BUILDING $(proj)$(extension)
-	@if [ ! -d $(libDir) ]; then mkdir $(libDir); fi;
-	@cd $(objDir); ar -rcs ../$(libDir)/$(proj)$(extension) $(objs);
-	@echo BUILT $(proj)$(extension) in $(libDir)
+	@if [ ! -d $(staticDir) ]; then mkdir -p $(staticDir); fi;
+	@cd $(objDir); ar -rcs ../$(staticDir)/$(proj)$(extension) $(objs);
+	@echo BUILT $(proj)$(extension) in $(staticDir)
 
 objects:
 	@echo CREATING OBJECT FILES
