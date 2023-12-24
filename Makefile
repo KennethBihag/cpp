@@ -14,7 +14,8 @@ binDir=bin
 sourceDir=$(proj)/src
 sources=$(wildcard $(sourceDir)/*.c) $(wildcard $(sourceDir)/*.cpp)
 includeDir=-I$(proj)/include -I.
-CFLAGS=-g -O2 -Wall -std=c++17
+STD=c++17
+CFLAGS=-g -Wall -std=$(STD)
 withStatic=
 withDynamic=
 

@@ -1,5 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef COMMON_TESTS_H
+#define COMMON_TESTS_H
 
 #define API_DECL
 
@@ -15,14 +15,10 @@ extern "C" {
 	#endif
 #endif
 
-API_DECL void libfunc(void);
-API_DECL int encrypt_char(char ch,int key);
-API_DECL const char* load_file_to_buffer(const char *filename);
-API_DECL const char* get_file_ext(const char *filename);
+API_DECL void bubblesort_test(int, const char **);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif
