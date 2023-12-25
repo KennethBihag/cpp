@@ -4,5 +4,6 @@
 void IsPalindromeTest();
 void TwoSumTest();
 void EnclosedParenthesesTest();
+void BiggestWidthTest();
 
 #endif

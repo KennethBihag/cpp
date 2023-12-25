@@ -3,8 +3,6 @@
 #include "test.hpp"
 
 int main(){
-	IsPalindromeTest();
-	TwoSumTest();
-	EnclosedParenthesesTest();
+	BiggestWidthTest();
 	return 0;
 }

@@ -1,10 +1,18 @@
 #include "leetcode.hpp"
 
+#include <malloc.h>
+#include <stdio.h>
 #include <string.h>
+
+//#include <algorithm>
+
+#include "common/include/sort.h"
 
 #include "stack.hpp"
 
 using std::vector;
+using std::pair;
+using std::sort;
 
 vector<int> Solution::TwoSum(vector<int> &nums, int target)
 {
@@ -90,4 +98,25 @@ bool Solution::_IsValid(char *s)
 {
 	int sLen = strlen(s);
 	return HasValidParentheses(s, sLen);
+}
+
+int Solution::BiggestWidth(std::vector<std::pair<int, int>> pts)
+{
+	int x[pts.size()];
+
+	for(int i=0; i<pts.size(); i++)
+		x[i] = pts[i].first;
+	int *y = bubblesort_int(x, pts.size());
+/* 	auto ComparePointX = [](pair<int,int>& a, pair<int,int>& b){
+		return a.first < b.first;
+	};
+	sort(pts.begin(), pts.end(), ComparePointX); */
+	
+	int answer = -1;
+	for(int i=0; i<pts.size()-1; i++)
+		answer = std::max(answer,y[i+1]-y[i]);
+		// answer = std::max(answer,pts[i+1].first - pts[i].first);
+	free(y);
+
+	return answer;
 }
