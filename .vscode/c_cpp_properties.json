@@ -3,18 +3,18 @@
         {
             "name": "Win32 - cygwin64",
             "includePath": [
-                "${workspaceFolder}/*/include",
+                "${workspaceFolder}\\*\\include",
                 "${workspaceFolder}"
             ],
-            "compilerPath": "${env:HOMEDRIVE}/cygwin64/bin/g++.exe"
+            "compilerPath": "${env:HOMEDRIVE}\\cygwin64\\bin\\gcc.exe"
         },
         {
             "name": "Win32 - mingw64",
             "includePath": [
-                "${workspaceFolder}/*/include",
+                "${workspaceFolder}\\*\\include",
                 "${workspaceFolder}"
             ],
-            "compilerPath": "${env:PROGRAMFILES}/mingw64/bin/g++.exe"
+            "compilerPath": "${env:PROGRAMFILES}\\mingw64\\bin\\g++.exe"
         },
         {
             "name": "Linux",
