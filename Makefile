@@ -1,8 +1,8 @@
-MAKE=$(shell \
-if [ -d "${PROGRAMFILES}/mingw64/bin" ];\
-then echo mingw32-make;\
-else echo make;\
-fi;)
+# MAKE=$(shell \
+# if [ -d "${PROGRAMFILES}/mingw64/bin" ];\
+# then echo mingw32-make;\
+# else echo make;\
+# fi;)
 
 ostype=$(shell echo ${OS})
 
@@ -16,29 +16,29 @@ sources=$(wildcard $(sourceDir)/*.c) $(wildcard $(sourceDir)/*.cpp)
 includeDir=-I$(proj)/include -I.
 STD=c++17
 CFLAGS=-g -Wall -std=$(STD)
-withStatic=
-withDynamic=
 
 executable: objects
 ifeq ($(ostype),Windows_NT)
 	$(eval appName:=$(proj).exe)
+	$(eval slibext:=lib)
 else
 	$(eval appName:=$(proj))
+	$(eval slibext:=a)
 endif
 	@echo BUILDING $(appName)
 	@if [ ! -d $(binDir) ]; then mkdir $(binDir); fi;
 ifneq ($(withStatic),)
-	$(eval objs:=$(objs) ../$(staticDir)/$(withStatic))
+	$(eval objs:=$(objs) ../$(staticDir)/lib$(withStatic).$(slibext))
 endif
 ifneq ($(withDynamic),)
-	$(eval CFLAGS:=$(CFLAGS) -L../$(libDir) -l$($(subst .*,,withDynamic)))
+	$(eval CFLAGS:=$(CFLAGS) -L../$(libDir) -l$(withDynamic))
 endif
 	cd $(objDir);\
-	 $(CC) $(CFLAGS) $(defines) -o ../$(binDir)/$(appName)\
+	 "$(CC)" $(CFLAGS) $(defines) -o ../$(binDir)/$(appName)\
 	 $(objs)
 	@echo BUILT $(appName) in $(binDir)
 
-dynamic: objects
+dynamic: fpic objects
 ifneq ($(ostype),Windows_NT)
 	$(eval extension=.so)
 else
@@ -46,8 +46,11 @@ else
 endif
 	@echo BUILDING $(proj)$(extension)
 	@if [ ! -d $(libDir) ]; then mkdir $(libDir); fi;
-	@cd $(objDir); $(CC) $(CFLAGS) -shared -o ../$(libDir)/$(proj)$(extension) $(objs);
-	@echo BUILT $(proj)$(extension) in $(libDir)
+	@cd $(objDir); "$(CC)" $(CFLAGS) -shared -o ../$(libDir)/lib$(proj)$(extension) $(objs);
+	@echo BUILT lib$(proj)$(extension) in $(libDir)
+
+fpic:
+	$(eval CFLAGS:=$(CFLAGS) -fPIC)
 
 static: objects
 ifneq ($(ostype),Windows_NT)
@@ -57,13 +60,13 @@ else
 endif
 	@echo BUILDING $(proj)$(extension)
 	@if [ ! -d $(staticDir) ]; then mkdir -p $(staticDir); fi;
-	@cd $(objDir); ar -rcs ../$(staticDir)/$(proj)$(extension) $(objs);
-	@echo BUILT $(proj)$(extension) in $(staticDir)
+	@cd $(objDir); ar -rcs ../$(staticDir)/lib$(proj)$(extension) $(objs);
+	@echo BUILT lib$(proj)$(extension) in $(staticDir)
 
 objects:
 	@echo CREATING OBJECT FILES
 	@if [ ! -d $(objDir) ]; then mkdir $(objDir); fi;
-	$(CC) -c $(CFLAGS) $(includeDir) $(defines) $(sources)
+	"$(CC)" -c $(CFLAGS) $(includeDir) $(defines) $(sources)
 	$(eval objs := $(subst .c,.o,$(subst .cpp,.o,$(sources))))
 	$(eval objs := $(subst $(sourceDir)/,,$(objs)))
 	@mv -t "$(objDir)" $(objs)
@@ -77,8 +80,3 @@ cleanobj:
 	@if [ -d $(objDir) ]; then rm -fr $(objDir); fi;
 cleanlib:
 	@if [ -d $(libDir) ]; then rm -fr $(libDir); fi;
-
-dump_%.lib:
-	@ar -t $(libDir)/$*.lib
-	@echo ----------------------
-	@objdump -t $(libDir)/$*.lib

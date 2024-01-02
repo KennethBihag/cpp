@@ -3,6 +3,7 @@
 #include "test.hpp"
 
 int main(){
-	BiggestWidthTest();
+	//BiggestWidthTest();
+	MedianTest();
 	return 0;
 }

@@ -5,5 +5,6 @@ void IsPalindromeTest();
 void TwoSumTest();
 void EnclosedParenthesesTest();
 void BiggestWidthTest();
+void MedianTest();
 
 #endif

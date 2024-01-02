@@ -1,9 +1,14 @@
 #include "sort.h"
 
 #include <malloc.h>
+#include <stdio.h>
 #include <string.h>
 
-void swap_int(int *a, int *b)
+#include "common.h"
+
+// internal functions
+
+static void swap_int(int *a, int *b)
 {
 	int t = *a;
 	*a = *b;
@@ -11,7 +16,7 @@ void swap_int(int *a, int *b)
 	return;
 }
 
-void swap_float(float *a, float *b)
+static void swap_float(float *a, float *b)
 {
 	int t = *a;
 	*a = *b;
@@ -19,6 +24,14 @@ void swap_float(float *a, float *b)
 	return;
 }
 
+static void printTabs(int tcount)
+{
+	for (; tcount > 0; --tcount)
+		printf("\t");
+	return;
+}
+
+// public functions
 /*
 Returns a sorted array of integers, allocated in the heap.
 */
@@ -62,4 +75,74 @@ float *bubblesort_flt(float *origArray, unsigned int length, int order)
 			}
 
 	return sorted;
+}
+
+int *mergesort_int(int *origArray, unsigned int length, int order)
+{
+	int *sortedArray = (int*)malloc(length*sizeof(int));
+	void mergesort_asc(int*, unsigned int, int*);
+	int level = 0;
+	switch (order)
+	{
+	case 1:
+		mergesort_asc(origArray, length, &level);
+		break;
+	default:
+		break;
+	}
+	memcpy(sortedArray, origArray, length*sizeof(int));
+	return sortedArray;
+}
+
+void mergesort_asc(int *origArray, unsigned int length, int *level)
+{
+	if (length < 2)
+		return;
+
+	(*level)++;
+	printf("LEVEL%d\n", *level);
+	// break part
+	int iMid = length % 2 ? length / 2 : length / 2 - 1;
+	int leftSize = iMid + 1, rightSize = length - iMid - 1;
+	int leftArr[leftSize], rightArr[rightSize];
+	memcpy(leftArr, origArray, leftSize * sizeof(int));
+	if (length % 2 == 0)
+		memcpy(rightArr, origArray + rightSize, rightSize * sizeof(int));
+	else
+		memcpy(rightArr, origArray + rightSize + 1, rightSize * sizeof(int));
+	printTabs(*level - 1);
+	printf("Orig. array:");
+	print_intarr_elems(origArray, length);
+#ifdef LOG_DBG
+	printTabs(*level - 1);
+	printf("Left: ");
+	print_intarr_elems(leftArr, leftSize);
+#endif
+	mergesort_asc(leftArr, leftSize, level);
+#ifdef LOG_DBG
+	printTabs(*level - 1);
+	printf("Right: ");
+	print_intarr_elems(rightArr, rightSize);
+#endif
+	mergesort_asc(rightArr, rightSize, level);
+	// sort and merge part
+	int i = 0, j = 0, k = 0;
+	for (; k < length && i < leftSize && j < rightSize; ++k)
+	{
+		if (leftArr[i] < rightArr[j])
+			origArray[k] = leftArr[i++];
+		else
+			origArray[k] = rightArr[j++];
+	}
+	while (i < leftSize)
+		origArray[k++] = leftArr[i++];
+	while (j < rightSize)
+		origArray[k++] = rightArr[j++];
+
+	printTabs(*level - 1);
+	printf("Sorted array:");
+	print_intarr_elems(origArray, length);
+	(*level)--;
+
+	return;
 }

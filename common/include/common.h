@@ -1,28 +1,23 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define API_DECL
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-#ifdef SHARED_LIB
-	#ifdef EXPORT_LIB
-		#define API_DECL __declspec(dllexport)
-	#else
-		#define API_DECL __declspec(dllimport)
-	#endif
-#endif
+    int encrypt_char(char ch, int key);
+    const char *load_file_to_buffer(const char *filename);
+    const char *get_file_ext(const char *filename);
+    
+    // Prints all elements of an array with a desired string format per element,
+    // separated by a space
+    void print_intarr_elems(int *array,int length);
+    void print_fltarr_elems(float *array, int length);
 
-API_DECL void libfunc(void);
-API_DECL int encrypt_char(char ch,int key);
-API_DECL const char* load_file_to_buffer(const char *filename);
-API_DECL const char* get_file_ext(const char *filename);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

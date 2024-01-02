@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-//#include <algorithm>
+#include <algorithm>
 
 #include "common/include/sort.h"
 
@@ -120,3 +120,35 @@ int Solution::BiggestWidth(std::vector<std::pair<int, int>> pts)
 
 	return answer;
 }
+
+#define AVE(a,b) (a+b)/2
+/* double Solution::FindMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+	if(nums1.empty())
+		return _GetMedian(nums2);
+	if(nums2.empty())
+		return _GetMedian(nums1);
+	double mdn1 = _GetMedian(nums1);
+	double mdn2 = _GetMedian(nums2);
+	return AVE(mdn1,mdn2);
+} */
+
+double Solution::FindMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+	std::vector<int> combined;
+	for(int i : nums1)
+		combined.push_back(i);
+	for(int i : nums2)
+		combined.push_back(i);
+	sort(combined.begin(),combined.end());
+	return _GetMedian(combined);
+}
+
+double Solution::_GetMedian(vector<int>& sortedArr){
+    int len = (int)sortedArr.size();
+    int i=len/2;
+    if(len%2)
+        return sortedArr[i];
+    else {
+        return (double)AVE(sortedArr[i-1],sortedArr[i]);
+    }
+}
+#undef AVE

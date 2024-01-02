@@ -41,7 +41,10 @@
             "type": "pickString",
             "description": "Type of make app",
             "default": "make",
-            "options": ["make","mingw32-make"]
+            "options": [
+                "make",
+                "mingw32-make"
+            ]
         }
     ]
 }

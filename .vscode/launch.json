@@ -86,7 +86,8 @@
                 "common",
                 "threading",
                 "my psql api",
-                "testapp"
+                "testapp",
+                "leetcode"
             ]
         },
         {

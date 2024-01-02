@@ -81,3 +81,28 @@ void BiggestWidthTest(){
 	printf("-- BIGGEST WIDTH TEST PASSED --\n");
 	printf("In %f\n",difftime(start,end));
 }
+
+void MedianTest(){
+	std::vector<int> nums1 = {1,3};
+	std::vector<int> nums2 = {2};
+	double r = solution.FindMedianSortedArrays(nums1,nums2);
+	double d = r-2;
+	assert(d < 0.25 && d > -0.25);
+	printf("Median is %lf\n",r);
+
+	nums1 = {1,2};
+	nums2 = {3,4};
+	r = solution.FindMedianSortedArrays(nums1,nums2);
+	d = r-2.5;
+	assert(d < 0.25 && d > -0.25);
+	printf("Median is %lf\n",r);
+
+	nums1 = {1,3};
+	nums2 = {2,7};
+	r = solution.FindMedianSortedArrays(nums1,nums2);
+	d = r-2.5;
+	assert(d < 0.25 && d > -0.25);
+	printf("Median is %lf\n",r);
+
+	printf("MEDIAN TEST PASSED");
+}
