@@ -3,7 +3,11 @@
 #include "test.hpp"
 
 int main(){
-	//BiggestWidthTest();
+	IsPalindromeTest();
+	TwoSumTest();
+	EnclosedParenthesesTest();
+	BiggestWidthTest();
 	MedianTest();
+	SumSubarrayMinsTest();
 	return 0;
 }

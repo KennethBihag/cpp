@@ -6,5 +6,5 @@ void TwoSumTest();
 void EnclosedParenthesesTest();
 void BiggestWidthTest();
 void MedianTest();
-
+void SumSubarrayMinsTest();
 #endif

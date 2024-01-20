@@ -37,14 +37,15 @@ ifeq ($(appType),exe)
 else ifeq ($(appType),dLib)
 	$(eval appName1=$(subst .exe,,$(appName)))
 	$(eval appName2=lib$(appName1).$(dLibX))
-	@"$(MAKE)" $(appName2) proj=$(proj) CC=$(CC2) STD=$(STD2) DEFINES=$(DEFINES)
+	@"$(MAKE)" $(appName2) proj=$(proj) CC=$(CC2) STD=$(STD2)\
+	 CFLAGS="$(CFLAGS) -fPIC" DEFINES=$(DEFINES)
 endif
 
 exec: bindir $(objs)
 	@echo Building app $(appName)
 ifneq ($(withDynamic),)
-	@"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC=$(CC2) STD=$(STD2)\
-	 DEFINES=$(DEFINES)
+	"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC=$(CC2)\
+	 STD=$(STD2) appType=dLib DEFINES=$(DEFINES)
 	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" -Llib\
 	 -l$(withDynamic) $(objs)
 else
@@ -53,11 +54,12 @@ endif
 
 lib%.$(dLibX): libdir $(objs)
 	"$(CC)" -std=$(STD) $(CFLAGS) -shared -o "$(libDir)/$@" $(objs)
+lib%.$(sLibX): libdir $(objs)
+	ar -rcs -o "$(libDir)/$@" $(objs)
 
 $(objDir)/%.o: $(sourceDir)/%.c* objdir
 ifeq ($(appType),dLib)
-	$(eval CFLAGS=$(CFLAGS) -fPIC)
-	"$(CC)" -std=$(STD2) $(CFLAGS) $(DEFINES) -c -o "$@" $<
+	"$(CC)" -std=$(STD2) $(CFLAGS) -fPIC $(DEFINES) -c -o "$@" $<
 else
 ifneq ($(withDynamic),)
 	$(eval CFLAGS=$(CFLAGS) -I.)

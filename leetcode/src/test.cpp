@@ -11,8 +11,11 @@
 
 Solution solution;
 
+const char bar[] = "-----------------------------\n";
+
 void EnclosedParenthesesTest()
 {
+	printf(bar);
 	char *testString = "{[()]}";
 	bool success = solution._IsValid(testString);
 	assert(success);
@@ -45,6 +48,7 @@ void EnclosedParenthesesTest()
 }
 
 void IsPalindromeTest(){
+	printf(bar);
 	int a = 0, b = -23, c = 123, d = 1221, e = 12321;
 	assert(solution.IsPalindrome(a));
 	assert(!solution.IsPalindrome(b));
@@ -55,6 +59,7 @@ void IsPalindromeTest(){
 }
 
 void TwoSumTest(){
+	printf(bar);
 	std::vector<int> nums = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 	int target = 9;
 	std::vector<int> ans = solution.TwoSum(nums, target);
@@ -63,6 +68,7 @@ void TwoSumTest(){
 }
 
 void BiggestWidthTest(){
+	printf(bar);
 	std::vector<std::pair<int, int>> points;
 	std::vector nums = {3,1,9,0,1,0,1,4,5,3,8,8};
 	printf("POINTS: \n");
@@ -83,6 +89,7 @@ void BiggestWidthTest(){
 }
 
 void MedianTest(){
+	printf(bar);
 	std::vector<int> nums1 = {1,3};
 	std::vector<int> nums2 = {2};
 	double r = solution.FindMedianSortedArrays(nums1,nums2);
@@ -104,5 +111,18 @@ void MedianTest(){
 	assert(d < 0.25 && d > -0.25);
 	printf("Median is %lf\n",r);
 
-	printf("MEDIAN TEST PASSED");
+	printf("MEDIAN TEST PASSED\n");
+}
+
+void SumSubarrayMinsTest(){
+	printf(bar);
+	std::vector<int> sample{3,1,2,4};
+	int ans1 = solution.sumSubarrayMins(sample);
+	sample = {11,81,94,43,3};
+	int ans2 = solution.sumSubarrayMins(sample);
+	printf("First min: %d\n",ans1);
+	printf("Second min: %d\n",ans2);
+	assert(ans1 == 17);
+	assert(ans2 == 444);
+	printf("SUM SUBARRAY MINS TEST PASSED\n");
 }

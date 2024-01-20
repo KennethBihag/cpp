@@ -77,11 +77,12 @@ bool Solution::HasValidParentheses(char *s, int len)
 				yes = true;
 				if (j < 3)
 					braceStk.Push(s[i]);
-				else{
+				else
+				{
 					char c = braceStk.Pop();
-					int cd = _vInputs+j - strchr(_vInputs, c);
-					if(cd != 3)
-						return yes=false;
+					int cd = _vInputs + j - strchr(_vInputs, c);
+					if (cd != 3)
+						return yes = false;
 				}
 				break;
 			}
@@ -89,7 +90,7 @@ bool Solution::HasValidParentheses(char *s, int len)
 		if (!yes)
 			break;
 	}
-	if(!braceStk.IsEmpty())
+	if (!braceStk.IsEmpty())
 		yes = false;
 	return yes;
 }
@@ -104,24 +105,24 @@ int Solution::BiggestWidth(std::vector<std::pair<int, int>> pts)
 {
 	int x[pts.size()];
 
-	for(int i=0; i<pts.size(); i++)
+	for (int i = 0; i < pts.size(); i++)
 		x[i] = pts[i].first;
 	int *y = bubblesort_int(x, pts.size());
-/* 	auto ComparePointX = [](pair<int,int>& a, pair<int,int>& b){
-		return a.first < b.first;
-	};
-	sort(pts.begin(), pts.end(), ComparePointX); */
-	
+	/* 	auto ComparePointX = [](pair<int,int>& a, pair<int,int>& b){
+			return a.first < b.first;
+		};
+		sort(pts.begin(), pts.end(), ComparePointX); */
+
 	int answer = -1;
-	for(int i=0; i<pts.size()-1; i++)
-		answer = std::max(answer,y[i+1]-y[i]);
-		// answer = std::max(answer,pts[i+1].first - pts[i].first);
+	for (int i = 0; i < pts.size() - 1; i++)
+		answer = std::max(answer, y[i + 1] - y[i]);
+	// answer = std::max(answer,pts[i+1].first - pts[i].first);
 	free(y);
 
 	return answer;
 }
 
-#define AVE(a,b) (a+b)/2
+#define AVE(a, b) (a + b) / 2
 /* double Solution::FindMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
 	if(nums1.empty())
 		return _GetMedian(nums2);
@@ -132,23 +133,51 @@ int Solution::BiggestWidth(std::vector<std::pair<int, int>> pts)
 	return AVE(mdn1,mdn2);
 } */
 
-double Solution::FindMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+double Solution::FindMedianSortedArrays(vector<int> &nums1, vector<int> &nums2)
+{
 	std::vector<int> combined;
-	for(int i : nums1)
+	for (int i : nums1)
 		combined.push_back(i);
-	for(int i : nums2)
+	for (int i : nums2)
 		combined.push_back(i);
-	sort(combined.begin(),combined.end());
+	sort(combined.begin(), combined.end());
 	return _GetMedian(combined);
 }
 
-double Solution::_GetMedian(vector<int>& sortedArr){
-    int len = (int)sortedArr.size();
-    int i=len/2;
-    if(len%2)
-        return sortedArr[i];
-    else {
-        return (double)AVE(sortedArr[i-1],sortedArr[i]);
-    }
+double Solution::_GetMedian(vector<int> &sortedArr)
+{
+	int len = (int)sortedArr.size();
+	int i = len / 2;
+	if (len % 2)
+		return sortedArr[i];
+	else
+	{
+		return (double)AVE(sortedArr[i - 1], sortedArr[i]);
+	}
 }
 #undef AVE
+
+int Solution::sumSubarrayMins(vector<int> &arr)
+{
+	int sum{};
+	int len = arr.size();
+	for (int sz = 1, c = len; sz <= len; ++sz, --c)
+	{
+		for (int k = 0; k < c; k++)
+		{
+			if (sz == 1)
+			{
+				sum += arr[k];
+				continue;
+			}
+			else
+			{
+				auto first = arr.begin() + k;
+				auto last = first + sz;
+				auto res = min_element(first, last);
+				sum += *res;
+			}
+		}
+	}
+	return sum;
+}
