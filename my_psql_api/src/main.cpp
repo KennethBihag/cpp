@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
-#include "../my_psql_api.h"
-#include "../query.h"
+#include "my_psql_api.h"
+#include "query.h"
 
 using namespace kbb;
 

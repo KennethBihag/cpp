@@ -1,6 +1,8 @@
 #ifndef MY_PSQL_API_H
 #define MY_PSQL_API_H
 
+#define BUILD_DLL
+
 #ifndef BUILD_DLL
 	#define BUILD_DYNAMIC __declspec(dllimport)
 #else

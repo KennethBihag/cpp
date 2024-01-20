@@ -1,79 +1,81 @@
-# MAKE=$(shell \
-# if [ -d "${PROGRAMFILES}/mingw64/bin" ];\
-# then echo mingw32-make;\
-# else echo make;\
-# fi;)
-
 ostype=$(shell echo ${OS})
 
-CC=g++
+proj=testapp
+appType=exe
+ifeq ($(ostype),Windows_NT)
+MAKE=mingw32-make
+appName=$(proj).exe
+sLibX=lib
+dLibX=dll
+else
+MAKE=make
+appName=$(proj)
+sLibX=a
+dLibX=so
+endif
 objDir=obj
 libDir=lib
-staticDir=$(libDir)/static
 binDir=bin
 sourceDir=$(proj)/src
 sources=$(wildcard $(sourceDir)/*.c) $(wildcard $(sourceDir)/*.cpp)
-includeDir=-I$(proj)/include -I.
+objs1=$(subst .cpp,.o,$(sources))
+objs2=$(subst .c,.o,$(objs1))
+objs=$(subst $(sourceDir),$(objDir),$(objs2))
+INCLUDE=-I$(proj)/include
+
+CC=g++
+CC2=gcc
 STD=c++17
-CFLAGS=-g -Wall -std=$(STD)
+STD2=c11
+CFLAGS=-g -Wall $(INCLUDE)
 
-executable: objects
-ifeq ($(ostype),Windows_NT)
-	$(eval appName:=$(proj).exe)
-	$(eval slibext:=lib)
-else
-	$(eval appName:=$(proj))
-	$(eval slibext:=a)
+
+all: objdir
+ifeq ($(appType),exe)
+	@"$(MAKE)" exec proj=$(proj) withDynamic=$(withDynamic) MAKE=$(MAKE)\
+	 CC=$(CC) STD=$(STD) DEFINES=$(DEFINES)
+else ifeq ($(appType),dLib)
+	$(eval appName1=$(subst .exe,,$(appName)))
+	$(eval appName2=lib$(appName1).$(dLibX))
+	@"$(MAKE)" $(appName2) proj=$(proj) CC=$(CC2) STD=$(STD2) DEFINES=$(DEFINES)
 endif
-	@echo BUILDING $(appName)
-	@if [ ! -d $(binDir) ]; then mkdir $(binDir); fi;
-ifneq ($(withStatic),)
-	$(eval objs:=$(objs) ../$(staticDir)/lib$(withStatic).$(slibext))
-endif
+
+exec: bindir $(objs)
+	@echo Building app $(appName)
 ifneq ($(withDynamic),)
-	$(eval CFLAGS:=$(CFLAGS) -L../$(libDir) -l$(withDynamic))
-endif
-	cd $(objDir);\
-	 "$(CC)" $(CFLAGS) $(defines) -o ../$(binDir)/$(appName)\
-	 $(objs)
-	@echo BUILT $(appName) in $(binDir)
-
-dynamic: fpic objects
-ifneq ($(ostype),Windows_NT)
-	$(eval extension=.so)
+	@"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC=$(CC2) STD=$(STD2)\
+	 DEFINES=$(DEFINES)
+	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" -Llib\
+	 -l$(withDynamic) $(objs)
 else
-	$(eval extension=.dll)
+	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)
 endif
-	@echo BUILDING $(proj)$(extension)
-	@if [ ! -d $(libDir) ]; then mkdir $(libDir); fi;
-	@cd $(objDir); "$(CC)" $(CFLAGS) -shared -o ../$(libDir)/lib$(proj)$(extension) $(objs);
-	@echo BUILT lib$(proj)$(extension) in $(libDir)
+
+lib%.$(dLibX): libdir $(objs)
+	"$(CC)" -std=$(STD) $(CFLAGS) -shared -o "$(libDir)/$@" $(objs)
+
+$(objDir)/%.o: $(sourceDir)/%.c* objdir
+ifeq ($(appType),dLib)
+	$(eval CFLAGS=$(CFLAGS) -fPIC)
+	"$(CC)" -std=$(STD2) $(CFLAGS) $(DEFINES) -c -o "$@" $<
+else
+ifneq ($(withDynamic),)
+	$(eval CFLAGS=$(CFLAGS) -I.)
+endif
+	"$(CC)" -std=$(STD) $(CFLAGS) $(DEFINES) -c -o "$@" $<
+endif
+
+libdir:
+	@if [ ! -d "$(libDir)" ]; then mkdir "$(libDir)"; fi;
+bindir:
+	@if [ ! -d "$(binDir)" ]; then mkdir "$(binDir)"; fi;
+objdir:
+	@if [ ! -d "$(objDir)" ]; then mkdir "$(objDir)"; fi;
 
 fpic:
 	$(eval CFLAGS:=$(CFLAGS) -fPIC)
 
-static: objects
-ifneq ($(ostype),Windows_NT)
-	$(eval extension=.a)
-else
-	$(eval extension=.lib)
-endif
-	@echo BUILDING $(proj)$(extension)
-	@if [ ! -d $(staticDir) ]; then mkdir -p $(staticDir); fi;
-	@cd $(objDir); ar -rcs ../$(staticDir)/lib$(proj)$(extension) $(objs);
-	@echo BUILT lib$(proj)$(extension) in $(staticDir)
-
-objects:
-	@echo CREATING OBJECT FILES
-	@if [ ! -d $(objDir) ]; then mkdir $(objDir); fi;
-	"$(CC)" -c $(CFLAGS) $(includeDir) $(defines) $(sources)
-	$(eval objs := $(subst .c,.o,$(subst .cpp,.o,$(sources))))
-	$(eval objs := $(subst $(sourceDir)/,,$(objs)))
-	@mv -t "$(objDir)" $(objs)
-	@echo CREATED OBJECT FILES in $(objDir)
-
 clean: cleanbin cleanobj cleanlib
-
 cleanbin:
 	@if [ -d $(binDir) ]; then rm -fr $(binDir); fi;
 cleanobj:
