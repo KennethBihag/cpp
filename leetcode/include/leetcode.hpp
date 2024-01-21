@@ -10,6 +10,7 @@ class Solution {
 protected:
     bool _IsValid(char *s);
 public:
+    int Rob(std::vector<int>& money);
     std::vector<int> TwoSum(std::vector<int>& nums, int target);
     bool IsPalindrome(int x);
     bool HasValidParentheses(char *s, int len);

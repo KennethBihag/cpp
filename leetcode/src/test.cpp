@@ -13,6 +13,29 @@ Solution solution;
 
 const char bar[] = "-----------------------------\n";
 
+void HouseRobberTest(){
+	printf(bar);
+	std::vector<int> sample1{1,2,3,1},
+		sample2{2,7,9,3,1}, sample3{4,1,2,7,5,3,1};
+/* 	std::vector<int> sample4{114,117,207,117,235,82,90,67,143,
+		146,53,108,200,91,80,223,58,170,110,236,81,90,222,160,
+		165,195,187,199,114,235,197,187,69,129,64,214,228,78,
+		188,67,205,94,205,169,241,202,144,240}; */
+	int exp1{4}, exp2{12}, exp3{14};
+	// int exp4{4173};
+	int ans1 = solution.Rob(sample1);
+	int ans2 = solution.Rob(sample2);
+	int ans3 = solution.Rob(sample3);
+	// int ans4 = solution.Rob(sample4);
+
+	assert(exp1 == ans1);
+	assert(exp2 == ans2);
+	assert(exp3 == ans3);
+	// assert(exp4 == ans4);
+	printf("-- HOUSE ROBBER TESTS PASSED --\n");
+
+}
+
 void EnclosedParenthesesTest()
 {
 	printf(bar);

@@ -10,9 +10,37 @@
 
 #include "stack.hpp"
 
-using std::vector;
 using std::pair;
 using std::sort;
+using std::vector;
+
+static int largestSum;
+static void sums(std::vector<int>::iterator,
+	std::vector<int>::iterator, const int&);
+int Solution::Rob(std::vector<int> &money)
+{
+	int gaps = 2;
+	for (int i = 0; i < money.size() - gaps + 1; ++i)
+	{
+		auto starting = money.begin()+i;
+		::sums(starting,money.end(),0);
+	}
+	return largestSum;
+}
+
+void sums(std::vector<int>::iterator start,
+	std::vector<int>::iterator end, const int& sum)
+{
+	auto itr = start+2;
+	if(itr >= end){
+		largestSum = std::max(largestSum,*start + sum);
+		return;
+	}
+	while(itr < end){
+		::sums(itr,end, sum+*start);
+		++itr;
+	}
+}
 
 vector<int> Solution::TwoSum(vector<int> &nums, int target)
 {
@@ -39,7 +67,7 @@ bool Solution::IsPalindrome(int x)
 	while (x)
 	{
 		++cnt;
-		digits[cnt-1] = x % 10;
+		digits[cnt - 1] = x % 10;
 		x /= 10;
 	}
 	if (cnt % 2)
