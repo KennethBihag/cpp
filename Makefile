@@ -27,7 +27,7 @@ CC=g++
 CC2=gcc
 STD=c++17
 STD2=c11
-CFLAGS=-g -Wall $(INCLUDE)
+CFLAGS=-g -Wall -Wno-comment $(INCLUDE)
 
 
 all: objdir
@@ -46,8 +46,8 @@ exec: bindir $(objs)
 ifneq ($(withDynamic),)
 	"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC=$(CC2)\
 	 STD=$(STD2) appType=dLib DEFINES=$(DEFINES)
-	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" -Llib\
-	 -l$(withDynamic) $(objs)
+	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)\
+	 -Llib -l$(withDynamic)
 else
 	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)
 endif
