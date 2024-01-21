@@ -151,16 +151,6 @@ int Solution::BiggestWidth(std::vector<std::pair<int, int>> pts)
 }
 
 #define AVE(a, b) (a + b) / 2
-/* double Solution::FindMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-	if(nums1.empty())
-		return _GetMedian(nums2);
-	if(nums2.empty())
-		return _GetMedian(nums1);
-	double mdn1 = _GetMedian(nums1);
-	double mdn2 = _GetMedian(nums2);
-	return AVE(mdn1,mdn2);
-} */
-
 double Solution::FindMedianSortedArrays(vector<int> &nums1, vector<int> &nums2)
 {
 	std::vector<int> combined;
