@@ -17,13 +17,13 @@ using std::vector;
 static int largestSum;
 static void sums(std::vector<int>::iterator,
 	std::vector<int>::iterator, const int&);
-int Solution::Rob(std::vector<int> &money)
+int Solution::Rob(std::vector<int>& money)
 {
 	int gaps = 2;
 	for (int i = 0; i < money.size() - gaps + 1; ++i)
 	{
-		auto starting = money.begin()+i;
-		::sums(starting,money.end(),0);
+		auto starting = money.begin() + i;
+		::sums(starting, money.end(), 0);
 	}
 	return largestSum;
 }
@@ -31,18 +31,20 @@ int Solution::Rob(std::vector<int> &money)
 void sums(std::vector<int>::iterator start,
 	std::vector<int>::iterator end, const int& sum)
 {
-	auto itr = start+2;
-	if(itr >= end){
-		largestSum = std::max(largestSum,*start + sum);
+	auto itr = start + 2;
+	if (itr >= end)
+	{
+		largestSum = std::max(largestSum, *start + sum);
 		return;
 	}
-	while(itr < end){
-		::sums(itr,end, sum+*start);
+	while (itr < end)
+	{
+		::sums(itr, end, sum + *start);
 		++itr;
 	}
 }
 
-vector<int> Solution::TwoSum(vector<int> &nums, int target)
+vector<int> Solution::TwoSum(vector<int>& nums, int target)
 {
 	int lastI = nums.size();
 	for (int i = 0; i < lastI - 1; i++)
@@ -50,7 +52,7 @@ vector<int> Solution::TwoSum(vector<int> &nums, int target)
 		for (int j = i + 1; j < lastI; j++)
 		{
 			if (nums[i] + nums[j] == target)
-				return {i, j};
+				return { i, j };
 		}
 	}
 	return vector<int>();
@@ -91,7 +93,7 @@ bool Solution::IsPalindrome(int x)
 	return true;
 }
 
-bool Solution::HasValidParentheses(char *s, int len)
+bool Solution::HasValidParentheses(char* s, int len)
 {
 	bool yes;
 	Stack braceStk;
@@ -123,7 +125,7 @@ bool Solution::HasValidParentheses(char *s, int len)
 	return yes;
 }
 
-bool Solution::_IsValid(char *s)
+bool Solution::_IsValid(char* s)
 {
 	int sLen = strlen(s);
 	return HasValidParentheses(s, sLen);
@@ -135,7 +137,7 @@ int Solution::BiggestWidth(std::vector<std::pair<int, int>> pts)
 
 	for (int i = 0; i < pts.size(); i++)
 		x[i] = pts[i].first;
-	int *y = bubblesort_int(x, pts.size());
+	int* y = bubblesort_int(x, pts.size());
 	/* 	auto ComparePointX = [](pair<int,int>& a, pair<int,int>& b){
 			return a.first < b.first;
 		};
@@ -151,7 +153,7 @@ int Solution::BiggestWidth(std::vector<std::pair<int, int>> pts)
 }
 
 #define AVE(a, b) (a + b) / 2
-double Solution::FindMedianSortedArrays(vector<int> &nums1, vector<int> &nums2)
+double Solution::FindMedianSortedArrays(vector<int>& nums1, vector<int>& nums2)
 {
 	std::vector<int> combined;
 	for (int i : nums1)
@@ -162,7 +164,7 @@ double Solution::FindMedianSortedArrays(vector<int> &nums1, vector<int> &nums2)
 	return _GetMedian(combined);
 }
 
-double Solution::_GetMedian(vector<int> &sortedArr)
+double Solution::_GetMedian(vector<int>& sortedArr)
 {
 	int len = (int)sortedArr.size();
 	int i = len / 2;
@@ -175,7 +177,7 @@ double Solution::_GetMedian(vector<int> &sortedArr)
 }
 #undef AVE
 
-int Solution::sumSubarrayMins(vector<int> &arr)
+int Solution::sumSubarrayMins(vector<int>& arr)
 {
 	int sum{};
 	int len = arr.size();

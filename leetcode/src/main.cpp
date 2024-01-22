@@ -2,9 +2,11 @@
 
 #include "test.hpp"
 
-int main(){
-	HouseRobberTest();
+int main()
+{
+	SetMismatchTest();
 #ifdef ALL_CHALLENGES
+	HouseRobberTest();
 	IsPalindromeTest();
 	TwoSumTest();
 	EnclosedParenthesesTest();

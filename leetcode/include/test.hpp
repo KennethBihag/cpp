@@ -1,5 +1,5 @@
-#ifndef TEST_H
-#define TEST_H
+#ifndef TEST_HPP
+#define TEST_HPP
 
 void HouseRobberTest();
 void IsPalindromeTest();
@@ -8,4 +8,6 @@ void EnclosedParenthesesTest();
 void BiggestWidthTest();
 void MedianTest();
 void SumSubarrayMinsTest();
+void SetMismatchTest();
+
 #endif

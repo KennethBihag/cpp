@@ -1,12 +1,12 @@
-#ifndef LEETCODE_STACK_H
-#define LEETCODE_STACK_H
+#ifndef LEETCODE_STACK_HPP
+#define LEETCODE_STACK_HPP
 
 #define STACKSIZE 5000
 
 struct Stack
 {
 private:
-	char backingArr[STACKSIZE] = {0};
+	char backingArr[STACKSIZE] = { 0 };
 	int _i = -1;
 public:
 	void Push(const char ch)
@@ -24,7 +24,8 @@ public:
 			return backingArr[_i--];
 	}
 
-	bool IsEmpty(){
+	bool IsEmpty()
+	{
 		return _i < 0;
 	}
 };
