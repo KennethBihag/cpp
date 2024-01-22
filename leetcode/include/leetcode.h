@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+/* caller must call free */
 int* findErrorNums(int* nums, int numsSize, int* returnSize);
 
 #ifdef __cplusplus
