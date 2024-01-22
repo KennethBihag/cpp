@@ -21,7 +21,7 @@ sources=$(wildcard $(sourceDir)/*.c) $(wildcard $(sourceDir)/*.cpp)
 objs1=$(subst .cpp,.o,$(sources))
 objs2=$(subst .c,.o,$(objs1))
 objs=$(subst $(sourceDir),$(objDir),$(objs2))
-INCLUDE=-I$(proj)/include
+INCLUDE=-I$(proj)/include -I"`pwd`"
 
 CC=g++
 CC2=gcc
@@ -29,16 +29,16 @@ STD=c++17
 STD2=c11
 CFLAGS=-g -Wall -Wno-comment $(INCLUDE)
 
-
 all: objdir
 ifeq ($(appType),exe)
-	@"$(MAKE)" exec proj=$(proj) withDynamic=$(withDynamic) MAKE=$(MAKE)\
-	 CC=$(CC) STD=$(STD) DEFINES=$(DEFINES)
+	@"$(MAKE)" exec proj=$(proj) withDynamic=$(withDynamic) withStatic=$(withStatic)\
+	 MAKE=$(MAKE) CC=$(CC) STD=$(STD) DEFINES=$(DEFINES)
 else ifeq ($(appType),dLib)
-	$(eval appName1=$(subst .exe,,$(appName)))
-	$(eval appName2=lib$(appName1).$(dLibX))
-	@"$(MAKE)" $(appName2) proj=$(proj) CC=$(CC2) STD=$(STD2)\
+	@"$(MAKE)" lib$(proj).$(dLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
 	 CFLAGS="$(CFLAGS) -fPIC" DEFINES=$(DEFINES)
+else
+	@"$(MAKE)" lib$(proj).$(sLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
+	 DEFINES=$(DEFINES)
 endif
 
 exec: bindir $(objs)
@@ -46,8 +46,18 @@ exec: bindir $(objs)
 ifneq ($(withDynamic),)
 	"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC=$(CC2)\
 	 STD=$(STD2) appType=dLib DEFINES=$(DEFINES)
+ifeq ($(ostype),Windows_NT)
+		$(eval LDFLAGS= )
+else
+		$(eval LDFLAGS += -Wl,-rpath,$(PWD)/$(libDir))
+endif
+	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(LDFLAGS) $(objs)\
+	 -L$(libDir) -l$(withDynamic)
+else ifneq ($(withStatic),)
+	"$(MAKE)" lib$(withStatic).$(sLibX) proj=$(withStatic) CC=$(CC2)\
+	 STD=$(STD2) appType=sLib DEFINES=$(DEFINES)
 	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)\
-	 -Llib -l$(withDynamic)
+	 -L$(libDir) -l$(withStatic)
 else
 	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)
 endif
@@ -61,9 +71,6 @@ $(objDir)/%.o: $(sourceDir)/%.c* objdir
 ifeq ($(appType),dLib)
 	"$(CC)" -std=$(STD2) $(CFLAGS) -fPIC $(DEFINES) -c -o "$@" $<
 else
-ifneq ($(withDynamic),)
-	$(eval CFLAGS=$(CFLAGS) -I.)
-endif
 	"$(CC)" -std=$(STD) $(CFLAGS) $(DEFINES) -c -o "$@" $<
 endif
 
