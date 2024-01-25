@@ -6,5 +6,13 @@
         "binDir":"${workspaceFolder}/bin",
         "staticLib":"${workspaceFolder}/lib/static",
         "dynamicLib":"${workspaceFolder}/lib"
+    },
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "threading2.h": "c",
+        "winthreading.h": "c",
+        "string.h": "c",
+        "pthread.h": "c",
+        "cstdint": "c"
     }
 }

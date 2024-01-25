@@ -1,5 +1,5 @@
-#ifndef THREADING_H
-#define THREADING_H
+#ifndef LINUXTHREADING_H
+#define LINUXTHREADING_H
 
 #include <threads.h>
 
