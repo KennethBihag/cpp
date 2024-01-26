@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 
+static char g_sharedch = 'S';
+char *g_hrule =
+    "----------------------------------------------------\n";
+char *g_srule =
+    "****************************************************\n";
+
 int additional(int a, int b)
 {
     printf("Adding %d & %d\n", a, b);
@@ -22,20 +28,29 @@ const char *isgay(char a)
 
 void *addtl_helper(void *args)
 {
+
+    printf("SHARED CHAR:%c\n", g_sharedch++);
     int *numbers = (int *)args;
     int *ans = (int *)malloc(sizeof(int));
     *ans = additional(numbers[0], numbers[1]);
+
     return (void *)ans;
 }
 
 void *isgay_helper(void *arg)
 {
+
+    printf("SHARED CHAR:%c\n", g_sharedch++);
     char *arg_ch = (char *)arg;
+
     return (void *)isgay(*arg_ch);
 }
 
 void *dummy_helper(void *args)
 {
+
+    printf("SHARED CHAR:%c\n", g_sharedch++);
     printf("This is dumb!\n");
+
     return NULL;
 }

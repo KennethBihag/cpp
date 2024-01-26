@@ -1,6 +1,7 @@
 #include "threading.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <malloc.h>
 
 int additional(int a, int b);
@@ -16,33 +17,60 @@ int threading_test
 #endif
     (int argc, const char **argv)
 {
-    int fcount = 3;
+    int fcount = 10;
 
 #ifdef _WIN32
     printf("Running in windows.\n");
 #else
     printf("Running in Linux.\n");
 #endif
-    thrd_func funcs[] = {addtl_helper, isgay_helper, dummy_helper};
-    int additionArgs[] = {30, -13};
-    char gayArg = 'g';
-    int funcsz = sizeof(funcs) / sizeof(funcs[0]);
-    void *args[funcsz];
-    args[0] = (void *)additionArgs;
-    args[1] = (void *)&gayArg;
-    args[2] = NULL;
+    thrd_func funcs[fcount];
+    void *args[fcount];
+    int a = 0, b = 1;
+    char c = 'a' - 1;
+    for (int i = 0; i < fcount; ++i)
+    {
+        a++, b++, c++;
+        if (i % 3 == 0)
+        {
+            int *additionArgs = (int *)malloc(2 * sizeof(int));
+            additionArgs[0] = a, additionArgs[1] = b;
+            funcs[i] = addtl_helper;
+            args[i] = (void *)additionArgs;
+        }
+        else if (i % 3 == 1)
+        {
+            char *gayArg = (char *)malloc(sizeof(char));
+            *gayArg = c;
+            funcs[i] = isgay_helper;
+            args[i] = (void *)gayArg;
+        }
+        else
+        {
+            funcs[i] = dummy_helper;
+            args[i] = NULL;
+        }
+    }
+
     parallel_run(funcs, args, fcount);
 
     printf("Results from parallel_run:\n");
-    printf("\tSUM: %d\n", *(int *)(results[0]));
-    printf("\tGAY: %s\n", (const char *)(results[1]));
-    printf("\tDUMMY: %s\n", (const char *)(results[2]));
+    for (int i = 0; i < fcount; i++)
+    {
+        if (i % 3 == 0)
+            printf("\tSUM: %d\n", *(int *)(results[i]));
+        else if (i % 3 == 1)
+            printf("\tGAY: %s\n", (const char *)(results[i]));
+        else
+            printf("\tDUMMY: %s\n", (const char *)(results[i]));
+    }
 
     for (int i = 0; i < fcount; ++i)
+    {
+        free(args[i]);
         free(results[i]);
-    printf("RESULTS FREED\n");
+    }
 
     printf("Done!!!\n");
-
-    return 0;
+    return EXIT_SUCCESS;
 }
