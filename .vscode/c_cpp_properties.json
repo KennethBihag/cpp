@@ -19,7 +19,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/*/include",
+                "${workspaceFolder}/**",
                 "${workspaceFolder}"
             ],
             "compilerPath": "/usr/bin/g++"
