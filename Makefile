@@ -32,40 +32,41 @@ CFLAGS=-g -Wall -Wno-comment $(INCLUDE)
 all: objdir
 ifeq ($(appType),exe)
 	@"$(MAKE)" exec proj=$(proj) withDynamic=$(withDynamic) withStatic=$(withStatic)\
-	 MAKE=$(MAKE) CC=$(CC) STD=$(STD) DEFINES=$(DEFINES)
+	 MAKE=$(MAKE) CC=$(CC) STD=$(STD) DEFINES=$(DEFINES) "OTHERLIBS=$(OTHERLIBS)"
 else ifeq ($(appType),dLib)
 	@"$(MAKE)" lib$(proj).$(dLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
-	 CFLAGS="$(CFLAGS) -fPIC" DEFINES=$(DEFINES)
+	 CFLAGS="$(CFLAGS) -fPIC" DEFINES=$(DEFINES) "OTHERLIBS=$(OTHERLIBS)"
 else
 	@"$(MAKE)" lib$(proj).$(sLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
-	 DEFINES=$(DEFINES)
+	 DEFINES=$(DEFINES) "OTHERLIBS=$(OTHERLIBS)"
 endif
 
 exec: bindir $(objs)
 	@echo Building app $(appName)
 ifneq ($(withDynamic),)
 	"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC=$(CC2)\
-	 STD=$(STD2) appType=dLib DEFINES=$(DEFINES)
+	 STD=$(STD2) appType=dLib DEFINES=$(DEFINES) "OTHERLIBS=$(OTHERLIBS)"
 ifeq ($(ostype),Windows_NT)
 		$(eval LDFLAGS= )
 else
 		$(eval LDFLAGS += -Wl,-rpath,$(PWD)/$(libDir))
 endif
 	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(LDFLAGS) $(objs)\
-	 -L$(libDir) -l$(withDynamic)
+	 -L$(libDir) -l$(withDynamic) $(OTHERLIBS)
 else ifneq ($(withStatic),)
 	"$(MAKE)" lib$(withStatic).$(sLibX) proj=$(withStatic) CC=$(CC2)\
-	 STD=$(STD2) appType=sLib DEFINES=$(DEFINES)
+	 STD=$(STD2) appType=sLib DEFINES=$(DEFINES) OTHERLIBS=$(OTHERLIBS)
 	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)\
-	 -L$(libDir) -l$(withStatic)
+	 -L$(libDir) -l$(withStatic) $(OTHERLIBS)
 else
-	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)
+	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)\
+	 -L$(libDir) $(OTHERLIBS)
 endif
 
 lib%.$(dLibX): libdir $(objs)
 	"$(CC)" -std=$(STD) $(CFLAGS) -shared -o "$(libDir)/$@" $(objs)
 lib%.$(sLibX): libdir $(objs)
-	ar -rcs -o "$(libDir)/$@" $(objs)
+	ar -rcs -o "$(libDir)/$@" $(objs) 
 
 $(objDir)/%.o: $(sourceDir)/%.c* objdir
 ifeq ($(appType),dLib)
@@ -91,3 +92,10 @@ cleanobj:
 	@if [ -d $(objDir) ]; then rm -fr $(objDir); fi;
 cleanlib:
 	@if [ -d $(libDir) ]; then rm -fr $(libDir); fi;
+
+# specific projects
+bleetcode:
+	@$(MAKE) libthreading.$(sLibX) proj=threading CC=gcc STD=c11
+	@$(MAKE) libcommon.$(sLibX) proj=common CC=gcc STD=c11
+	@$(MAKE) proj=leetcode DEFINES=-DALL_CHALLENGES\
+	 "OTHERLIBS=-lthreading -lcommon"

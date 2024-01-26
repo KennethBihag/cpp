@@ -1,13 +1,13 @@
 #ifndef TEST_HPP
 #define TEST_HPP
 
-void HouseRobberTest();
-void IsPalindromeTest();
-void TwoSumTest();
-void EnclosedParenthesesTest();
-void BiggestWidthTest();
-void MedianTest();
-void SumSubarrayMinsTest();
-void SetMismatchTest();
+void *HouseRobberTest(void*);
+void *IsPalindromeTest(void*);
+void *TwoSumTest(void*);
+void *EnclosedParenthesesTest(void*);
+void *BiggestWidthTest(void*);
+void *MedianTest(void*);
+void *SumSubarrayMinsTest(void*);
+void *SetMismatchTest(void*);
 
 #endif

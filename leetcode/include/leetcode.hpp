@@ -18,7 +18,7 @@ public:
     double FindMedianSortedArrays(std::vector<int>& nums1, std::vector<int>& nums2);
     int sumSubarrayMins(std::vector<int>& arr);
 
-    friend void EnclosedParenthesesTest();
+    friend void *EnclosedParenthesesTest(void*);
 };
 
 #endif

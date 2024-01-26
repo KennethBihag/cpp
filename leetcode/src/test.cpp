@@ -15,7 +15,7 @@ Solution solution;
 
 const char bar[] = "-----------------------------\n";
 
-void HouseRobberTest()
+void *HouseRobberTest(void *args)
 {
 	printf(bar);
 	std::vector<int> sample1{ 1,2,3,1 },
@@ -36,10 +36,10 @@ void HouseRobberTest()
 	assert(exp3 == ans3);
 	// assert(exp4 == ans4);
 	printf("-- HOUSE ROBBER TESTS PASSED --\n");
-
+	return NULL;
 }
 
-void EnclosedParenthesesTest()
+void *EnclosedParenthesesTest(void *args)
 {
 	printf(bar);
 	char* testString = "{[()]}";
@@ -71,9 +71,10 @@ void EnclosedParenthesesTest()
 	assert(!success);
 
 	printf("-- ENCLOSED PARENTHESES TESTS PASSED --\n");
+	return NULL;
 }
 
-void IsPalindromeTest()
+void *IsPalindromeTest(void *args)
 {
 	printf(bar);
 	int a = 0, b = -23, c = 123, d = 1221, e = 12321;
@@ -82,10 +83,11 @@ void IsPalindromeTest()
 	assert(!solution.IsPalindrome(c));
 	assert(solution.IsPalindrome(d));
 	assert(solution.IsPalindrome(e));
-	printf("-- PALIDROME TESTS PASSED --\n");
+	printf("-- PALINDROME TESTS PASSED --\n");
+	return NULL;
 }
 
-void TwoSumTest()
+void *TwoSumTest(void *args)
 {
 	printf(bar);
 	std::vector<int> nums = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -93,9 +95,10 @@ void TwoSumTest()
 	std::vector<int> ans = solution.TwoSum(nums, target);
 	assert(ans[0] == 1 && ans[1] == 8);
 	printf("-- TWOSUM TEST PASSED --\n");
+	return NULL;
 }
 
-void BiggestWidthTest()
+void *BiggestWidthTest(void *args)
 {
 	printf(bar);
 	std::vector<std::pair<int, int>> points;
@@ -116,9 +119,10 @@ void BiggestWidthTest()
 	assert(width == 3);
 	printf("-- BIGGEST WIDTH TEST PASSED --\n");
 	printf("In %f\n", difftime(start, end));
+	return NULL;
 }
 
-void MedianTest()
+void *MedianTest(void *args)
 {
 	printf(bar);
 	std::vector<int> nums1 = { 1,3 };
@@ -143,9 +147,10 @@ void MedianTest()
 	printf("Median is %lf\n", r);
 
 	printf("MEDIAN TEST PASSED\n");
+	return NULL;
 }
 
-void SumSubarrayMinsTest()
+void *SumSubarrayMinsTest(void *args)
 {
 	printf(bar);
 	std::vector<int> sample{ 3,1,2,4 };
@@ -157,9 +162,10 @@ void SumSubarrayMinsTest()
 	assert(ans1 == 17);
 	assert(ans2 == 444);
 	printf("SUM SUBARRAY MINS TEST PASSED\n");
+	return NULL;
 }
 
-void SetMismatchTest()
+void *SetMismatchTest(void *args)
 {
 	printf(bar);
 	int sample1[] = { 3,2,2 };
@@ -178,5 +184,5 @@ void SetMismatchTest()
 
 	free(ans1); free(ans2);
 	printf("-- SET MISMATCH TESTS PASSED --\n");
-
+	return NULL;
 }
