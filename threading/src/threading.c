@@ -39,9 +39,6 @@ static
     void *tmpres = mth->func(mth->args);
     mth->code = (signed char *)tmpres;
     mth->result = tmpres + 1;
-    /* #ifndef NO_PARALLEL
-        pthread_exit((void*)mth->code);
-    #endif */
     return (void *)mth->code;
 }
 
@@ -77,14 +74,10 @@ int parallel_run(MyThread *thrds[], unsigned char fcount)
         thrd_create_dummy(&thrds[i]->id, RunInNewThrd, (void *)thrds[i]);
 #endif
     }
-    for (int i = 0; i < fcount; i++)
-    {
 #ifndef NO_PARALLEL
+    for (int i = 0; i < fcount; i++)
         pthread_join(thrds[i]->id, NULL);
 #endif
-        printf("Thread%03llu exited with %hd\n",
-               thrds[i]->id, *thrds[i]->code);
-    }
     return 0;
 }
 #endif
