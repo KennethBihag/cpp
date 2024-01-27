@@ -27,7 +27,8 @@ CC=g++
 CC2=gcc
 STD=c++17
 STD2=c11
-CFLAGS=-g -Wall -Wno-comment -Wno-unused-function $(INCLUDE)
+NO_WARNINGS=-Wno-unused-function -Wno-pointer-arith -Wno-sign-compare
+CFLAGS=-g -Wall -Wno-comment $(NO_WARNINGS) $(INCLUDE)
 
 # final build
 all: objdir
@@ -103,4 +104,4 @@ bleetcode:
 	@$(MAKE) proj=leetcode DEFINES=-DALL_CHALLENGES\
 	 "OTHERLIBS=-lthreading -lcommon"
 bthreading:
-	"$(MAKE)" proj=threading "DEFINES=$(DEFINES) -Wno-pointer-arith"
+	"$(MAKE)" proj=threading "DEFINES=$(DEFINES)"

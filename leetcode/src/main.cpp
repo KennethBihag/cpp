@@ -6,19 +6,23 @@
 int main()
 {
 	thrd_func tests[] = {
-	SetMismatchTest
+		SetMismatchTest
 #ifdef ALL_CHALLENGES
-	,HouseRobberTest
-	,IsPalindromeTest
-	,TwoSumTest
-	,EnclosedParenthesesTest
-	,BiggestWidthTest
-	,MedianTest
-	,SumSubarrayMinsTest
+		,HouseRobberTest,
+		IsPalindromeTest,
+		TwoSumTest,
+		EnclosedParenthesesTest,
+		BiggestWidthTest,
+		MedianTest,
+		SumSubarrayMinsTest
 #endif
 	};
-	int fcount = sizeof(tests)/sizeof(thrd_func);
-	void *args[fcount];
-	parallel_run(tests,args,fcount);
+	unsigned char fcount = (unsigned char)(sizeof(tests) / sizeof(thrd_func));
+	for (int i = 0; i < fcount; i++)
+	{
+		mythreads[i] = new MyThread;
+		mythreads[i]->func = tests[i];
+	}
+	parallel_run(mythreads, fcount);
 	return 0;
 }
