@@ -24,53 +24,60 @@ int threading_test
 #else
     printf("Running in Linux.\n");
 #endif
-    thrd_func funcs[fcount];
-    void *args[fcount];
     int a = 0, b = 1;
     char c = 'a' - 1;
     for (int i = 0; i < fcount; ++i)
     {
+        mythreads[i] = (MyThread *)malloc(sizeof(MyThread));
         a++, b++, c++;
         if (i % 3 == 0)
         {
             int *additionArgs = (int *)malloc(2 * sizeof(int));
             additionArgs[0] = a, additionArgs[1] = b;
-            funcs[i] = addtl_helper;
-            args[i] = (void *)additionArgs;
+            mythreads[i]->func = addtl_helper;
+            mythreads[i]->args = (void *)additionArgs;
         }
         else if (i % 3 == 1)
         {
             char *gayArg = (char *)malloc(sizeof(char));
             *gayArg = c;
-            funcs[i] = isgay_helper;
-            args[i] = (void *)gayArg;
+            mythreads[i]->func = isgay_helper;
+            mythreads[i]->args = (void *)gayArg;
         }
         else
         {
-            funcs[i] = dummy_helper;
-            args[i] = NULL;
+            mythreads[i]->func = dummy_helper;
+            mythreads[i]->args = NULL;
         }
     }
 
-    parallel_run(funcs, args, fcount);
+    int code = parallel_run(mythreads, fcount);
 
     printf("Results from parallel_run:\n");
     for (int i = 0; i < fcount; i++)
     {
         if (i % 3 == 0)
-            printf("\tSUM: %d\n", *(int *)(results[i]));
+        {
+            int *sum = (int *)(mythreads[i]->result);
+            printf("\tSUM: %d\n", *sum);
+        }
         else if (i % 3 == 1)
-            printf("\tGAY: %s\n", (const char *)(results[i]));
+        {
+            const char **mess = (const char **)(mythreads[i]->result);
+            printf("\tGAY: %s\n", *mess);
+        }
         else
-            printf("\tDUMMY: %s\n", (const char *)(results[i]));
+        {
+            printf("\tDUMMY: %s\n", (const char *)mythreads[i]->result);
+        }
     }
 
     for (int i = 0; i < fcount; ++i)
     {
-        free(args[i]);
-        free(results[i]);
+        free(mythreads[i]->args);
+        // if(i%3 != 1) free(mythreads[i]->result);
     }
 
     printf("Done!!!\n");
-    return EXIT_SUCCESS;
+    return code;
 }

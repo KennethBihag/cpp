@@ -103,4 +103,4 @@ bleetcode:
 	@$(MAKE) proj=leetcode DEFINES=-DALL_CHALLENGES\
 	 "OTHERLIBS=-lthreading -lcommon"
 bthreading:
-	"$(MAKE)" proj=threading "DEFINES=$(DEFINES)"
+	"$(MAKE)" proj=threading "DEFINES=$(DEFINES) -Wno-pointer-arith"

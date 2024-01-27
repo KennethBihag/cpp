@@ -5,29 +5,27 @@
 
 extern char *g_hrule;
 extern char *g_srule;
-void *results[0xFF] = {0};
 
-typedef struct
-{
-    thrd_func func;
-    void *args;
-    void *result;
-#ifndef _WIN32
-    thrd_t id;
-#else
-    pthread_t id;
-#endif
-} MyThread;
+MyThread *mythreads[0xFF] = {0};
 
-static void thrd_create_dummy
 #ifndef _WIN32
-    (thrd_t *ID, int (*FUNC)(void *), void *ARGS)
-#else
-    (pthread_t *ID, thrd_func FUNC, void *ARGS)
-#endif
+static int thrd_create_dummy(thrd_t *ID, int (*FUNC)(void *), void *ARGS)
 {
-    FUNC(ARGS);
+    *ID = *ID % 256;
+    int code = FUNC(ARGS);
+    printf("Thread%03lu exited with %d\n",
+           *ID, code);
+    return code;
 }
+#else
+static void thrd_create_dummy(pthread_t *ID, thrd_func FUNC, void *ARGS)
+{
+    *ID = *ID % 256;
+    void *code = FUNC(ARGS);
+    printf("Thread%03llu exited with %hd\n",
+           *ID, *(signed char *)code);
+}
+#endif
 
 static
 #ifndef _WIN32
@@ -38,62 +36,55 @@ static
     RunInNewThrd(void *arg)
 {
     MyThread *mth = (MyThread *)arg;
-    mth->result = mth->func(mth->args);
-    if (mth->result)
-    {
-        printf(g_hrule);
-        printf("Result%010lu\n\t(int): %d\n", (unsigned long)mth->id, *(int *)mth->result);
-        printf("\t(char): %c\n", *(char *)mth->result);
-        printf("\t(string):%s\n", (const char *)mth->result);
-        printf(g_hrule);
-    }
-#ifndef _WIN32
-    return mth->result ? 0 : -1;
-#else
-    void *retval = mth->result ? NULL : (void *)-1;
-    pthread_exit(retval);
-    return retval;
-#endif
+    void *tmpres = mth->func(mth->args);
+    mth->code = (signed char *)tmpres;
+    mth->result = tmpres + 1;
+    /* #ifndef NO_PARALLEL
+        pthread_exit((void*)mth->code);
+    #endif */
+    return (void *)mth->code;
 }
 
-void parallel_run(thrd_func *funcs, void **args, int fcount)
+int parallel_run(MyThread *thrds[], unsigned char fcount)
 #ifndef _WIN32
 {
-    MyThread threads[fcount];
     for (int i = 0; i < fcount; ++i)
     {
-        threads[i].func = funcs[i];
-        threads[i].args = args[i];
-        thrd_create(&threads[i].id, RunInNewThrd, (void *)(threads + i));
-        // thrd_create_dummy(&threads[i].id, RunInNewThrd, (void *)(threads + i));
+#ifndef NO_PARALLEL
+        thrd_create(&thrds[i]->id, RunInNewThrd, (void *)thrds[i]);
+#else
+        thrds[i]->code = thrd_create_dummy(
+            &thrds[i]->id, RunInNewThrd, (void *)thrds[i]);
+#endif
     }
+
     for (int i = 0; i < fcount; i++)
     {
-        int code;
-        thrd_join(threads[i].id, &code);
-        results[i] = threads[i].result;
-        printf("Thread%010lu exited with %d\n",
-               threads[i].id, code);
+#ifndef NO_PARALLEL
+        thrd_join(thrds[i]->id, &thrds[i]->code);
+#endif
+        printf("Thread%03lu exited with %d\n",
+               thrds[i]->id, thrds[i]->code);
     }
 }
 #else
 {
-    MyThread threads[fcount];
     for (int i = 0; i < fcount; ++i)
     {
-        threads[i].func = funcs[i];
-        threads[i].args = args[i];
-        pthread_create(&threads[i].id, NULL, RunInNewThrd, (void *)(threads + i));
-        // thrd_create_dummy(&threads[i].id, RunInNewThrd, (void *)(threads + i));
+#ifndef NO_PARALLEL
+        pthread_create(&thrds[i]->id, NULL, RunInNewThrd, (void *)(thrds[i]));
+#else
+        thrd_create_dummy(&thrds[i]->id, RunInNewThrd, (void *)thrds[i]);
+#endif
     }
     for (int i = 0; i < fcount; i++)
     {
-        int code;
-        void *codeptr = (void *)&code;
-        pthread_join(threads[i].id, codeptr);
-        results[i] = threads[i].result;
-        printf("Thread%010llu exited with %d\n",
-               threads[i].id, code);
+#ifndef NO_PARALLEL
+        pthread_join(thrds[i]->id, NULL);
+#endif
+        printf("Thread%03llu exited with %hd\n",
+               thrds[i]->id, *thrds[i]->code);
     }
+    return 0;
 }
 #endif

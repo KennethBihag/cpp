@@ -8,13 +8,27 @@
 #endif
 
 typedef void *(*thrd_func)(void *);
-extern void *results[0xFF];
+
+// code: -1:not run, 0:success, 1:fail
+typedef struct
+{
+	thrd_func func;
+	void *args;
+	void *result;
+	signed char *code;
+#ifndef _WIN32
+	thrd_t id;
+#else
+	pthread_t id;
+#endif
+} MyThread;
+
+extern MyThread *mythreads[0xFF];
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
 	/*
 	Run an array of functions sequentially by index. Caller must call free on global results
 	if needed.
@@ -25,8 +39,8 @@ extern "C"
 	RETURNS:
 		none but modifies the global results array
 	*/
-	void parallel_run(thrd_func *func, void **args, int fcount);
-
+	int parallel_run(MyThread *thrds[], unsigned char fcount);
+	void clear_thread_at(MyThread *th, unsigned char i);
 #ifdef __cplusplus
 }
 #endif
