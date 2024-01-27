@@ -42,7 +42,7 @@ static
     if (mth->result)
     {
         printf(g_hrule);
-        printf("Result%010d\n\t(int): %d\n", (unsigned long)mth->id, *(int *)mth->result);
+        printf("Result%010lu\n\t(int): %d\n", (unsigned long)mth->id, *(int *)mth->result);
         printf("\t(char): %c\n", *(char *)mth->result);
         printf("\t(string):%s\n", (const char *)mth->result);
         printf(g_hrule);
