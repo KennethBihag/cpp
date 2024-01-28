@@ -6,8 +6,9 @@ extern "C"
 {
 #endif
 
-    void bubblesort_test(int, const char **);
-    void mergesort_test(int, const char **);
+    void bubblesort_test(int, const char**);
+    void mergesort_test(int, const char**);
+    void *permute_test(void*);
 
 #ifdef __cplusplus
 }

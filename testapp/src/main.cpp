@@ -1,5 +1,4 @@
-#include "testapp.hpp"
-#ifdef TEST_LIB
+#ifndef VOIDPTR
 #include "common/include/tests.h"
 #include "common/include/sort.h"
 #include "common/include/common.h"
@@ -8,11 +7,20 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <iostream>
+#include <string>
+#include <vector>
 using namespace std;
+
+void br(){
+	cout <<
+"------------------------------------\n";
+}
 
 int main(int argc, const char *argv[])
 {
 	cout << "Started testapp..." << endl;
+	br();
+
 	#ifdef TEST_LIB
 	bubblesort_test(argc, argv);
 	mergesort_test(argc,argv);
@@ -23,8 +31,7 @@ int main(int argc, const char *argv[])
 	print_intarr_elems(sample,sizeof(sample)/sizeof(int));
 	mergesort_int(sample,sizeof(sample)/sizeof(int));
 	print_intarr_elems(sample,sizeof(sample)/sizeof(int));
-	#endif
-	
+	#elif VOIDPTR
 	cout << "Sizes of pointers:\n";
 	printf("char:%lld, short:%lld, int:%lld, long:%lld, long long:%lld,"
 		"void:%lld\n",sizeof(char*),sizeof(short*),sizeof(int*),sizeof(long*),
@@ -78,7 +85,45 @@ int main(int argc, const char *argv[])
 			printf("\t\t\t%s\n",vpsptr[i]);
 		}
 	}
+#else
+	int len = 1;
+	char *chars = new char[len]{1};
+	void *arg = malloc(sizeof(int) + len*sizeof(char));
+	*(int*)arg = len;
+	memcpy(arg+sizeof(int),(void*)chars,len);
+	permute_test(arg);
+	delete[] chars;
+	free(arg);
 
+	len = 2;
+	chars = new char[len]{1,2};
+	arg = malloc(sizeof(int) + len*sizeof(char));
+	*(int*)arg = len;
+	memcpy(arg+sizeof(int),(void*)chars,len);
+	permute_test(arg);
+	delete[] chars;
+	free(arg);
+
+	len = 3;
+	chars = new char[len]{1,2,3};
+	arg = malloc(sizeof(int) + len*sizeof(char));
+	*(int*)arg = len;
+	memcpy(arg+sizeof(int),(void*)chars,len);
+	permute_test(arg);
+	delete[] chars;
+	free(arg);
+
+	len = 5;
+	chars = new char[len]{1,2,3,4,5};
+	arg = malloc(sizeof(int) + len*sizeof(char));
+	*(int*)arg = len;
+	memcpy(arg+sizeof(int),(void*)chars,len);
+	permute_test(arg);
+	delete[] chars;
+	free(arg);
+
+#endif
+	br();
 	cout << "testapp ended" << endl;
 	return 0;
 }

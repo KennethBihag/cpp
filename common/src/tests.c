@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "common.h"
+#include "permute.h"
 #include "sort.h"
 
 void bubblesort_test(int argc, const char **argv)
@@ -23,9 +24,9 @@ void bubblesort_test(int argc, const char **argv)
 	}
 	int *copied = bubblesort_int(o, olength, 1);
 	printf("ORIG: ");
-	print_intarr_elems(o,olength);
+	print_intarr_elems(o, olength);
 	printf("NEW: ");
-	print_intarr_elems(copied,olength);
+	print_intarr_elems(copied, olength);
 	free(copied);
 	float p[argc - 1];
 	for (int i = 0; i < olength; i++)
@@ -34,9 +35,9 @@ void bubblesort_test(int argc, const char **argv)
 	}
 	float *copied2 = bubblesort_flt(p, olength, -1);
 	printf("ORIG: ");
-	print_fltarr_elems(p,olength);
+	print_fltarr_elems(p, olength);
 	printf("NEW: ");
-	print_fltarr_elems(copied2,olength);
+	print_fltarr_elems(copied2, olength);
 	free(copied2);
 
 	return;
@@ -53,7 +54,27 @@ void mergesort_test(int argc, const char **argv)
 	int olength = sizeof(o) / sizeof(o[0]);
 	for (int i = 0; i < olength; i++)
 		sscanf(argv[i + 1], "%d", o + i);
-	mergesort_int(o,olength,1);
+	mergesort_int(o, olength, 1);
 
 	return;
+}
+
+void *permute_test(void *arg)
+{
+	const int len = *(const int*)arg;
+	const char *const numbers =
+		(const char *)(arg + sizeof(int));
+	int r = 0, c = 0;
+	char *res = permute_ch(numbers, len, &r, &c);
+	int orders = 0;
+	for (int i = 0; i < r; ++i)
+	{
+		++orders;
+		for (int j = 0; j < c; ++j)
+			printf("%hd ", res[i * c + j]);
+		printf("\n");
+	}
+	printf("%d orders\n", orders);
+	free((void *)res);
+	return NULL;
 }
