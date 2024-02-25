@@ -9,5 +9,6 @@ void *BiggestWidthTest(void*);
 void *MedianTest(void*);
 void *SumSubarrayMinsTest(void*);
 void *SetMismatchTest(void*);
+void *FindAllPeopleTest(void*);
 
 #endif

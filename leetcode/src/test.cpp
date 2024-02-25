@@ -190,3 +190,34 @@ void *SetMismatchTest(void *args)
 	printf("-- SET MISMATCH TESTS PASSED --\n");
 	RETURN_CODE
 }
+
+void *FindAllPeopleTest(void *args)
+{
+	printf(bar);
+	std::vector<std::vector<int>> meetings{
+		{1, 2, 5},
+		{2, 3, 8},
+		{1, 5, 10}};
+	int p1 = 1;
+	solution.FindAllPeople(6, meetings, p1);
+
+	meetings = std::vector<std::vector<int>>{{0,2,1},{1,3,1},{4,5,1}};
+	p1 = 1;
+	solution.FindAllPeople(6, meetings,p1);
+
+	meetings = std::vector<std::vector<int>>{{3, 1, 3}, {1, 2, 2}, {0, 3, 3}};
+	p1 = 3;
+	solution.FindAllPeople(4, meetings, p1);
+
+	meetings = std::vector<std::vector<int>>{{3, 4, 2}, {1, 2, 1}, {2, 3, 1}};
+	p1 = 1;
+	solution.FindAllPeople(5, meetings, p1);
+
+	meetings = std::vector<std::vector<int>>{{1, 4, 3}, {0, 4, 3}};
+	p1 = 3;
+	solution.FindAllPeople(5, meetings, p1);
+
+	printf("--- FIND ALL PEOPLE TESTS PASSED ---\n");
+
+	RETURN_CODE
+}

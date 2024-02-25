@@ -6,9 +6,10 @@
 int main()
 {
 	thrd_func tests[] = {
-		SetMismatchTest
+		FindAllPeopleTest
 #ifdef ALL_CHALLENGES
-		,HouseRobberTest,
+		,SetMismatchTest,
+		HouseRobberTest,
 		IsPalindromeTest,
 		TwoSumTest,
 		EnclosedParenthesesTest,

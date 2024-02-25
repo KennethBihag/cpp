@@ -20,6 +20,8 @@ public:
     int BiggestWidth(std::vector<std::pair<int, int>> pts);
     double FindMedianSortedArrays(std::vector<int> &nums1, std::vector<int> &nums2);
     int sumSubarrayMins(std::vector<int> &arr);
+    std::vector<int> FindAllPeople(
+        int n, std::vector<std::vector<int>> &meetings, int firstPerson);
 
     friend void *EnclosedParenthesesTest(void*);
 };
