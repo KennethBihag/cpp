@@ -10,5 +10,6 @@ void *MedianTest(void*);
 void *SumSubarrayMinsTest(void*);
 void *SetMismatchTest(void*);
 void *FindAllPeopleTest(void*);
+void *RemoveNodeFromEndTest(void*);
 
 #endif

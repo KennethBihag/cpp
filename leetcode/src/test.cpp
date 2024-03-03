@@ -10,6 +10,8 @@
 
 #include "leetcode.h"
 #include "leetcode.hpp"
+#include "common/include/singly_linked_list.h"
+#include "remove_node_from_end.h"
 
 #define RETURN_CODE \
 	void *res = malloc(sizeof(signed char)); \
@@ -219,5 +221,39 @@ void *FindAllPeopleTest(void *args)
 
 	printf("--- FIND ALL PEOPLE TESTS PASSED ---\n");
 
+	RETURN_CODE
+}
+
+void *RemoveNodeFromEndTest(void *args){
+	ListNode head1;
+	head1.val=1;
+	head1.next=0;
+	// printf("Input 1: %s\n", node_to_string(&head1));
+	ListNode *result1 = removeNthFromEnd(&head1,1);
+	const char *rStr1 = node_to_string(result1);
+	assert(strcmp(rStr1,"")==0);
+	// printf("Result1: %s\n", rStr1);
+
+	ListNode *head2=0;
+	ListNode *curr = head2;
+	for(int i=1; i<6; i++){
+		if(!curr){
+			curr = new ListNode();
+			head2 = curr;
+		}
+		else{
+			curr->next = new ListNode();
+			curr = curr->next;
+		}
+		curr->val = i;
+		curr->next = 0;
+	}
+	// printf("Input 2: %s\n", node_to_string(head2));
+	ListNode *result2 = removeNthFromEnd(head2, 2);
+	const char *rStr2 = node_to_string(result2);
+	assert(strcmp(rStr2,"1, 2, 3, 5")==0);
+	// printf("Result2: %s\n", rStr2);
+
+	printf("--- REMOVE NODE FROM END TESTS PASSED ---\n");
 	RETURN_CODE
 }
