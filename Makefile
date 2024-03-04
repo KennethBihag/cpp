@@ -3,7 +3,8 @@ ostype=$(shell echo ${OS})
 proj=testapp
 appType=exe
 ifeq ($(ostype),Windows_NT)
-MAKE=mingw32-make
+compDir=/c/Program Files/mingw64/bin
+MAKE=$(compDir)/mingw32-make
 appName=$(proj).exe
 sLibX=lib
 dLibX=dll
@@ -23,8 +24,8 @@ objs2=$(subst .c,.o,$(objs1))
 objs=$(subst $(sourceDir),$(objDir),$(objs2))
 INCLUDE=-I$(proj)/include -I"`pwd`"
 
-CC=g++
-CC2=gcc
+CC=$(compDir)/g++
+CC2=$(compDir)/gcc
 STD=c++17
 STD2=c11
 NO_WARNINGS=-Wno-unused-function -Wno-pointer-arith -Wno-sign-compare
@@ -34,12 +35,12 @@ CFLAGS=-g -Wall -Wno-comment $(NO_WARNINGS) $(INCLUDE)
 all: objdir
 ifeq ($(appType),exe)
 	"$(MAKE)" exec proj=$(proj) withDynamic=$(withDynamic) withStatic=$(withStatic)\
-	 MAKE=$(MAKE) CC=$(CC) STD=$(STD) "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
+	 MAKE="$(MAKE)" CC="$(CC)" STD=$(STD) "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
 else ifeq ($(appType),dLib)
-	"$(MAKE)" lib$(proj).$(dLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
+	"$(MAKE)" lib$(proj).$(dLibX) proj=$(proj) CC="$(CC2)" STD=$(STD2)\
 	 CFLAGS="$(CFLAGS) -fPIC" "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
 else
-	"$(MAKE)" lib$(proj).$(sLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
+	"$(MAKE)" lib$(proj).$(sLibX) proj=$(proj) CC="$(CC2)" STD=$(STD2)\
 	 "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
 endif
 
@@ -47,7 +48,7 @@ endif
 exec: bindir $(objs)
 	@echo Building app $(appName)
 ifneq ($(withDynamic),)
-	"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC=$(CC2)\
+	"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC="$(CC2)"\
 	 STD=$(STD2) appType=dLib "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
 ifeq ($(ostype),Windows_NT)
 		$(eval LDFLAGS= )
@@ -57,7 +58,7 @@ endif
 	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(LDFLAGS) $(objs)\
 	 -L$(libDir) -l$(withDynamic) $(OTHERLIBS)
 else ifneq ($(withStatic),)
-	"$(MAKE)" lib$(withStatic).$(sLibX) proj=$(withStatic) CC=$(CC2)\
+	"$(MAKE)" lib$(withStatic).$(sLibX) proj=$(withStatic) CC="$(CC2)"\
 	 STD=$(STD2) appType=sLib "DEFINES=$(DEFINES)" OTHERLIBS=$(OTHERLIBS)
 	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)\
 	 -L$(libDir) -l$(withStatic) $(OTHERLIBS)
@@ -99,9 +100,9 @@ cleanlib:
 
 # specific projects
 bleetcode:
-	@$(MAKE) libthreading.$(sLibX) proj=threading CC=gcc STD=c11
-	@$(MAKE) libcommon.$(sLibX) proj=common CC=gcc STD=c11
-	@$(MAKE) proj=leetcode DEFINES=-DALL_CHALLENGES\
+	@"$(MAKE)" libthreading.$(sLibX) proj=threading CC="$(CC2)" STD=c11 DEFINES=-DNO_PARALLEL
+	@"$(MAKE)" libcommon.$(sLibX) proj=common CC="$(CC2)" STD=c11
+	@"$(MAKE)" proj=leetcode DEFINES=-DALL_CHALLENGES\
 	 "OTHERLIBS=-lthreading -lcommon"
 bthreading:
 	"$(MAKE)" proj=threading "DEFINES=$(DEFINES)"

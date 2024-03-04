@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <iostream>
 
 #include "common/include/sort.h"

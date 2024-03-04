@@ -13,6 +13,7 @@
         "winthreading.h": "c",
         "string.h": "c",
         "pthread.h": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "threading.h": "c"
     }
 }
