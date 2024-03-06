@@ -313,6 +313,7 @@ vector<int> Solution::FindAllPeople(int n, vector<vector<int>> &meetings, int fi
 
 int minLenHelper(const char *s, const int slen)
 {
+#ifdef VERSION2
 	if (slen <= 1)
 		return slen;
 
@@ -352,6 +353,37 @@ int minLenHelper(const char *s, const int slen)
 	}
 
 	return slen;
+#else
+	const char* const start = s;
+	const char* const end = s+slen-1;
+	const char *pf = start;
+	const char *sf = end;
+	char compare;
+	int result;
+STEP_1:
+	result = sf-pf+1;
+	if(*pf != *sf || result == 1)
+		return result;
+
+	compare = *pf;
+	for(; pf <= end; pf++){
+		if(*pf != compare)
+			break;
+	}
+	if(pf==sf)
+		return 0;
+	for(; sf >= pf; sf--){
+		if(*sf != compare)
+			break;
+	}
+	if(sf < pf)
+		return 0;
+	else
+		goto STEP_1;
+
+
+#endif
+
 }
 
 int Solution::minimumLength(string &s)

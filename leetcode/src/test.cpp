@@ -15,9 +15,9 @@
 #include "common/include/singly_linked_list.h"
 #include "remove_node_from_end.h"
 
-#define RETURN_CODE \
+#define RETURN_CODE                          \
 	void *res = malloc(sizeof(signed char)); \
-	*(signed char *)res = 0; \
+	*(signed char *)res = 0;                 \
 	return res;
 
 using std::string;
@@ -208,9 +208,9 @@ void *FindAllPeopleTest(void *args)
 	int p1 = 1;
 	solution.FindAllPeople(6, meetings, p1);
 
-	meetings = std::vector<std::vector<int>>{{0,2,1},{1,3,1},{4,5,1}};
+	meetings = std::vector<std::vector<int>>{{0, 2, 1}, {1, 3, 1}, {4, 5, 1}};
 	p1 = 1;
-	solution.FindAllPeople(6, meetings,p1);
+	solution.FindAllPeople(6, meetings, p1);
 
 	meetings = std::vector<std::vector<int>>{{3, 1, 3}, {1, 2, 2}, {0, 3, 3}};
 	p1 = 3;
@@ -229,24 +229,28 @@ void *FindAllPeopleTest(void *args)
 	RETURN_CODE
 }
 
-void *RemoveNodeFromEndTest(void *args){
+void *RemoveNodeFromEndTest(void *args)
+{
 	ListNode head1;
-	head1.val=1;
-	head1.next=0;
+	head1.val = 1;
+	head1.next = 0;
 	// printf("Input 1: %s\n", node_to_string(&head1));
-	ListNode *result1 = removeNthFromEnd(&head1,1);
+	ListNode *result1 = removeNthFromEnd(&head1, 1);
 	const char *rStr1 = node_to_string(result1);
-	assert(strcmp(rStr1,"")==0);
+	assert(strcmp(rStr1, "") == 0);
 	// printf("Result1: %s\n", rStr1);
 
-	ListNode *head2=0;
+	ListNode *head2 = 0;
 	ListNode *curr = head2;
-	for(int i=1; i<6; i++){
-		if(!curr){
+	for (int i = 1; i < 6; i++)
+	{
+		if (!curr)
+		{
 			curr = new ListNode();
 			head2 = curr;
 		}
-		else{
+		else
+		{
 			curr->next = new ListNode();
 			curr = curr->next;
 		}
@@ -256,35 +260,36 @@ void *RemoveNodeFromEndTest(void *args){
 	// printf("Input 2: %s\n", node_to_string(head2));
 	ListNode *result2 = removeNthFromEnd(head2, 2);
 	const char *rStr2 = node_to_string(result2);
-	assert(strcmp(rStr2,"1, 2, 3, 5")==0);
+	assert(strcmp(rStr2, "1, 2, 3, 5") == 0);
 	// printf("Result2: %s\n", rStr2);
 
 	printf("--- REMOVE NODE FROM END TESTS PASSED ---\n");
 	RETURN_CODE
 }
 
-void *MinimumLengthTest(void *args){
+void *MinimumLengthTest(void *args)
+{
 	string s("ca");
 	string t("cabaabac");
 	string u("abbbbbbbbbbbbbbbbbbba");
 	int sn = solution.minimumLength(s);
-	assert(sn==2);
+	assert(sn == 2);
 	int tn = solution.minimumLength(t);
-	assert(tn==0);
+	assert(tn == 0);
 	int un = solution.minimumLength(u);
-	assert(un==0);
+	assert(un == 0);
 
-// PARSE INPUT 4
+	// PARSE INPUT 4
 	std::ifstream fv(g_minimumLength_input_path);
 	string v;
-	if(fv.is_open())
-		printf("SUCCESS OPEN\n");
-	else
-		printf("COULD NOT OPEN FILE\n");
-	std::getline(fv,v);
+	bool opened = fv.is_open();
+	if (!opened)
+		fprintf(stderr, "COULD NOT OPEN FILE\n");
+	assert(opened);
+	std::getline(fv, v);
 	fv.close();
 	int vn = solution.minimumLength(v);
-	assert(vn==0);
+	assert(vn == 0);
 	printf("--- MINIMUM LENGTH TESTS PASSED ---\n");
 	RETURN_CODE
 }
