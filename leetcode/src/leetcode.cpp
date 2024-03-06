@@ -311,45 +311,50 @@ vector<int> Solution::FindAllPeople(int n, vector<vector<int>> &meetings, int fi
 	return knowers;
 }
 
-int Solution::minimumLength(string &s)
+int minLenHelper(const char *s, const int slen)
 {
-	int slen = s.length();
-
 	if (slen <= 1)
 		return slen;
 
-	char frch = s.front();
-	char lach = s.back();
+	const char &frch = s[0];
+	const char &lach = s[slen - 1];
 
 	if (frch == lach)
 	{
 		if (slen == 2)
 			return 0;
-		auto pfi = s.begin();
-		auto sfi = s.end() - 1;
+		auto pfi = s;
+		auto sfi = s + slen - 1;
 
 		if (pfi == sfi)
 			return 1;
 
-		for (; pfi < s.end() - 2; pfi++)
+		for (; pfi < sfi; pfi++)
 		{
 			if (frch != *pfi)
 				break;
 		}
 
-		for (; sfi > s.begin() + 1; sfi--)
+		for (; sfi > s; sfi--)
 		{
 			if (lach != *sfi)
 				break;
 		}
 		if (sfi >= pfi)
 		{
-			string sf(pfi, sfi + 1);
-			return minimumLength(sf);
+			((char *)sfi)[1] = 0;
+			const char *sf = pfi;
+			int tmpresult = minLenHelper(sf, sfi - pfi + 1);
+			return tmpresult;
 		}
 		else
 			return 0;
 	}
 
 	return slen;
+}
+
+int Solution::minimumLength(string &s)
+{
+	return minLenHelper(s.c_str(), s.length());
 }

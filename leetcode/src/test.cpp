@@ -6,6 +6,7 @@
 #include <string.h>
 #include <time.h>
 
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -24,6 +25,7 @@ using std::string;
 Solution solution;
 
 const char bar[] = "-----------------------------\n";
+const char *g_minimumLength_input_path = "D:\\cpp\\leetcode\\data\\MinimumLength_testcase_3.txt";
 
 void *HouseRobberTest(void *args)
 {
@@ -271,6 +273,18 @@ void *MinimumLengthTest(void *args){
 	assert(tn==0);
 	int un = solution.minimumLength(u);
 	assert(un==0);
+
+// PARSE INPUT 4
+	std::ifstream fv(g_minimumLength_input_path);
+	string v;
+	if(fv.is_open())
+		printf("SUCCESS OPEN\n");
+	else
+		printf("COULD NOT OPEN FILE\n");
+	std::getline(fv,v);
+	fv.close();
+	int vn = solution.minimumLength(v);
+	assert(vn==0);
 	printf("--- MINIMUM LENGTH TESTS PASSED ---\n");
 	RETURN_CODE
 }
