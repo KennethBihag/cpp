@@ -11,5 +11,6 @@ void *SumSubarrayMinsTest(void*);
 void *SetMismatchTest(void*);
 void *FindAllPeopleTest(void*);
 void *RemoveNodeFromEndTest(void*);
+void *MinimumLengthTest(void*);
 
 #endif

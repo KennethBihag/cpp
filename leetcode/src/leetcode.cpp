@@ -5,7 +5,9 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <iostream>
+#include <string>
 
 #include "common/include/sort.h"
 
@@ -14,6 +16,7 @@
 using std::cout;
 using std::pair;
 using std::sort;
+using std::string;
 using std::vector;
 
 static int largestSum;
@@ -306,4 +309,47 @@ vector<int> Solution::FindAllPeople(int n, vector<vector<int>> &meetings, int fi
 	spread(meetingsSameTime, knowers);
 	printWhoKnows(knowers);
 	return knowers;
+}
+
+int Solution::minimumLength(string &s)
+{
+	int slen = s.length();
+
+	if (slen <= 1)
+		return slen;
+
+	char frch = s.front();
+	char lach = s.back();
+
+	if (frch == lach)
+	{
+		if (slen == 2)
+			return 0;
+		auto pfi = s.begin();
+		auto sfi = s.end() - 1;
+
+		if (pfi == sfi)
+			return 1;
+
+		for (; pfi < s.end() - 2; pfi++)
+		{
+			if (frch != *pfi)
+				break;
+		}
+
+		for (; sfi > s.begin() + 1; sfi--)
+		{
+			if (lach != *sfi)
+				break;
+		}
+		if (sfi >= pfi)
+		{
+			string sf(pfi, sfi + 1);
+			return minimumLength(sf);
+		}
+		else
+			return 0;
+	}
+
+	return slen;
 }

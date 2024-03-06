@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <map>
+#include <string>
 
 class Solution
 {
@@ -22,6 +23,7 @@ public:
     int sumSubarrayMins(std::vector<int> &arr);
     std::vector<int> FindAllPeople(
         int n, std::vector<std::vector<int>> &meetings, int firstPerson);
+    int minimumLength(std::string& s);
 
     friend void *EnclosedParenthesesTest(void*);
 };

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <time.h>
 
+#include <string>
 #include <vector>
 
 #include "leetcode.h"
@@ -17,6 +18,8 @@
 	void *res = malloc(sizeof(signed char)); \
 	*(signed char *)res = 0; \
 	return res;
+
+using std::string;
 
 Solution solution;
 
@@ -255,5 +258,19 @@ void *RemoveNodeFromEndTest(void *args){
 	// printf("Result2: %s\n", rStr2);
 
 	printf("--- REMOVE NODE FROM END TESTS PASSED ---\n");
+	RETURN_CODE
+}
+
+void *MinimumLengthTest(void *args){
+	string s("ca");
+	string t("cabaabac");
+	string u("abbbbbbbbbbbbbbbbbbba");
+	int sn = solution.minimumLength(s);
+	assert(sn==2);
+	int tn = solution.minimumLength(t);
+	assert(tn==0);
+	int un = solution.minimumLength(u);
+	assert(un==0);
+	printf("--- MINIMUM LENGTH TESTS PASSED ---\n");
 	RETURN_CODE
 }

@@ -6,9 +6,10 @@
 int main()
 {
 	thrd_func tests[] = {
-		RemoveNodeFromEndTest
+		MinimumLengthTest
 #ifdef ALL_CHALLENGES
-		,FindAllPeopleTest,
+		,RemoveNodeFromEndTest,
+		FindAllPeopleTest,
 		SetMismatchTest,
 		HouseRobberTest,
 		IsPalindromeTest,
