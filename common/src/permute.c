@@ -1,6 +1,7 @@
 #include "permute.h"
 
 #include <assert.h>
+#include <malloc.h>
 #include <stdio.h>
 
 int *permute(const int *const nums, int len, int *rrows, int *rcols)

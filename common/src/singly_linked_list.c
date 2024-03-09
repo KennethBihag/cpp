@@ -1,10 +1,10 @@
 #include "singly_linked_list.h"
 
 #include <malloc.h>
+#include <stdio.h>
 #include <string.h>
 
 const char *node_to_string(struct ListNode *node){
-    int listlen = 0;
     char *result = (char*) malloc(32);
     result[0] = 0;
 

@@ -19,11 +19,14 @@ using std::sort;
 using std::string;
 using std::vector;
 
+#ifndef CODEIUM_GEN
 static int largestSum;
 static void sums(std::vector<int>::iterator,
 				 std::vector<int>::iterator, const int &);
+#endif
 int Solution::Rob(std::vector<int> &money)
 {
+#ifndef CODEIUM_GEN
 	int gaps = 2;
 	for (int i = 0; i < money.size() - gaps + 1; ++i)
 	{
@@ -31,8 +34,28 @@ int Solution::Rob(std::vector<int> &money)
 		::sums(starting, money.end(), 0);
 	}
 	return largestSum;
+#else
+	int n = money.size();
+	if (n == 0)
+	{
+		return 0;
+	}
+	if (n == 1)
+	{
+		return money[0];
+	}
+	vector<int> dp(n);
+	dp[0] = money[0];
+	dp[1] = std::max(money[0], money[1]);
+	for (int i = 2; i < n; ++i)
+	{
+		dp[i] = std::max(dp[i - 1], dp[i - 2] + money[i]);
+	}
+	return dp[n - 1];
+#endif
 }
 
+#ifndef CODEIUM_GEN
 void sums(std::vector<int>::iterator start,
 		  std::vector<int>::iterator end, const int &sum)
 {
@@ -48,6 +71,7 @@ void sums(std::vector<int>::iterator start,
 		++itr;
 	}
 }
+#endif
 
 vector<int> Solution::TwoSum(vector<int> &nums, int target)
 {
@@ -354,36 +378,36 @@ int minLenHelper(const char *s, const int slen)
 
 	return slen;
 #else
-	const char* const start = s;
-	const char* const end = s+slen-1;
+	const char *const start = s;
+	const char *const end = s + slen - 1;
 	const char *pf = start;
 	const char *sf = end;
 	char compare;
 	int result;
 STEP_1:
-	result = sf-pf+1;
-	if(*pf != *sf || result == 1)
+	result = sf - pf + 1;
+	if (*pf != *sf || result == 1)
 		return result;
 
 	compare = *pf;
-	for(; pf <= end; pf++){
-		if(*pf != compare)
+	for (; pf <= end; pf++)
+	{
+		if (*pf != compare)
 			break;
 	}
-	if(pf==sf)
+	if (pf == sf)
 		return 0;
-	for(; sf >= pf; sf--){
-		if(*sf != compare)
+	for (; sf >= pf; sf--)
+	{
+		if (*sf != compare)
 			break;
 	}
-	if(sf < pf)
+	if (sf < pf)
 		return 0;
 	else
 		goto STEP_1;
 
-
 #endif
-
 }
 
 int Solution::minimumLength(string &s)
