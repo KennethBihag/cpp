@@ -237,22 +237,22 @@ static bool meetingComp(const vector<int> &a, const vector<int> &b)
 	return a[2] < b[2];
 }
 
-void printMeetings(const vector<vector<int>> &meetings)
+/* void printMeetings(const vector<vector<int>> &meetings)
 {
 	for (auto i : meetings)
 	{
 		cout << '\t';
 		cout << i[0] << " meets with " << i[1] << " on " << i[2] << '\n';
 	}
-}
+} */
 
-static void printWhoKnows(const vector<int> &knowers)
+/* static void printWhoKnows(const vector<int> &knowers)
 {
 	cout << "Those who know:";
 	for (auto i : knowers)
 		cout << ' ' << i;
 	cout << '\n';
-}
+} */
 
 static bool exists(const vector<int> &vec, const int val)
 {
@@ -305,10 +305,6 @@ REPEAT:
 	return;
 }
 
-static void spread(vector<int> &knowers, const int newPerson)
-{
-}
-
 vector<int> Solution::FindAllPeople(int n, vector<vector<int>> &meetings, int firstPerson)
 {
 	vector<int> knowers{0, firstPerson};
@@ -331,10 +327,11 @@ vector<int> Solution::FindAllPeople(int n, vector<vector<int>> &meetings, int fi
 		}
 	}
 	spread(meetingsSameTime, knowers);
-	printWhoKnows(knowers);
+	// printWhoKnows(knowers);
 	return knowers;
 }
 
+// Minimum Length of string after removing like prefix and suffix
 int minLenHelper(const char *s, const int slen)
 {
 #ifdef VERSION2

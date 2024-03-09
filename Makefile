@@ -34,7 +34,7 @@ CFLAGS=-g -Wall -Wno-comment $(NO_WARNINGS) $(INCLUDE)
 all: objdir
 ifeq ($(appType),exe)
 	"$(MAKE)" exec proj=$(proj) withDynamic=$(withDynamic) withStatic=$(withStatic)\
-	 MAKE=$(MAKE) CC=$(CC) STD=$(STD) "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
+	 MAKE="$(MAKE)" CC=$(CC) STD=$(STD) "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
 else ifeq ($(appType),dLib)
 	"$(MAKE)" lib$(proj).$(dLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
 	 CFLAGS="$(CFLAGS) -fPIC" "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
@@ -68,7 +68,8 @@ endif
 
 # auto builds
 lib%.$(dLibX): libdir $(objs)
-	"$(CC)" -std=$(STD) $(CFLAGS) -shared -o "$(libDir)/$@" $(objs)
+	"$(CC)" -std=$(STD) $(CFLAGS) -shared -o "$(libDir)/$@" $(objs)\
+	 -L$(libDir) $(OTHERLIBS)
 lib%.$(sLibX): libdir $(objs)
 	ar -rcs -o "$(libDir)/$@" $(objs) 
 $(objDir)/%.o: $(sourceDir)/%.c* objdir
@@ -99,9 +100,9 @@ cleanlib:
 
 # specific projects
 bleetcode:
-	@$(MAKE) libthreading.$(sLibX) proj=threading CC=gcc STD=c11
-	@$(MAKE) libcommon.$(sLibX) proj=common CC=gcc STD=c11
-	@$(MAKE) proj=leetcode DEFINES=-DALL_CHALLENGES\
+	"$(MAKE)" libthreading.$(dLibX) proj=threading CC=gcc STD=c11
+	"$(MAKE)" libcommon.$(dLibX) proj=common CC=gcc STD=c11
+	"$(MAKE)" proj=leetcode DEFINES="-DALL_CHALLENGES -DCODEIUM_GEN"\
 	 "OTHERLIBS=-lthreading -lcommon"
 bthreading:
 	"$(MAKE)" proj=threading "DEFINES=$(DEFINES)"

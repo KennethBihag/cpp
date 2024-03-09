@@ -4,7 +4,6 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 
 #include <fstream>
 #include <string>
@@ -115,21 +114,14 @@ void *BiggestWidthTest(void *args)
 	printf(bar);
 	std::vector<std::pair<int, int>> points;
 	std::vector nums = {3, 1, 9, 0, 1, 0, 1, 4, 5, 3, 8, 8};
-	printf("POINTS: \n");
 	for (int i = 0; i < nums.size(); i += 2)
 	{
 		points.push_back(std::make_pair(
 			nums[i], nums[i + 1]));
-		printf("\t(%d,%d)\n", points.back().first, points.back().second);
 	}
-	time_t start, end;
-	time(&start);
 	int width = solution.BiggestWidth(points);
-	time(&end);
-	printf("Biggest width is: %d\n", width);
 	assert(width == 3);
 	printf("-- BIGGEST WIDTH TEST PASSED --\n");
-	printf("In %f\n", difftime(start, end));
 	RETURN_CODE
 }
 
@@ -141,21 +133,18 @@ void *MedianTest(void *args)
 	double r = solution.FindMedianSortedArrays(nums1, nums2);
 	double d = r - 2;
 	assert(d < 0.25 && d > -0.25);
-	printf("Median is %lf\n", r);
 
 	nums1 = {1, 2};
 	nums2 = {3, 4};
 	r = solution.FindMedianSortedArrays(nums1, nums2);
 	d = r - 2.5;
 	assert(d < 0.25 && d > -0.25);
-	printf("Median is %lf\n", r);
 
 	nums1 = {1, 3};
 	nums2 = {2, 7};
 	r = solution.FindMedianSortedArrays(nums1, nums2);
 	d = r - 2.5;
 	assert(d < 0.25 && d > -0.25);
-	printf("Median is %lf\n", r);
 
 	printf("MEDIAN TEST PASSED\n");
 	RETURN_CODE
@@ -168,8 +157,6 @@ void *SumSubarrayMinsTest(void *args)
 	int ans1 = solution.sumSubarrayMins(sample);
 	sample = {11, 81, 94, 43, 3};
 	int ans2 = solution.sumSubarrayMins(sample);
-	printf("First min: %d\n", ans1);
-	printf("Second min: %d\n", ans2);
 	assert(ans1 == 17);
 	assert(ans2 == 444);
 	printf("SUM SUBARRAY MINS TEST PASSED\n");
@@ -186,8 +173,6 @@ void *SetMismatchTest(void *args)
 	int *ans1 = findErrorNums(sample1, std::size(sample1), &sz1);
 	int *ans2 = findErrorNums(sample2, std::size(sample2), &sz2);
 
-	printf("Answer: {%d,%d}\n", ans1[0], ans1[1]);
-	printf("Answer: {%d,%d}\n", ans2[0], ans2[1]);
 
 	assert(ans1[0] == exp1[0] && ans1[1] == exp1[1]);
 	assert(ans2[0] == exp2[0] && ans2[1] == exp2[1]);
