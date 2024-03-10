@@ -10,11 +10,7 @@
         },
         {
             "name": "Win32 - mingw64",
-            "includePath": [
-                "${workspaceFolder}\\*\\include",
-                "${workspaceFolder}"
-            ],
-            "compilerPath": "${env:PROGRAMFILES}\\mingw64\\bin\\g++.exe"
+            "compilerPath": "C:/Program Files/mingw64/bin/g++.exe"
         },
         {
             "name": "Linux",

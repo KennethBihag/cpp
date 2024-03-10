@@ -5,7 +5,13 @@
     "C_Cpp.default.browse.path": [
         "${workspaceFolder}"
     ],
-    "C_Cpp.default.defines": ["ALL_CHALLENGES","CODEIUM_GEN"],
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/**"
+    ],
+    "C_Cpp.default.defines": [
+        "ALL_CHALLENGES",
+        "CODEIUM_GEN"
+    ],
     "custom": {
         "binDir": "${workspaceFolder}/bin",
         "staticLib": "${workspaceFolder}/lib/static",
@@ -66,6 +72,11 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "server.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "hvsocket.h": "c",
+        "winsock.h": "c"
     }
 }
