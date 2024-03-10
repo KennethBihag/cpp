@@ -95,7 +95,6 @@ int send_data(SOCKET clSock, const char msg[], int len)
 
 void close_connection(SOCKET clients[])
 {
-	closesocket(svSock);
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
 		if (clients[i] != 0)
@@ -103,5 +102,6 @@ void close_connection(SOCKET clients[])
 			closesocket(clients[i]);
 		}
 	}
+	closesocket(svSock);
 	WSACleanup();
 }

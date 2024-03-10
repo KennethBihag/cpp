@@ -22,6 +22,6 @@ void close_connection(SOCKET clients[]);
 
 extern char g_request[MAX_RESP_LEN];
 extern char g_response[MAX_RESP_LEN];
-
+extern char g_css_init_resp[];
 void create_html_body(const char *const body);
 #endif
