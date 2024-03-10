@@ -1,95 +1,99 @@
 #include "server.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#ifdef _WIN32
 #include <winsock2.h>
+#endif
 
 typedef struct sockaddr_in sockaddr_in;
 typedef struct sockaddr sockaddr;
 
-SOCKET create_connection(const char host[], int port)
+SOCKET svSock = 0;
+sockaddr_in svAdd = {0};
+
+int create_connection(const char host[], int port)
 {
 	WSADATA wsadata;
-	SOCKET svSock;
-	sockaddr_in svAdd;
-	
+
 	if (WSAStartup(MAKEWORD(2, 2), &wsadata) != 0)
 	{
 		fprintf(stderr, "WSAStartup failed\n");
-		return 0;
+		return EXIT_FAILURE;
 	}
 	svSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (svSock == INVALID_SOCKET)
 	{
 		fprintf(stderr, "socket failed\n");
 		WSACleanup();
-		return 0;
+		return EXIT_FAILURE;
 	}
+	printf("Server(%llu) started\n", svSock);
 	svAdd.sin_family = AF_INET;
 	svAdd.sin_addr.s_addr = inet_addr(host);
 	svAdd.sin_port = htons(port);
-
 	if (bind(svSock, (sockaddr *)&svAdd, sizeof(svAdd)) == SOCKET_ERROR)
 	{
 		fprintf(stderr, "Bind failed\n");
 		closesocket(svSock);
 		WSACleanup();
-		return 0;
+		return EXIT_FAILURE;
 	}
-	printf("Bound address: %s:%d\n", host, port);
-
-	return svSock;
-}
-
-SOCKET listen_connection(SOCKET svSock)
-{
-	SOCKET clSock;
-	sockaddr_in clAdd;
-	int addLen = sizeof(clAdd);
-	printf("Listening...\n");
 	if (listen(svSock, MAX_CLIENTS) == SOCKET_ERROR)
 	{
 		fprintf(stderr, "Listen failed\n");
 		closesocket(svSock);
 		WSACleanup();
-		return 0;
+		return 1;
 	}
-	clSock = accept(svSock, (sockaddr *)&clAdd, &addLen);
-	if (clSock == INVALID_SOCKET)
-	{
-		fprintf(stderr, "Accept failed: %d\n", WSAGetLastError());
-		closesocket(svSock);
-		WSACleanup();
-		return 0;
-	}
+	printf("Listening on %s:%d\n", host, port);
+	return 0;
+}
 
-	char buffer[1024] = {0};
-	printf("sizeof(buffer): %d\n", sizeof(buffer));
-	int bytesReceived = recv(clSock, buffer, sizeof(buffer), 0);
+SOCKET accept_client()
+{
+	SOCKET clSock;
+	sockaddr_in clAdd;
+	int addLen = sizeof(clAdd);
+
+	clSock = accept(svSock, (sockaddr *)&clAdd, &addLen);
+	if (clSock == INVALID_SOCKET){
+		fprintf(stderr, "Accept failed: %d\n", WSAGetLastError());
+		return clSock;
+	}
+	printf("Client(%llu) connected\n", clSock);
+	return clSock;
+}
+
+int get_data(SOCKET clSock, const char msg[], int len)
+{
+	g_request[0] = '\0';
+	int bytesReceived = recv(clSock, g_request, MAX_RESP_LEN, 0);
 	if (bytesReceived == SOCKET_ERROR)
 	{
 		fprintf(stderr, "Receive failed: %d\n", WSAGetLastError());
 		closesocket(clSock);
-		closesocket(svSock);
-		WSACleanup();
-		return 0;
+		return bytesReceived;
 	}
 
-	printf("Received request: %s\n", buffer);
-
-	return clSock;
+	printf("Received request from sock(%llu): %s\n",
+		   clSock,
+		   g_request);
+	return bytesReceived;
 }
 
-int send_data(SOCKET clsock, const char msg[], int len)
+int send_data(SOCKET clSock, const char msg[], int len)
 {
-	if (send(clsock, msg, len, 0) == SOCKET_ERROR)
+	int ret = 0;
+	if ((ret = send(clSock, msg, len, 0)) == SOCKET_ERROR)
 	{
 		fprintf(stderr, "Send failed\n");
-		return 1;
+		closesocket(clSock);
 	}
-	return 0;
+	return ret;
 }
 
-void close_connection(SOCKET svSock, SOCKET clients[])
+void close_connection(SOCKET clients[])
 {
 	closesocket(svSock);
 	for (int i = 0; i < MAX_CLIENTS; i++)

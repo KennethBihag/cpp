@@ -4,6 +4,7 @@
 #include <string.h>
 
 char g_response[MAX_RESP_LEN] = "";
+char g_request[MAX_RESP_LEN] = "";
 
 const char html_resp[] =
 	"HTTP/1.1 200 OK\r\n"
