@@ -1,0 +1,109 @@
+{
+    // default shell for VSCode should be bash (git-bash)
+    "configurations": [
+        {
+            "name": "Windows GNU - current file",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/../bin/${fileBasenameNoExtension}.exe",
+            "cwd": "${fileDirname}/../bin",
+            "externalConsole": true,
+            "args": [
+                "${input:debugArgs}"
+            ],
+            "MIMode": "gdb",
+            "miDebuggerPath": "${input:windowsDebugger}",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Windows - project",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${config:custom.binDir}/${input:projectNamePrompt}.exe",
+            "args": [
+                "${input:debugArgs}"
+            ],
+            "cwd": "${config:custom.binDir}",
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "${input:windowsDebugger}",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Linux - project",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${config:custom.binDir}/${input:projectNamePrompt}",
+            "args": [
+                "${input:debugArgs}"
+            ],
+            "cwd": "${config:custom.binDir}",
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+    ],
+    "inputs": [
+        {
+            "id": "projectNamePrompt",
+            "description": "Insert project name",
+            "type": "pickString",
+            "options": [
+                "common",
+                "threading",
+                "my_psql_api",
+                "testapp",
+                "leetcode"
+            ]
+        },
+        {
+            "id": "windowsDebugger",
+            "description": "Pick a compiler for Windows GNU",
+            "type": "pickString",
+            "options": [
+                "${env:HOMEDIR}/cygwin64/bin/gdb.exe",
+                "${env:PROGRAMFILES}/mingw64/bin/gdb.exe"
+            ]
+        },
+        {
+            "id": "debugArgs",
+            "description": "Enter args for program debugged. Enclode each arg with double quotes.",
+            "type": "promptString"
+        }
+    ],
+    "version": "2.0.0"
+}

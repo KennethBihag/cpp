@@ -1,0 +1,50 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    // default shell for VSCode should be bash (git-bash)
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Clean All",
+            "type": "shell",
+            "command": "${input:makePickList} clean"
+        },
+        {
+            "label": "Windows GNU - build current file",
+            "type": "shell",
+            "command": "g++ -g -O2 -Wall -o '${fileDirname}/../bin/${fileBasenameNoExtension}.exe' '${file}'",
+            "dependsOn": "create_bin_dir_for_file",
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "Linux - build current file",
+            "type": "shell",
+            "command": "g++ -g -O2 -Wall -o '${fileDirname}/../bin/${fileBasenameNoExtension}' '${file}'",
+            "dependsOn": "create_bin_dir_for_file",
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "create_bin_dir_for_file",
+            "type": "shell",
+            "command": "if [ ! -d '${fileDirname}/../bin' ]; then mkdir '${fileDirname}/../bin'; fi;"
+        },
+        {
+            "label": "clean_output_from_file",
+            "type": "shell",
+            "command": "if [ -d '${fileDirname}/../bin' ]; then rm -fr '${fileDirname}/../bin'; fi;",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "makePickList",
+            "type": "pickString",
+            "description": "Type of make app",
+            "default": "make",
+            "options": [
+                "make",
+                "mingw32-make"
+            ]
+        }
+    ]
+}

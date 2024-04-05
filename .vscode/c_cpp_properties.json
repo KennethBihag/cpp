@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Win32 - cygwin64",
+            "includePath": [
+                "${workspaceFolder}\\*\\include",
+                "${workspaceFolder}"
+            ],
+            "compilerPath": "${env:HOMEDRIVE}\\cygwin64\\bin\\gcc.exe"
+        },
+        {
+            "name": "Win32 - mingw64",
+            "compilerPath": "C:/Program Files/mingw64/bin/g++.exe"
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}"
+            ],
+            "compilerPath": "/usr/bin/g++"
+        }
+    ],
+    "version": 4
+}
