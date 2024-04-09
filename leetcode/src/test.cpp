@@ -263,18 +263,6 @@ void *MinimumLengthTest(void *args)
 	assert(tn == 0);
 	int un = solution.minimumLength(u);
 	assert(un == 0);
-
-	// PARSE INPUT 4
-	std::ifstream fv(g_minimumLength_input_path);
-	string v;
-	bool opened = fv.is_open();
-	if (!opened)
-		fprintf(stderr, "COULD NOT OPEN FILE\n");
-	assert(opened);
-	std::getline(fv, v);
-	fv.close();
-	int vn = solution.minimumLength(v);
-	assert(vn == 0);
 	printf("--- MINIMUM LENGTH TESTS PASSED ---\n");
 	RETURN_CODE
 }

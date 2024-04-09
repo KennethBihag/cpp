@@ -1,108 +1,73 @@
-ostype=$(shell echo ${OS})
-
-proj=testapp
-appType=exe
-ifeq ($(ostype),Windows_NT)
-MAKE=mingw32-make
-appName=$(proj).exe
-sLibX=lib
-dLibX=dll
-else
-MAKE=make
-appName=$(proj)
-sLibX=a
-dLibX=so
+ifneq ($(DEFINES),)
+DEFFLAGS := $(shell for d in $(DEFINES); do echo -n "-D$$d "; done)
 endif
-objDir=obj
-libDir=lib
-binDir=bin
-sourceDir=$(proj)/src
-sources=$(wildcard $(sourceDir)/*.c) $(wildcard $(sourceDir)/*.cpp)
-objs1=$(subst .cpp,.o,$(sources))
-objs2=$(subst .c,.o,$(objs1))
-objs=$(subst $(sourceDir),$(objDir),$(objs2))
-INCLUDE=-I$(proj)/include -I"`pwd`"
-
-CC=g++
-CC2=gcc
-STD=c++17
-STD2=c11
-NO_WARNINGS=-Wno-unused-function -Wno-pointer-arith -Wno-sign-compare
-CFLAGS=-g -Wall -Wno-comment $(NO_WARNINGS) $(INCLUDE)
-
-# final build
-all: objdir
-ifeq ($(appType),exe)
-	"$(MAKE)" exec proj=$(proj) withDynamic=$(withDynamic) withStatic=$(withStatic)\
-	 MAKE="$(MAKE)" CC=$(CC) STD=$(STD) "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
-else ifeq ($(appType),dLib)
-	"$(MAKE)" lib$(proj).$(dLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
-	 CFLAGS="$(CFLAGS) -fPIC" "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
-else
-	"$(MAKE)" lib$(proj).$(sLibX) proj=$(proj) CC=$(CC2) STD=$(STD2)\
-	 "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
+ifneq ($(LIBS),)
+LDFLAGS := $(shell for l in $(LIBS); do echo -n "-l$$l "; done)
 endif
 
-# executable intermediate build
-exec: bindir $(objs)
-	@echo Building app $(appName)
-ifneq ($(withDynamic),)
-	"$(MAKE)" lib$(withDynamic).$(dLibX) proj=$(withDynamic) CC=$(CC2)\
-	 STD=$(STD2) appType=dLib "DEFINES=$(DEFINES)" "OTHERLIBS=$(OTHERLIBS)"
-ifeq ($(ostype),Windows_NT)
-		$(eval LDFLAGS= )
-else
-		$(eval LDFLAGS += -Wl,-rpath,$(PWD)/$(libDir))
-endif
-	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(LDFLAGS) $(objs)\
-	 -L$(libDir) -l$(withDynamic) $(OTHERLIBS)
-else ifneq ($(withStatic),)
-	"$(MAKE)" lib$(withStatic).$(sLibX) proj=$(withStatic) CC=$(CC2)\
-	 STD=$(STD2) appType=sLib "DEFINES=$(DEFINES)" OTHERLIBS=$(OTHERLIBS)
-	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)\
-	 -L$(libDir) -l$(withStatic) $(OTHERLIBS)
-else
-	"$(CC)" -std=$(STD) $(CFLAGS) -o "$(binDir)/$(appName)" $(objs)\
-	 -L$(libDir) $(OTHERLIBS)
-endif
+CC = g++
+STD = c++17
+NO_WARN = -Wno-unused-function -Wno-pointer-arith -Wno-sign-compare\
+ -Wno-comment
+CFLAGS = -ggdb -std=$(STD) -Wall $(NO_WARN) -I. -I$(PROJ)/include\
+ -Llib -Llib/static $(DEFFLAGS)
 
-# auto builds
-lib%.$(dLibX): libdir $(objs)
-	"$(CC)" -std=$(STD) $(CFLAGS) -shared -o "$(libDir)/$@" $(objs)\
-	 -L$(libDir) $(OTHERLIBS)
-lib%.$(sLibX): libdir $(objs)
-	ar -rcs -o "$(libDir)/$@" $(objs) 
-$(objDir)/%.o: $(sourceDir)/%.c* objdir
-ifeq ($(appType),dLib)
-	"$(CC)" -std=$(STD2) $(CFLAGS) -fPIC $(DEFINES) -c -o "$@" $<
+MAKE = mingw32-make
+ifeq (${OS},Windows_NT)
+	ifeq ($(type),dynamic)
+	outPath = lib/lib$(PROJ).dll
+	FPIC = -fPIC
+	else ifeq ($(type),static)
+	outPath = lib/static/lib$(PROJ).lib
+	else
+	outPath = bin/$(PROJ).exe
+	endif
 else
-	"$(CC)" -std=$(STD) $(CFLAGS) $(DEFINES) -c -o "$@" $<
+MAKE = make
+CFLAGS := $(CFLAGS) -Wl,-rpath,lib
+	ifeq ($(type),dynamic)
+	outPath = lib/lib$(PROJ).so
+	FPIC = -fPIC
+	else ifeq ($(type),static)
+	outPath = lib/static/lib$(PROJ).a
+	else
+	outPath = bin/$(PROJ)
+	endif
 endif
 
-# directory builds
-libdir:
-	@if [ ! -d "$(libDir)" ]; then mkdir "$(libDir)"; fi;
-bindir:
-	@if [ ! -d "$(binDir)" ]; then mkdir "$(binDir)"; fi;
-objdir:
-	@if [ ! -d "$(objDir)" ]; then mkdir "$(objDir)"; fi;
+all:
+	@if [ ! -d $(PROJ)/obj ]; then mkdir $(PROJ)/obj; fi;
+	@if [ ! -d bin ]; then mkdir bin; fi;
+	@if [ ! -d lib/static ]; then mkdir --parents lib/static; fi;
+	"$(MAKE)" -f makeLib $(outPath) CC=$(CC) "CFLAGS=$(CFLAGS)"\
+	 "LDFLAGS=$(LDFLAGS)" FPIC=$(FPIC) PROJ=$(PROJ)
 
-# other builds
-fpic:
-	$(eval CFLAGS:=$(CFLAGS) -fPIC)
-clean: cleanbin cleanobj cleanlib
-cleanbin:
-	@if [ -d $(binDir) ]; then rm -fr $(binDir); fi;
-cleanobj:
-	@if [ -d $(objDir) ]; then rm -fr $(objDir); fi;
-cleanlib:
-	@if [ -d $(libDir) ]; then rm -fr $(libDir); fi;
+clean:
+ifeq ($(PROJ),)
+	@rm -fr */obj
+	@if [ -d bin ]; then rm -fr bin; fi;
+	@if [ -d lib ]; then rm -fr lib; fi;
+else
+	@rm -fr $(PROJ)/obj
+	@if [ -e bin/$(PROJ) ]; then rm bin/$(PROJ); fi;
+	@if [ -e bin/$(PROJ).exe ]; then rm bin/$(PROJ).exe; fi;
+	@if [ -e lib/static/lib$(PROJ).lib ]; then\
+	 rm lib/static/lib$(PROJ).lib; fi;
+	@if [ -e lib/static/lib$(PROJ).a ]; then\
+	 rm lib/static/lib$(PROJ).a; fi;
+	@if [ -e lib/lib$(PROJ).dll ]; then rm lib/lib$(PROJ).dll; fi;
+	@if [ -e lib/lib$(PROJ).so ]; then rm lib/lib$(PROJ).so; fi;
+endif
 
-# specific projects
-bleetcode:
-	"$(MAKE)" libthreading.$(dLibX) proj=threading CC=gcc STD=c11
-	"$(MAKE)" libcommon.$(dLibX) proj=common CC=gcc STD=c11
-	"$(MAKE)" proj=leetcode DEFINES="-DALL_CHALLENGES -DCODEIUM_GEN"\
-	 "OTHERLIBS=-lthreading -lcommon"
+bcommon:
+	@"$(MAKE)" PROJ=common type=dynamic CC=gcc STD=c11
+
 bthreading:
-	"$(MAKE)" proj=threading "DEFINES=$(DEFINES)"
+	@"$(MAKE)" PROJ=threading type=dynamic CC=gcc STD=c11
+
+btestapp: bcommon
+	@"$(MAKE)" PROJ=testapp LIBS=common
+
+bleetcode: bcommon bthreading
+	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"\
+	 DEFINES="ALL_CHALLENGES CODEIUM_GEN"

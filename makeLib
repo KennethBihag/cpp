@@ -1,0 +1,29 @@
+objects = $(wildcard $(PROJ)/src/*.c) $(wildcard $(PROJ)/src/*.cpp)
+objects := $(subst src,obj,$(objects))
+ifeq (${OS},Windows_NT)
+objects := $(subst .cpp,.obj,$(objects))
+objects := $(subst .c,.obj,$(objects))
+else
+objects := $(subst .cpp,.o,$(objects))
+objects := $(subst .c,.o,$(objects))
+endif
+
+bin/%.exe: $(objects)
+	"$(CC)" -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
+bin/%: $(objects)
+	"$(CC)" -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
+
+lib/static/%.lib: $(objects)
+	ar -rcs -o $@ $(objects) $(LDFLAGS)
+lib/static/%.a: $(objects)
+	ar -rcs -o $@ $(objects) $(LDFLAGS)
+
+lib/%.dll: $(objects)
+	"$(CC)" -shared -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
+lib/%.so: $(objects)
+	@"$(CC)" -shared -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
+
+$(PROJ)/obj/%.obj: $(PROJ)/src/%.c*
+	"$(CC)" -c -o $@ $(CFLAGS) $(FPIC) $<
+$(PROJ)/obj/%.o: $(PROJ)/src/%.c*
+	"$(CC)" -c -o $@ $(CFLAGS) $(FPIC) $<
