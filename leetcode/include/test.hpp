@@ -12,5 +12,6 @@ void *SetMismatchTest(void*);
 void *FindAllPeopleTest(void*);
 void *RemoveNodeFromEndTest(void*);
 void *MinimumLengthTest(void*);
+void *DeckRevealedIncreasingTest(void*);
 
 #endif

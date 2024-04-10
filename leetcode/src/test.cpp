@@ -266,3 +266,24 @@ void *MinimumLengthTest(void *args)
 	printf("--- MINIMUM LENGTH TESTS PASSED ---\n");
 	RETURN_CODE
 }
+
+void *DeckRevealedIncreasingTest(void *args)
+{
+    std::vector<int> input3 = {17,13,11,2,3,5,7};
+    std::vector<int> output3 = {2,13,3,11,5,17,7};
+    std::vector<int> input2 = {1,2,3,4,5,6,7,8};
+    std::vector<int> output2 = {1,5,2,7,3,6,4,8};
+    std::vector<int> input1 = {1,2,3,4,5,6,7,8,9};
+    std::vector<int> output1 = {1,9,2,6,3,8,4,7,5};
+
+    auto s1 = solution.deckRevealedIncreasing(input1);
+    auto s2 = solution.deckRevealedIncreasing(input2);
+    auto s3 = solution.deckRevealedIncreasing(input3);
+
+    assert(input1 == output1);
+    assert(input2 == output2);
+    assert(input3 == output3);
+	printf("--- DECK REVEALED INCREASING TESTS PASSED ---\n");
+
+    RETURN_CODE
+}

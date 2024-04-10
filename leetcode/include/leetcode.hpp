@@ -24,7 +24,7 @@ public:
     std::vector<int> FindAllPeople(
         int n, std::vector<std::vector<int>> &meetings, int firstPerson);
     int minimumLength(std::string& s);
-
+    std::vector<int> deckRevealedIncreasing(std::vector<int>& deck);
     friend void *EnclosedParenthesesTest(void*);
 };
 

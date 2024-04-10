@@ -411,3 +411,36 @@ int Solution::minimumLength(string &s)
 {
 	return minLenHelper(s.c_str(), s.length());
 }
+
+// Reveal cards in increasing order
+static std::vector<int> deckHelper(std::vector<int> &deck){
+    switch(deck.size()){
+        case 1:
+        case 2:
+            return deck;
+    }
+    int mid = deck.size()/2;
+    if(deck.size()%2)
+        mid++;
+
+    std::vector<int> low(deck.begin(), deck.begin()+mid);
+    std::vector<int> high(deck.begin()+mid,deck.end());
+    deckHelper(high);
+    if(deck.size()%2){
+        high.emplace(high.begin(),high[high.size()-1]);
+        high.erase(high.end()-1);
+    }
+    
+    for(int i=0; i<high.size(); i++){
+        deck[i*2] = low[i];
+        deck[i*2+1] = high[i];
+    }
+
+    if(low.size() > high.size())
+        deck[deck.size()-1] = low[low.size()-1];
+    return deck;
+}
+std::vector<int> Solution::deckRevealedIncreasing(std::vector<int>& deck){
+    std::sort(deck.begin(), deck.end());
+    return deckHelper(deck);
+}

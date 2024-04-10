@@ -71,3 +71,10 @@ btestapp: bcommon
 bleetcode: bcommon bthreading
 	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"\
 	 DEFINES="ALL_CHALLENGES CODEIUM_GEN"
+
+tleetcode:
+	@"$(MAKE)" clean PROJ=leetcode
+	@"$(MAKE)" PROJ=common type=static CC=gcc STD=c11
+	@"$(MAKE)" PROJ=threading type=static CC=gcc STD=c11\
+	 DEFINES=NO_PARALLEL
+	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"
