@@ -13,8 +13,8 @@ DBGB =-O3
 CFLAGS = $(DBGB) -std=$(STD) -Wall $(NO_WARN) -I. -I$(PROJ)/include\
  -Llib -Llib/static $(DEFFLAGS)
 
-MAKE = mingw32-make
 ifeq (${OS},Windows_NT)
+MAKE = ${PROGRAMFILES}/mingw64/bin/mingw32-make
 	ifeq ($(type),dynamic)
 	outPath = lib/lib$(PROJ).dll
 	FPIC = -fPIC
@@ -40,7 +40,10 @@ all:
 	@if [ ! -d $(PROJ)/obj ]; then mkdir $(PROJ)/obj; fi;
 	@if [ ! -d bin ]; then mkdir bin; fi;
 	@if [ ! -d lib/static ]; then mkdir --parents lib/static; fi;
-	"$(MAKE)" -f makeLib $(outPath) CC=$(CC) "CFLAGS=$(CFLAGS)"\
+ifeq (${OS},Windows_NT)
+	$(eval DD = ${PROGRAMFILES}/mingw64/bin/$(CC))
+endif
+	"$(MAKE)" -f makeLib $(outPath) "CC=$(DD)" "CFLAGS=$(CFLAGS)"\
 	 "LDFLAGS=$(LDFLAGS)" FPIC=$(FPIC) PROJ=$(PROJ)
 
 clean:
