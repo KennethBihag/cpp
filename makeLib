@@ -16,9 +16,9 @@ bin/%: $(objects)
 	"$(CC)" -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
 
 lib/static/%.lib: $(objects)
-	"$(AR)" -rcs -o $@ $(objects) $(LDFLAGS)
+	"$(AR)" -rcs -o $@ $(objects)
 lib/static/%.a: $(objects)
-	"$(AR)" -rcs -o $@ $(objects) $(LDFLAGS)
+	"$(AR)" -rcs -o $@ $(objects)
 
 lib/%.dll: $(objects)
 	"$(CC)" -shared -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
