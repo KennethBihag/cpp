@@ -18,11 +18,9 @@ int o[16384];
 void sleepy()
 {
     int s = 3;
-    cout << "I am sleeping for "
-         << 3 << " seconds."
-         << endl;
-    sleep(3);
-    cout << "Just woke up!" << endl;
+    printf("I am sleeping for %d seconds.\n", s);
+    sleep(s);
+    printf("Just woke up!\n");
 }
 
 void sorting()
@@ -38,7 +36,7 @@ void sorting()
 int main(int argc, const char *argv[])
 {
     cout << "Profiling..." << endl;
-
+    // snprintf(voidBuffer, sizeof(voidBuffer), "data/profile.txt");
     int offset = std::size(o) / 2;
     for (int i = 0; i < std::size(o); i++)
     {

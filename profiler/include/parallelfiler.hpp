@@ -5,7 +5,7 @@
 
 #include "profiler.hpp"
 
-extern const char *const voidBuffer;
+extern char voidBuffer[32];
 
 class Parallelfiler
 {

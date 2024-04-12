@@ -5,9 +5,9 @@
 #include <unistd.h>
 
 #ifndef _WIN32
-const char* const voidBuffer = "/dev/null";
+char voidBuffer[32] = "/dev/null";
 #else
-const char* const voidBuffer = "NUL:";
+char voidBuffer[32] = "NUL:";
 #endif
 
 using std::vector;
