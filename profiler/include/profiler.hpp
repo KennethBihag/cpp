@@ -3,6 +3,7 @@
 #define PROFILER_HPP
 
 #include <iostream>
+#include <pthread.h>
 #include <string>
 
 extern const char *const voidBuffer;
@@ -16,6 +17,7 @@ class Profiler
 {
 protected:
 
+    static pthread_mutex_t p_mtx;
     std::string _funcName;
     void (*_func)();
     p_unit _unit;

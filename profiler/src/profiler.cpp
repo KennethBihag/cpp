@@ -12,6 +12,8 @@ const char* const voidBuffer = "/dev/null";
 const char* const voidBuffer = "NUL:";
 #endif
 
+pthread_mutex_t Profiler::p_mtx;
+
 void Profiler::redirectOut(const char* const file)
 {
     rdfd = dup(STDOUT_FILENO);

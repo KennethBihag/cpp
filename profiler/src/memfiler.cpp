@@ -33,9 +33,11 @@ void Memfiler::Run()
     long startMem = ru.ru_maxrss;
     cout << "Start mem: " << startMem << endl;
 #endif
+    pthread_mutex_lock(&p_mtx);
     redirectOut(voidBuffer);
     _func();
     restoreOut();
+    pthread_mutex_unlock(&p_mtx);
 #ifndef _WIN32
     getrusage(RUSAGE_SELF, &ru);
     long endMem = ru.ru_maxrss;

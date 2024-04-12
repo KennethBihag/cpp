@@ -23,11 +23,13 @@ void Timfiler::Run()
 {
     cout << "Timing run time of " << _funcName << endl;
 
+    pthread_mutex_lock(&p_mtx);
     redirectOut(voidBuffer);
     auto start = std::chrono::high_resolution_clock::now();
     _func();
     auto end = std::chrono::high_resolution_clock::now();
     restoreOut();
+    pthread_mutex_unlock(&p_mtx);
 
     if(_unit == p_unit::s)
         measurement =

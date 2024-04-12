@@ -1,10 +1,13 @@
-#include <iostream>
-
 #include "profiler.hpp"
 #include "memfiler.hpp"
 #include "timfiler.hpp"
+#include "parallelfiler.hpp"
 
+#include <string.h>
 #include <unistd.h>
+
+#include <iostream>
+#include <vector>
 
 #include "common/include/tests.h"
 
@@ -63,38 +66,30 @@ int main(int argc, const char *argv[])
         "10", "-3", "77", "69", "13", "24", "-52", "-6", "99"};
     g_argv = nums;
 
-    string fname("bubblesort_test");
-    Profiler *p = new Timfiler(pfBubblesort, p_unit::ms, fname);
-    p->Run();
-    p->PrintData();
-    delete p;
+    vector<Profiler*> profs;
 
-    p = new Memfiler(pfBubblesort, p_unit::kb, fname);
-    p->Run();
-    p->PrintData();
-    delete p;
+    string fname("bubblesort_test");
+    profs.push_back(new Timfiler(pfBubblesort, p_unit::ms, fname));
+    profs.push_back(new Memfiler(pfBubblesort, p_unit::kb, fname));
 
     fname = "permute_test2";
-    p = new Timfiler(pfPermute2,p_unit::ms, fname);
-    p->Run();
-    p->PrintData();
-    delete p;
+    profs.push_back(new Timfiler(pfPermute2,p_unit::ms, fname));
 
     fname = "permute_test4";
-    p = new Timfiler(pfPermute4,p_unit::ms, fname);
-    p->Run();
-    p->PrintData();
+    profs.push_back(new Timfiler(pfPermute4,p_unit::ms, fname));
 
     fname = "permute_test8";
-    p = new Timfiler(pfPermute8,p_unit::ms, fname);
-    p->Run();
-    p->PrintData();
-    delete p;
+    profs.push_back(new Timfiler(pfPermute8,p_unit::ms, fname));
 
     fname = "permute_test10";
-    p = new Timfiler(pfPermute10,p_unit::ms, fname);
-    p->Run();
-    p->PrintData();
+    profs.push_back(new Timfiler(pfPermute10,p_unit::ms, fname));
+
+    Parallelfiler prfl(profs);
+    prfl.ParallelRun();
+
+    for(auto &p : profs)
+        delete p;
+    profs.clear();
 
     return EXIT_SUCCESS;
 }
