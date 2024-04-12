@@ -1,5 +1,3 @@
-#include "profiler.hpp"
-#include "memfiler.hpp"
 #include "timfiler.hpp"
 #include "parallelfiler.hpp"
 
@@ -7,96 +5,71 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <random>
 #include <vector>
 
-#include "common/include/tests.h"
+#include "common/include/sort.h"
+#include "common/include/common.h"
 
 using namespace std;
 
-int g_argc;
-const char **g_argv;
-const char **g_argv2;
+int o[16384];
 
-void pfBubblesort()
+void sleepy()
 {
-    bubblesort_test(g_argc, g_argv);
+    int s = 3;
+    cout << "I am sleeping for "
+         << 3 << " seconds."
+         << endl;
+    sleep(3);
+    cout << "Just woke up!" << endl;
 }
 
-void pfMergesort()
+void sorting()
 {
-    mergesort_test(g_argc, g_argv2);
-}
-
-void pfPermute2()
-{
-    char permuteArgs[] = { 2,0,0,0,
-        42, 87};
-    permute_test((void*)permuteArgs);
-}
-
-void pfPermute4()
-{
-    char permuteArgs[] = { 4,0,0,0,
-        42, 87, 15, 61};
-    permute_test((void*)permuteArgs);
-}
-
-void pfPermute10_1()
-{
-    char permuteArgs[] = { 10,0,0,0,
-        87, 33, 0, 1, 3,
-        94, 40, 76, 69, 13};
-    permute_test((void*)permuteArgs);
-}
-
-void pfPermute10_2()
-{
-    char permuteArgs[] = { 10,0,0,0,
-        30, 22, 0, 58, 3,
-        7, 39, 76, 96, 13};
-    permute_test((void*)permuteArgs);
+    int *copied = bubblesort_int(o, std::size(o), 1);
+    printf("ORIG: ");
+    print_intarr_elems(o, std::size(o));
+    printf("NEW: ");
+    print_intarr_elems(copied, std::size(o));
+    free(copied);
 }
 
 int main(int argc, const char *argv[])
 {
     cout << "Profiling..." << endl;
 
-    g_argc = 19;
+    int offset = std::size(o) / 2;
+    for (int i = 0; i < std::size(o); i++)
+    {
+        int r = rand() % (offset + 1);
+        int s = rand() % (offset + 1);
+        o[i] = r - s;
+    }
 
-    const char *nums[] = {
-        "", "20", "-4", "7", "0", "1", "45", "-33", "-6", "99",
-        "10", "-3", "77", "69", "13", "24", "-52", "-6", "99"};
-    g_argv = nums;
+    vector<Profiler *> profs;
 
-    const char *nums2[] = {
-        "", "20", "-4", "7", "0", "1", "45", "-33", "-6", "99",
-        "10", "-3", "77", "69", "13", "24", "-52", "-6", "99"};
-    g_argv2 = nums2;
+    string fname;
+    fname = "sleepy1";
+    profs.push_back(new Timfiler(sleepy, p_unit::ms, fname));
+    fname = "sleepy2";
+    profs.push_back(new Timfiler(sleepy, p_unit::ms, fname));
+    fname = "sleepy3";
+    profs.push_back(new Timfiler(sleepy, p_unit::ms, fname));
 
-    vector<Profiler*> profs;
+    fname = "sorting1";
+    profs.push_back(new Timfiler(sorting, p_unit::ms, fname));
 
-    string fname("bubblesort_test");
-    profs.push_back(new Timfiler(pfBubblesort, p_unit::ms, fname));
+    fname = "sorting2";
+    profs.push_back(new Timfiler(sorting, p_unit::ms, fname));
 
-    fname = "mergesort_test";
-    profs.push_back(new Memfiler(pfMergesort, p_unit::kb, fname));
-
-    fname = "permute_test2";
-    profs.push_back(new Timfiler(pfPermute2,p_unit::ms, fname));
-
-    fname = "permute_test4";
-    profs.push_back(new Timfiler(pfPermute4,p_unit::ms, fname));
-
-    fname = "permute_test10_1";
-    profs.push_back(new Timfiler(pfPermute10_1,p_unit::ms, fname));
-
-    fname = "permute_test10_2";
-    profs.push_back(new Timfiler(pfPermute10_2,p_unit::ms, fname));
+    fname = "sorting3";
+    profs.push_back(new Timfiler(sorting, p_unit::ms, fname));
 
     Parallelfiler prfl(profs);
     prfl.ParallelRun();
 
-    for(auto &p : profs)
+    for (auto &p : profs)
         delete p;
     profs.clear();
 

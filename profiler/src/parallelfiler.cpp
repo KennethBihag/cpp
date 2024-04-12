@@ -35,6 +35,7 @@ void Parallelfiler::restoreOut()
 
 void Parallelfiler::Run()
 {
+    std::cout << "Synchronous run\n";
     redirectOut(voidBuffer);
     vector<Profiler *> &profs = *_profilers;
     for (auto &p : profs)
@@ -46,6 +47,7 @@ void Parallelfiler::Run()
 
 void Parallelfiler::ParallelRun()
 {
+    std::cout << "Asynchronous run\n";
     redirectOut(voidBuffer);
     vector<pthread_t> ths;
     for(auto &p : *_profilers)
