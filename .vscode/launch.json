@@ -87,7 +87,8 @@
                 "threading",
                 "my_psql_api",
                 "testapp",
-                "leetcode"
+                "leetcode",
+                "profiler"
             ]
         },
         {

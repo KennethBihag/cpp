@@ -9,7 +9,8 @@ CC = g++
 STD = c++17
 NO_WARN = -Wno-unused-function -Wno-pointer-arith -Wno-sign-compare\
  -Wno-comment
-CFLAGS = -ggdb -std=$(STD) -Wall $(NO_WARN) -I. -I$(PROJ)/include\
+DBGB =-O3
+CFLAGS = $(DBGB) -std=$(STD) -Wall $(NO_WARN) -I. -I$(PROJ)/include\
  -Llib -Llib/static $(DEFFLAGS)
 
 MAKE = mingw32-make
@@ -61,13 +62,13 @@ endif
 
 bcommon:
 	@"$(MAKE)" PROJ=common type=dynamic CC=gcc STD=c11
-
 bthreading:
 	@"$(MAKE)" PROJ=threading type=dynamic CC=gcc STD=c11
 
+bprofiler: bcommon
+	@"$(MAKE)" PROJ=profiler LIBS=common
 btestapp: bcommon
 	@"$(MAKE)" PROJ=testapp LIBS=common
-
 bleetcode: bcommon bthreading
 	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"\
 	 DEFINES="ALL_CHALLENGES CODEIUM_GEN"
@@ -78,3 +79,7 @@ tleetcode:
 	@"$(MAKE)" PROJ=threading type=static CC=gcc STD=c11\
 	 DEFINES=NO_PARALLEL
 	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"
+tprofiler:
+	@"$(MAKE)" clean PROJ=profiler
+	@"$(MAKE)" PROJ=common type=static CC=gcc STD=c11 DBGB=-ggdb
+	@"$(MAKE)" PROJ=profiler LIBS=common DBGB=-ggdb

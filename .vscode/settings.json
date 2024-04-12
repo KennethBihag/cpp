@@ -6,7 +6,8 @@
         "${workspaceFolder}"
     ],
     "C_Cpp.default.includePath": [
-        "${workspaceFolder}/**"
+        "${workspaceFolder}/**",
+        "${workspaceFolder}"
     ],
     "C_Cpp.default.defines": [
         "ALL_CHALLENGES",
@@ -77,6 +78,7 @@
         "stdio.h": "c",
         "stdlib.h": "c",
         "hvsocket.h": "c",
-        "winsock.h": "c"
+        "winsock.h": "c",
+        "chrono": "cpp"
     }
 }
