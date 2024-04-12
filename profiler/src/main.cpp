@@ -23,11 +23,33 @@ void pfMergesort()
     mergesort_test(g_argc, g_argv);
 }
 
-void pfPermute()
+void pfPermute2()
+{
+    char permuteArgs[] = { 2,0,0,0,
+        42, 87};
+    permute_test((void*)permuteArgs);
+}
+
+void pfPermute4()
+{
+    char permuteArgs[] = { 4,0,0,0,
+        42, 87, 15, 61};
+    permute_test((void*)permuteArgs);
+}
+
+void pfPermute8()
+{
+    char permuteArgs[] = { 8,0,0,0,
+        42, 87, 15, 61, 33,
+        94, 20, 76 };
+    permute_test((void*)permuteArgs);
+}
+
+void pfPermute10()
 {
     char permuteArgs[] = { 10,0,0,0,
-        42, 87, 15, 61, 33,
-        94, 20, 76, 50, 10 };
+        87, 33, 0, 1, 3,
+        94, 40, 76, 69, 13};
     permute_test((void*)permuteArgs);
 }
 
@@ -52,13 +74,25 @@ int main(int argc, const char *argv[])
     p->PrintData();
     delete p;
 
-    fname = "permute_test";
-    p = new Timfiler(pfPermute,p_unit::ms, fname);
+    fname = "permute_test2";
+    p = new Timfiler(pfPermute2,p_unit::ms, fname);
+    p->Run();
+    p->PrintData();
+    delete p;
+
+    fname = "permute_test4";
+    p = new Timfiler(pfPermute4,p_unit::ms, fname);
     p->Run();
     p->PrintData();
 
+    fname = "permute_test8";
+    p = new Timfiler(pfPermute8,p_unit::ms, fname);
+    p->Run();
+    p->PrintData();
     delete p;
-    p = new Memfiler(pfPermute, p_unit::kb, fname);
+
+    fname = "permute_test10";
+    p = new Timfiler(pfPermute10,p_unit::ms, fname);
     p->Run();
     p->PrintData();
 

@@ -42,6 +42,8 @@ all:
 	@if [ ! -d lib/static ]; then mkdir --parents lib/static; fi;
 ifeq (${OS},Windows_NT)
 	$(eval DD = ${PROGRAMFILES}/mingw64/bin/$(CC))
+else
+	$(eval DD = $(CC))
 endif
 	"$(MAKE)" -f makeLib $(outPath) "CC=$(DD)" "CFLAGS=$(CFLAGS)"\
 	 "LDFLAGS=$(LDFLAGS)" FPIC=$(FPIC) PROJ=$(PROJ)
