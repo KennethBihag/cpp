@@ -26,18 +26,13 @@ void Memfiler::PrintData()
 
 void Memfiler::Run()
 {
-    cout << "Profiling memory usage of " << _funcName << endl;
 #ifndef _WIN32
     struct rusage ru;
     getrusage(RUSAGE_SELF, &ru);
     long startMem = ru.ru_maxrss;
     cout << "Start mem: " << startMem << endl;
 #endif
-    pthread_mutex_lock(&p_mtx);
-    redirectOut(voidBuffer);
     _func();
-    restoreOut();
-    pthread_mutex_unlock(&p_mtx);
 #ifndef _WIN32
     getrusage(RUSAGE_SELF, &ru);
     long endMem = ru.ru_maxrss;

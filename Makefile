@@ -78,13 +78,14 @@ bleetcode: bcommon bthreading
 	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"\
 	 DEFINES="ALL_CHALLENGES CODEIUM_GEN"
 
-tleetcode:
-	@"$(MAKE)" clean PROJ=leetcode
-	@"$(MAKE)" PROJ=common type=static CC=gcc STD=c11
-	@"$(MAKE)" PROJ=threading type=static CC=gcc STD=c11\
-	 DEFINES=NO_PARALLEL
-	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"
-tprofiler:
-	@"$(MAKE)" clean PROJ=profiler
+tcommon:
 	@"$(MAKE)" PROJ=common type=static CC=gcc STD=c11 DBGB=-ggdb
+tthreading:
+	@"$(MAKE)" PROJ=threading type=static CC=gcc STD=c11\
+	 DEFINES=NO_PARALLEL DBGB=-ggdb
+tleetcode: tcommon tthreading
+	@"$(MAKE)" clean PROJ=leetcode
+	@"$(MAKE)" PROJ=leetcode "LIBS=common threading" DBGB=-ggdb
+tprofiler: tcommon
+	@"$(MAKE)" clean PROJ=profiler
 	@"$(MAKE)" PROJ=profiler LIBS=common DBGB=-ggdb

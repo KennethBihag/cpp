@@ -60,7 +60,7 @@
                 "${input:debugArgs}"
             ],
             "cwd": "${config:custom.binDir}",
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [

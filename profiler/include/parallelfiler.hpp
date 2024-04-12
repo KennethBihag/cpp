@@ -5,11 +5,15 @@
 
 #include "profiler.hpp"
 
+extern const char *const voidBuffer;
+
 class Parallelfiler
 {
-
+    int rdfd;
     std::vector<Profiler *> *_profilers;
 
+    void redirectOut(const char* const file);
+    void restoreOut();
 public:
 
     Parallelfiler(std::vector<Profiler *> &profilers)
