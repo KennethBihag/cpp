@@ -10,9 +10,12 @@
 
 #include "common/include/sort.h"
 #include "common/include/common.h"
+#include "leetcode/include/test.hpp"
 
 using namespace std;
 
+
+#ifndef PROFILE_LEETCODE
 int o[16384];
 
 void sleepy()
@@ -36,11 +39,22 @@ void sorting()
     print_intarr_elems(copied, 52);
     free(copied);
 }
+#else
+void leetcodeTest()
+{
+    DeckRevealedIncreasingTest(0);
+}
+#endif // PROFILE_LEETCODE
 
 int main(int argc, const char *argv[])
 {
     cout << "Profiling..." << endl;
     // snprintf(voidBuffer, sizeof(voidBuffer), "data/profile.txt");
+
+    vector<Profiler *> profs;
+    string fname;
+
+#ifndef PROFILE_LEETCODE
     int offset = std::size(o) / 2;
     for (int i = 0; i < std::size(o); i++)
     {
@@ -49,9 +63,6 @@ int main(int argc, const char *argv[])
         o[i] = r - s;
     }
 
-    vector<Profiler *> profs;
-
-    string fname;
     fname = "sleepy1";
     profs.push_back(new Timfiler(sleepy, p_unit::ms, fname));
     fname = "sleepy2";
@@ -67,6 +78,10 @@ int main(int argc, const char *argv[])
 
     fname = "sorting3";
     profs.push_back(new Timfiler(sorting, p_unit::ms, fname));
+#else
+    fname = "DeckRevealedIncreasing";
+    profs.push_back(new Timfiler(leetcodeTest, p_unit::ms, fname));
+#endif // PROFILE_LEETCODE
 
     Parallelfiler prfl(profs);
     prfl.ParallelRun();

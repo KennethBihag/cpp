@@ -28,6 +28,7 @@ void *RunProfiler(void *arg)
 
 void Parallelfiler::redirectOut(const char* const file)
 {
+    fflush(stdout);
     rdfd = dup(STDOUT_FILENO);
     freopen(file, "w", stdout);
 }
@@ -44,6 +45,7 @@ void Parallelfiler::Run()
 {
     cout << "Synchronous run" << endl;
 #ifndef NO_COUT_RDIR
+    cout.flush();
     auto orgBuffer = cout.rdbuf();
     ofstream newFstream(voidBuffer);
     cout.rdbuf(newFstream.rdbuf());
@@ -66,6 +68,7 @@ void Parallelfiler::ParallelRun()
 {
     cout << "Asynchronous run" << endl;
 #ifndef NO_COUT_RDIR
+    cout.flush();
     auto orgBuffer = cout.rdbuf();
     ofstream newFstream(voidBuffer);
     cout.rdbuf(newFstream.rdbuf());

@@ -1,3 +1,5 @@
+#ifndef BUILD_LIB
+
 #include <stdio.h>
 
 #include "threading/include/threading.h"
@@ -30,3 +32,5 @@ int main()
 	parallel_run(mythreads, fcount);
 	return 0;
 }
+
+#endif

@@ -23,24 +23,25 @@ typedef struct
 #endif
 } MyThread;
 
-extern MyThread *mythreads[0xFF];
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-	/*
-	Run an array of functions sequentially by index. Caller must call free on global results
-	if needed.
-	PARAMS:
-		func - array of functions to run
-		args - array of any data type pointer to args of a function
-		fcount - number of functions passed and results expected
-	RETURNS:
-		none but modifies the global results array
-	*/
-	int parallel_run(MyThread *thrds[], unsigned char fcount);
-	void clear_thread_at(MyThread *th, unsigned char i);
+
+extern MyThread *mythreads[0xFF];
+
+/*
+Run an array of functions sequentially by index. Caller must call free on global results
+if needed.
+PARAMS:
+    func - array of functions to run
+    args - array of any data type pointer to args of a function
+    fcount - number of functions passed and results expected
+RETURNS:
+    none but modifies the global results array
+*/
+int parallel_run(MyThread *thrds[], unsigned char fcount);
+
 #ifdef __cplusplus
 }
 #endif

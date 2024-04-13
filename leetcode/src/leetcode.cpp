@@ -15,15 +15,16 @@
 
 using std::cout;
 using std::pair;
-using std::sort;
 using std::string;
 using std::vector;
+using std::sort;
 
 #ifndef CODEIUM_GEN
 static int largestSum;
 static void sums(std::vector<int>::iterator,
 				 std::vector<int>::iterator, const int &);
 #endif
+
 int Solution::Rob(std::vector<int> &money)
 {
 #ifndef CODEIUM_GEN
