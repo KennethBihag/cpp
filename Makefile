@@ -71,7 +71,11 @@ bthreading:
 	@"$(MAKE)" PROJ=threading type=dynamic CC=gcc STD=c11
 
 bprofiler: bcommon
+ifneq (${OS},Windows_NT)
 	@"$(MAKE)" PROJ=profiler LIBS=common
+else
+	@"$(MAKE)" PROJ=profiler LIBS=common DEFINES=NO_COUT_RDIR
+endif
 btestapp: bcommon
 	@"$(MAKE)" PROJ=testapp LIBS=common
 bleetcode: bcommon bthreading

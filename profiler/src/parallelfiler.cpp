@@ -4,12 +4,19 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include <fstream>
+#include <iostream>
+
 #ifndef _WIN32
 char voidBuffer[32] = "/dev/null";
 #else
 char voidBuffer[32] = "NUL:";
 #endif
 
+using std::cout;
+using std::endl;
+using std::ofstream;
+using std::streambuf;
 using std::vector;
 
 void *RunProfiler(void *arg)
@@ -35,19 +42,34 @@ void Parallelfiler::restoreOut()
 
 void Parallelfiler::Run()
 {
-    std::cout << "Synchronous run\n";
+    cout << "Synchronous run" << endl;
+#ifndef NO_COUT_RDIR
+    auto orgBuffer = cout.rdbuf();
+    ofstream newFstream(voidBuffer);
+    cout.rdbuf(newFstream.rdbuf());
+#endif   
     redirectOut(voidBuffer);
     vector<Profiler *> &profs = *_profilers;
     for (auto &p : profs)
         p->Run();
     restoreOut();
+#ifndef NO_COUT_RDIR
+    cout.flush();
+    cout.rdbuf(orgBuffer);
+    newFstream.close();
+#endif
     for (auto &p : profs)
         p->PrintData();
 }
 
 void Parallelfiler::ParallelRun()
 {
-    std::cout << "Asynchronous run\n";
+    cout << "Asynchronous run" << endl;
+#ifndef NO_COUT_RDIR
+    auto orgBuffer = cout.rdbuf();
+    ofstream newFstream(voidBuffer);
+    cout.rdbuf(newFstream.rdbuf());
+#endif
     redirectOut(voidBuffer);
     vector<pthread_t> ths;
     for(auto &p : *_profilers)
@@ -58,6 +80,11 @@ void Parallelfiler::ParallelRun()
     for(auto &t : ths)
         pthread_join(t,NULL);
     restoreOut();
+#ifndef NO_COUT_RDIR
+    cout.flush();
+    cout.rdbuf(orgBuffer);
+    newFstream.close();
+#endif
     for(auto &p : *_profilers)
         p->PrintData();
 }

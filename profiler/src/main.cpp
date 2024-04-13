@@ -19,17 +19,21 @@ void sleepy()
 {
     int s = 3;
     printf("I am sleeping for %d seconds.\n", s);
+    fflush(stdout);
+    cout << "zzz zzzz zzz" << endl;
     sleep(s);
     printf("Just woke up!\n");
+    fflush(stdout);
+    cout << "???" << endl;
 }
 
 void sorting()
 {
     int *copied = bubblesort_int(o, std::size(o), 1);
-    printf("ORIG: ");
-    print_intarr_elems(o, std::size(o));
-    printf("NEW: ");
-    print_intarr_elems(copied, std::size(o));
+    cout << "ORIG: " << endl;
+    print_intarr_elems(o, 52);
+    cout << "NEW: " << endl;
+    print_intarr_elems(copied, 52);
     free(copied);
 }
 
