@@ -96,10 +96,5 @@ tprofiler: tcommon
 	@"$(MAKE)" PROJ=profiler LIBS=common DBGB=-ggdb
 
 pleetcode: bleetcodel
-ifneq (${OS},Windows_NT)
 	@"$(MAKE)" PROJ=profiler LIBS='leetcode common'\
-	 'DEFINES=PROFILE_LEETCODE'
-else
-	@"$(MAKE)" PROJ=profiler 'LIBS=leetcode common'\
-	 'DEFINES=NO_COUT_RDIR PROFILE_LEETCODE'
-endif
+	 'DEFINES=STD_THREAD'

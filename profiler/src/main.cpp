@@ -1,6 +1,3 @@
-#include "timfiler.hpp"
-#include "parallelfiler.hpp"
-
 #include <string.h>
 #include <unistd.h>
 
@@ -11,6 +8,10 @@
 #include "common/include/sort.h"
 #include "common/include/common.h"
 #include "leetcode/include/test.hpp"
+
+#include "timfiler.hpp"
+#include "parallelfiler.hpp"
+#include "perfiler.hpp"
 
 using namespace std;
 
@@ -45,10 +46,9 @@ int main(int argc, const char *argv[])
 {
     cout << "Profiling..." << endl;
     // snprintf(voidBuffer, sizeof(voidBuffer), "data/profile.txt");
-
-    vector<Profiler *> profs;
     string fname;
-
+#ifndef STD_THREAD
+    vector<Profiler *> profs;
 #ifndef PROFILE_LEETCODE
     int offset = std::size(o) / 2;
     for (int i = 0; i < std::size(o); i++)
@@ -90,6 +90,21 @@ int main(int argc, const char *argv[])
     for (auto &p : profs)
         delete p;
     profs.clear();
+#else
+    Perfiler perfiler;
+
+    fname = "DeckRevealedIncreasing";
+    perfiler.AddFunction(fname, (func_t)DeckRevealedIncreasingTest,0);
+    fname = "FindAllPeople";
+    perfiler.AddFunction(fname, (func_t)FindAllPeopleTest,0);
+    fname = "Maximal Rectangle";
+    perfiler.AddFunction(fname, (func_t)MaximalRectangleTest,0);
+    fname = "HouseRobber";
+    perfiler.AddFunction(fname, (func_t)HouseRobberTest,0);
+
+    perfiler.ParallelRun();
+    perfiler.PrintData();
+#endif // STD_THREAD
 
     return EXIT_SUCCESS;
 }
