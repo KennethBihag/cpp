@@ -8,8 +8,8 @@ endif
 CC = g++
 STD = c++17
 NO_WARN = -Wno-unused-function -Wno-pointer-arith -Wno-sign-compare\
- -Wno-comment
-DBGB =-O3
+ -Wno-comment -Wno-unused-result -Wno-write-strings
+DBGB =-O4
 CFLAGS = $(DBGB) -std=$(STD) -Wall $(NO_WARN) -I. -I$(PROJ)/include\
  -Llib -Llib/static $(DEFFLAGS)
 
@@ -66,7 +66,8 @@ bthreading:
 	@"$(MAKE)" PROJ=threading type=dynamic CC=gcc STD=c11
 bleetcodel: bcommon
 	@"$(MAKE)" PROJ=leetcode type=dynamic "LIBS=common"\
-	 DEFINES="BUILD_LIB CODEIUM_GEN"
+	 DEFINES="BUILD_LIB CODEIUM_GEN" NO_WARN="$(NO_WARN)\
+	  -Wno-write-strings"
 
 bprofiler: bcommon
 ifneq (${OS},Windows_NT)

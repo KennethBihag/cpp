@@ -8,9 +8,11 @@
 int main()
 {
 	thrd_func tests[] = {
-		DeckRevealedIncreasingTest
+        MaximalRectangleTest
 #ifdef ALL_CHALLENGES
-        ,MinimumLengthTest,
+        ,
+        DeckRevealedIncreasingTest,
+        MinimumLengthTest,
 		RemoveNodeFromEndTest,
 		FindAllPeopleTest,
 		SetMismatchTest,

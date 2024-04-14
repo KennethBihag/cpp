@@ -7,6 +7,7 @@ extern "C" {
 
 /* caller must call free */
 int* findErrorNums(int* nums, int numsSize, int* returnSize);
+int maximalRectangle(char **matrix, int matrixSize, int *matrixColSize);
 
 #ifdef __cplusplus
 }

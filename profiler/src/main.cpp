@@ -39,11 +39,6 @@ void sorting()
     print_intarr_elems(copied, 52);
     free(copied);
 }
-#else
-void leetcodeTest()
-{
-    DeckRevealedIncreasingTest(0);
-}
 #endif // PROFILE_LEETCODE
 
 int main(int argc, const char *argv[])
@@ -80,7 +75,13 @@ int main(int argc, const char *argv[])
     profs.push_back(new Timfiler(sorting, p_unit::ms, fname));
 #else
     fname = "DeckRevealedIncreasing";
-    profs.push_back(new Timfiler(leetcodeTest, p_unit::ms, fname));
+    profs.push_back(new Timfiler((void(*)())DeckRevealedIncreasingTest, p_unit::ms, fname));
+    fname = "Maximal Rectangle";
+    profs.push_back(new Timfiler((void(*)())MaximalRectangleTest, p_unit::ms, fname));
+    fname = "FindAllPeople";
+    profs.push_back(new Timfiler((void(*)())FindAllPeopleTest, p_unit::ms, fname));
+    fname = "HouseRobber";
+    profs.push_back(new Timfiler((void(*)())HouseRobberTest, p_unit::ms, fname));
 #endif // PROFILE_LEETCODE
 
     Parallelfiler prfl(profs);

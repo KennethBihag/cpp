@@ -13,5 +13,6 @@ void *FindAllPeopleTest(void*);
 void *RemoveNodeFromEndTest(void*);
 void *MinimumLengthTest(void*);
 void *DeckRevealedIncreasingTest(void*);
+void *MaximalRectangleTest(void*);
 
 #endif

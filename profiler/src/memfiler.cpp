@@ -28,13 +28,13 @@ void Memfiler::Run()
 {
 #ifndef _WIN32
     struct rusage ru;
-    getrusage(RUSAGE_SELF, &ru);
+    getrusage(RUSAGE_THREAD, &ru);
     long startMem = ru.ru_maxrss;
     cout << "Start mem: " << startMem << endl;
 #endif
     _func();
 #ifndef _WIN32
-    getrusage(RUSAGE_SELF, &ru);
+    getrusage(RUSAGE_THREAD, &ru);
     long endMem = ru.ru_maxrss;
     cout << "End mem: " << endMem << endl;
     measurement = endMem - startMem;
