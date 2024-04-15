@@ -14,7 +14,7 @@ CFLAGS = $(DBGB) -std=$(STD) -Wall $(NO_WARN) -I. -I$(PROJ)/include\
  -Llib -Llib/static $(DEFFLAGS)
 
 ifeq (${OS},Windows_NT)
-MAKE=${PROGRAMFILES}/mingw64/bin/mingw32-make
+MAKE=mingw32-make
 	ifeq ($(type),dynamic)
 	outPath = lib/lib$(PROJ).dll
 	FPIC = -fPIC
