@@ -6,7 +6,7 @@ LDFLAGS := $(shell for l in $(LIBS); do echo -n "-l$$l "; done)
 endif
 
 CC = g++
-STD = c++17
+STD = c++11
 NO_WARN = -Wno-unused-function -Wno-pointer-arith -Wno-sign-compare\
  -Wno-comment -Wno-unused-result -Wno-write-strings
 DBGB =-O4
@@ -61,9 +61,9 @@ else
 endif
 
 bcommon:
-	@"$(MAKE)" PROJ=common type=dynamic CC=gcc STD=c11
+	@"$(MAKE)" PROJ=common type=dynamic CC=gcc STD=c99
 bthreading:
-	@"$(MAKE)" PROJ=threading type=dynamic CC=gcc STD=c11
+	@"$(MAKE)" PROJ=threading type=dynamic CC=gcc STD=c99
 bleetcodel: bcommon
 	@"$(MAKE)" PROJ=leetcode type=dynamic "LIBS=common"\
 	 DEFINES="BUILD_LIB CODEIUM_GEN" NO_WARN="$(NO_WARN)\
@@ -81,12 +81,12 @@ bleetcode: bcommon bthreading
 	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"\
 	 DEFINES="ALL_CHALLENGES CODEIUM_GEN"
 bthreadinge:
-	@"$(MAKE)" PROJ=threading CC=gcc STD=c11 DEFINES=BUILD_MAIN
+	@"$(MAKE)" PROJ=threading CC=gcc STD=c99 DEFINES=BUILD_MAIN
 
 tcommon:
-	@"$(MAKE)" PROJ=common type=static CC=gcc STD=c11 DBGB=-ggdb
+	@"$(MAKE)" PROJ=common type=static CC=gcc STD=c99 DBGB=-ggdb
 tthreading:
-	@"$(MAKE)" PROJ=threading type=static CC=gcc STD=c11\
+	@"$(MAKE)" PROJ=threading type=static CC=gcc STD=c99\
 	 DEFINES=NO_PARALLEL DBGB=-ggdb
 tleetcode: tcommon tthreading
 	@"$(MAKE)" clean PROJ=leetcode

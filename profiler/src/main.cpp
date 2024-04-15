@@ -7,6 +7,7 @@
 
 #include "common/include/sort.h"
 #include "common/include/common.h"
+#include "common/include/macro_funcs.h"
 #include "leetcode/include/test.hpp"
 
 #include "timfiler.hpp"
@@ -33,7 +34,7 @@ void sleepy()
 
 void sorting()
 {
-    int *copied = bubblesort_int(o, std::size(o), 1);
+    int *copied = bubblesort_int(o, SIZE(o,int), 1);
     cout << "ORIG: " << endl;
     print_intarr_elems(o, 52);
     cout << "NEW: " << endl;
@@ -50,8 +51,8 @@ int main(int argc, const char *argv[])
 #ifndef STD_THREAD
     vector<Profiler *> profs;
 #ifndef PROFILE_LEETCODE
-    int offset = std::size(o) / 2;
-    for (int i = 0; i < std::size(o); i++)
+    int offset = SIZE(o,int) / 2;
+    for (int i = 0; i < SIZE(o,int); i++)
     {
         int r = rand() % (offset + 1);
         int s = rand() % (offset + 1);
