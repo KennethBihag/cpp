@@ -1,7 +1,5 @@
 bin/
-lib/
-obj/
-
+build/
 data/
-
-*.exe
+obj/
+lib/
