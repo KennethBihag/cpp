@@ -21,6 +21,10 @@
             "compilerPath": "/usr/bin/gcc",
             "cppStandard": "c++11",
             "cStandard": "c99"
+        },
+        {
+            "name": "Win32 - MSVC",
+            "intelliSenseMode": "windows-msvc-x64"
         }
     ],
     "version": 4

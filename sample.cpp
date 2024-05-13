@@ -1,49 +1,54 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 using namespace std;
-
-typedef struct MyObject
-{
-	char pet[8];
-	unsigned short weight;
-	bool good;
-};
 
 int main(int argc, const char **argv)
 {
 	printf("START main\n");
-	FILE *fp;
-	const int MyObjectLen = sizeof(MyObject);
 
-	if (argc < 2)
-	{
-		MyObject mo1 =
-			{
-				.pet = "cat",
-				.weight = 45,
-				.good = true};
+    if(argc<3)
+        return EXIT_FAILURE;
 
-		fp = fopen("myobject.mo", "w");
-/* 		char *mp = (char*)&mo1;
-		for(int i=0; i<MyObjectLen; ++i)
-			fprintf(fp, "%c", mp+i); */
-		fwrite(&mo1, 1, MyObjectLen, fp);
-	}
-	else
-	{
-		const char *fn = argv[1];
-		fp = fopen(fn, "r");
-		char myobjbuff[MyObjectLen]={0};
-		fread(myobjbuff, 1, MyObjectLen, fp);
-		MyObject *mo1 = (MyObject*)myobjbuff;
-		printf("MyObject read from file:\n");
-		printf("\t%s\n\t%hu\n\t%hi\n",
-			mo1->pet, mo1->weight, mo1->good);
-	}
+    string inpath(argv[1]);
+    int parts;
 
-	fclose(fp);
+    sscanf_s(argv[2], "%d", &parts);
+    ifstream ifs(inpath, ios::binary | ios::in);
+    auto begPos = ifs.tellg();
+    ifs.seekg(0,ios::end);
+    auto endPos = ifs.tellg();
+    auto fsize = endPos-begPos;
+    long long psize = fsize/parts;
+
+    char **bfs = new char*[parts];
+    ifs.seekg(0,ios::beg);
+    int i=0;
+    char outpath[64];
+    for(; i<parts-1; i++){
+        bfs[i] = new char[psize];
+        sprintf_s(outpath, "%s.part.%d",
+          inpath.c_str(), i+1);
+        ofstream ofs(outpath, ios::out | ios::binary);
+        ifs.read(bfs[i], psize);
+        ofs.write(bfs[i], psize);
+        ofs.close();
+    }
+
+    psize = fsize - psize*i;
+    bfs[i] = new char[psize];
+    sprintf_s(outpath, "%s.part.%d",
+            inpath.c_str(), i+1);
+    ofstream ofs(outpath, ios::out | ios::binary);
+    ifs.read(bfs[i], psize);
+    ofs.write(bfs[i], psize);
+    ofs.close();
+
+    ifs.close();
+    for(int i=0; i<parts; i++)
+        delete bfs[i];
+    delete [] bfs;
 
 	printf("END main\n");
 	return EXIT_SUCCESS;

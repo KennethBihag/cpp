@@ -81,7 +81,8 @@
         "winsock.h": "c",
         "chrono": "cpp",
         "leetcode.h": "c",
-        "singly_linked_list.h": "c"
+        "singly_linked_list.h": "c",
+        "xiosbase": "cpp"
     },
     "C_Cpp.clang_format_sortIncludes": true
 }
