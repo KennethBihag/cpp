@@ -1,6 +1,8 @@
 # Repository info
-## main.cpp
+## Projects
+### server
+- works for windows only so far
+### testapp
 - used to test various codes and C++ concepts or techniques
-- built with makefile, using Visual Studio 2022 c++ compiler
-## [other/](other/ReadMe.md)
-- libraries referenced by main.cpp
+### [other/](other/ReadMe.md)
+- libraries for testing
