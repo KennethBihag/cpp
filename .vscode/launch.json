@@ -77,16 +77,20 @@
             ]
         },
         {
-            "name": "C/C++: cl.exe build and debug active file",
+            "name": "Windows MSVC - debug active dir",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
-            "args": ["sample2.exe", "2"],
+            "program": "${config:custom.dfltOut}.exe",
+            "args": [
+                "${input:debugArgs1}",
+                "${input:debugArgs2}",
+                "${input:debugArgs3}"
+            ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
             "console": "integratedTerminal",
-            "preLaunchTask": "C/C++: cl.exe build active file"
+            "preLaunchTask": "Windows MSVC - build active dir"
         }
     ],
     "inputs": [
@@ -100,7 +104,8 @@
                 "my_psql_api",
                 "testapp",
                 "leetcode",
-                "profiler"
+                "profiler",
+                "FUtil"
             ]
         },
         {
@@ -115,7 +120,22 @@
         {
             "id": "debugArgs",
             "description": "Enter args for program debugged. Enclode each arg with double quotes.",
-            "type": "promptString"
+            "type": "promptString",
+        },
+        {
+            "id": "debugArgs1",
+            "description": "Enter arg for program debugged.",
+            "type": "promptString",
+        },
+        {
+            "id": "debugArgs2",
+            "description": "Enter arg for program debugged.",
+            "type": "promptString",
+        },
+        {
+            "id": "debugArgs3",
+            "description": "Enter arg for program debugged.",
+            "type": "promptString",
         }
     ],
     "version": "2.0.0"
