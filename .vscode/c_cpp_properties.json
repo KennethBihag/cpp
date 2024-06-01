@@ -18,7 +18,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}"
             ],
-            "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "/usr/bin/g++",
             "cppStandard": "c++11",
             "cStandard": "c99"
         },
