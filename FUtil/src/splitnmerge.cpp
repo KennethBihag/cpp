@@ -1,11 +1,18 @@
 #include "splitnmerge.hpp"
+#include <pthread.h>
 #include <cmath>
 
 using namespace std;
 
 const long long g_byteLimit = 512LL;
+pthread_mutex_t mtx;
 
-fpos_t GetFileSize(const string& inPath){
+#ifdef _WIN32
+fpos_t
+#else
+long long
+#endif
+GetFileSize(const string& inPath){
     ifstream inFile(inPath, ios::in | ios::binary);
     if(inFile.is_open()){
         auto start = inFile.tellg();
@@ -26,12 +33,19 @@ void CpyFBytesToF(const string& inPath,
     else
         outFile.open(outPath, ios::out | ios::binary);
     if(inFile.is_open() && outFile.is_open()) {
-        cout << (toSkip.state()._Wchar+1) << ":" << toRead
+pthread_mutex_lock(&mtx);
+#ifdef _WIN32
+        cout << (toSkip.state()._Wchar+1)
+#else
+        cout << (toSkip.state().__count+1)
+#endif
+             << ":" << toRead
              << ":" << inPath << ":" << outPath << endl;
+pthread_mutex_unlock(&mtx);
         inFile.seekg(toSkip, ios::beg);
         char buffer[g_byteLimit];
         while (toRead > 0) {
-            const streamsize bytesRead = min(toRead, g_byteLimit);
+            const streamsize bytesRead = min((long)toRead, (long)g_byteLimit);
             inFile.read(buffer, bytesRead);
             outFile.write(buffer, bytesRead);
             toRead -= bytesRead;

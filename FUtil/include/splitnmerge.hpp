@@ -5,7 +5,12 @@
 #include <fstream>
 #include <string>
 
-std::fpos_t GetFileSize(const std::string& inPath);
+#ifdef _WIN32
+std::fpos_t
+#else
+long long
+#endif
+GetFileSize(const std::string& inPath);
 
 void CpyFBytesToF(const std::string& inPath,
   const std::string& outPath, std::streampos toSkip,
