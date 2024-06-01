@@ -1,4 +1,4 @@
-#include "splitter.hpp"
+#include "splitnmerge.hpp"
 #include <cmath>
 
 using namespace std;
@@ -15,12 +15,16 @@ fpos_t GetFileSize(const string& inPath){
         return -1;
 }
 
-void GetBytesFromFile(const string& inPath,
+void CpyFBytesToF(const string& inPath,
   const string& outPath, streampos toSkip,
-  streamsize toRead){
+  streamsize toRead, int app){
 
     ifstream inFile(inPath, ios::in | ios::binary);
-    ofstream outFile(outPath, ios::out | ios::binary);
+    ofstream outFile;
+    if(app)
+        outFile.open(outPath, ios::out | ios::app | ios::binary);
+    else
+        outFile.open(outPath, ios::out | ios::binary);
     if(inFile.is_open() && outFile.is_open()) {
         cout << (toSkip.state()._Wchar+1) << ":" << toRead
              << ":" << inPath << ":" << outPath << endl;

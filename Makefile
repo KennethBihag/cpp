@@ -69,11 +69,13 @@ bleetcodel: bcommon
 	 DEFINES="BUILD_LIB CODEIUM_GEN" NO_WARN="$(NO_WARN)\
 	  -Wno-write-strings"
 
+bfutil:
+	@"$(MAKE)" PROJ=FUtil DBGB=-O0
 bprofiler: bcommon
 ifneq (${OS},Windows_NT)
 	@"$(MAKE)" PROJ=profiler LIBS=common
 else
-	@"$(MAKE)" PROJ=profiler LIBS=common DEFINES=NO_COUT_RDIR
+	@"$(MAKE)" PROJ=profiler LIBS=common DBGB=-O0
 endif
 btestapp: bcommon
 	@"$(MAKE)" PROJ=testapp LIBS=common
@@ -88,6 +90,8 @@ tcommon:
 tthreading:
 	@"$(MAKE)" PROJ=threading type=static CC=gcc STD=c11\
 	 DEFINES=NO_PARALLEL DBGB=-ggdb
+tfutil:
+	@"$(MAKE)" PROJ=FUtil DBGB=-ggdb
 tleetcode: tcommon tthreading
 	@"$(MAKE)" clean PROJ=leetcode
 	@"$(MAKE)" PROJ=leetcode "LIBS=common threading" DBGB=-ggdb
