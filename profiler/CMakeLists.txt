@@ -11,7 +11,12 @@ include_directories(
 set(CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 
-find_library(CMNLIB common ../lib)
+find_library(CMNLIB common ../lib/ ../lib/static)
+if(CMNLIB)
+    message("found ${CMNLIB}")
+else()
+    message("No common library in ../lib nor ../lib/static")
+endif()
 
 add_definitions(-DNO_COUT_RDIR)
 aux_source_directory(src SOURCES)
