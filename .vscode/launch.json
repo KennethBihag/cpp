@@ -88,7 +88,8 @@
                 "my_psql_api",
                 "testapp",
                 "leetcode",
-                "profiler"
+                "profiler",
+                "FUtil"
             ]
         },
         {
@@ -103,7 +104,22 @@
         {
             "id": "debugArgs",
             "description": "Enter args for program debugged. Enclode each arg with double quotes.",
-            "type": "promptString"
+            "type": "promptString",
+        },
+        {
+            "id": "debugArgs1",
+            "description": "Enter arg for program debugged.",
+            "type": "promptString",
+        },
+        {
+            "id": "debugArgs2",
+            "description": "Enter arg for program debugged.",
+            "type": "promptString",
+        },
+        {
+            "id": "debugArgs3",
+            "description": "Enter arg for program debugged.",
+            "type": "promptString",
         }
     ],
     "version": "2.0.0"

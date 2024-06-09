@@ -48,6 +48,7 @@ ifeq ($(PROJ),)
 	@rm -fr */obj
 	@if [ -d bin ]; then rm -fr bin; fi;
 	@if [ -d lib ]; then rm -fr lib; fi;
+	@if [ -d build ]; then rm -fr build; fi;
 else
 	@rm -fr $(PROJ)/obj
 	@if [ -e bin/$(PROJ) ]; then rm bin/$(PROJ); fi;
@@ -69,6 +70,8 @@ bleetcodel: bcommon
 	 DEFINES="BUILD_LIB CODEIUM_GEN" NO_WARN="$(NO_WARN)\
 	  -Wno-write-strings"
 
+bfutil:
+	@"$(MAKE)" PROJ=FUtil DBGB=-O0
 bprofiler: bcommon
 ifneq (${OS},Windows_NT)
 	@"$(MAKE)" PROJ=profiler LIBS=common
@@ -88,6 +91,8 @@ tcommon:
 tthreading:
 	@"$(MAKE)" PROJ=threading type=static CC=gcc STD=c99\
 	 DEFINES=NO_PARALLEL DBGB=-ggdb
+tfutil:
+	@"$(MAKE)" PROJ=FUtil DBGB=-ggdb
 tleetcode: tcommon tthreading
 	@"$(MAKE)" clean PROJ=leetcode
 	@"$(MAKE)" PROJ=leetcode "LIBS=common threading" DBGB=-ggdb
