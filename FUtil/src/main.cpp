@@ -1,6 +1,12 @@
+#include <pthread.h>
+#include <string.h>
+
+#include <fstream>
 #include <iostream>
 #include <string>
-#include <pthread.h>
+
+#include "cryptographer.hpp"
+#include "printer.hpp"
 #include "splitnmerge.hpp"
 
 using namespace std;
@@ -16,21 +22,26 @@ struct CpyThrdArg{
 int main(int argc, const char *argv[]){
     if(argc<4){
         cout << "USAGE: " << argv[0]
-             << " <split|merge> <file path> [parts]"
+             << " <<split|merge> <file path> [parts]"
+             << " | crypt <file path> <password>>"
              << endl;
         return EXIT_FAILURE;
     }
 
     string comm(argv[1]);
     string inpath(argv[2]);
-    long long parts = atoll(argv[3]);
+    long long parts = 0;
     size_t t = inpath.find_last_of("\\/");
     string leaf = inpath.substr(t+1);
     string indir(inpath);
     indir.erase(indir.length()-leaf.length());
 
-    if(parts < 2)
-        return EXIT_FAILURE;
+    if(comm.compare("split")==0 || comm.compare("merge")==0){
+        parts = atoll(argv[3]);
+        if(parts < 2)
+            return EXIT_FAILURE;
+    }
+
     if(comm.compare("split")==0){
         long long fileSz = GetFileSize(inpath);
         if(fileSz < 0)
@@ -43,7 +54,7 @@ int main(int argc, const char *argv[]){
         CpyThrdArg *args = new CpyThrdArg[parts];
         for(int id=0; id<parts; id++){
             char prefix[4];
-            sprintf(prefix, "%d", id);
+            sprintf(prefix, "%hhd", id);
             string outpath(indir);
             outpath.append(prefix).append("_").append(leaf);
             long long offSet = id*chunkSz;
@@ -68,12 +79,23 @@ int main(int argc, const char *argv[]){
         outpath.append("merged").append("_").append(leaf);
         for(int id=0; id<parts; id++){
             char prefix[4];
-            sprintf(prefix,"%d",id);
+            sprintf(prefix,"%hhd",id);
             string part(indir);
             part.append(prefix).append("_").append(leaf);
             auto pfsz = GetFileSize(part);
             CpyFBytesToF(part, outpath, 0, pfsz, 1);
         }
+    } else if(comm.compare("crypt")==0){
+
+        Cryptographer c(inpath.c_str(), argv[3]);
+        string outpath(inpath);
+        outpath.append(".ken");
+        ofstream ofs(outpath,ios::binary|ios::out);
+        Printer p(c,ofs);
+        c.GetOrigBytes();
+        c.ToggleEncryption();
+        p.Print();
+        ofs.close();
     } else {
         cout << "NOT IMPLEMENTED" << endl;
     }
