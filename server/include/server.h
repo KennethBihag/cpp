@@ -4,6 +4,11 @@
 // sockets
 #ifdef _WIN32
 #include <winsock2.h>
+#else
+#include <sys/socket.h>
+#include <unistd.h>
+typedef int SOCKET;
+int closesocket(SOCKET s);
 #endif
 
 #define MAX_CLIENTS 10

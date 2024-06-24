@@ -101,7 +101,8 @@
         "xmemory": "cpp",
         "xstring": "cpp",
         "xtr1common": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "socket.h": "c"
     },
     "C_Cpp.clang_format_sortIncludes": true
 }
