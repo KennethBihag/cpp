@@ -10,7 +10,8 @@
         },
         {
             "name": "Win32 - mingw64",
-            "compilerPath": "C:/Program Files/mingw64/bin/g++.exe"
+            "compilerPath": "C:/Program Files/mingw64/bin/g++.exe",
+            "browse": {"path": ["*/"]}
         },
         {
             "name": "Linux",
@@ -18,12 +19,14 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}"
             ],
+            "browse": {"path": ["*/"]},
             "compilerPath": "/usr/bin/g++",
             "cppStandard": "c++11",
             "cStandard": "c99"
         },
         {
             "name": "Win32 - MSVC",
+            "browse": {"path": ["*/"]},
             "intelliSenseMode": "windows-msvc-x64"
         }
     ],
