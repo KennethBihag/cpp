@@ -182,30 +182,36 @@ int Solution::BiggestWidth(std::vector<std::pair<int, int>> pts)
 	return answer;
 }
 
-#define AVE(a, b) (a + b) / 2
 double Solution::FindMedianSortedArrays(vector<int> &nums1, vector<int> &nums2)
 {
-	std::vector<int> combined;
-	for (int i : nums1)
-		combined.push_back(i);
-	for (int i : nums2)
-		combined.push_back(i);
-	sort(combined.begin(), combined.end());
-	return _GetMedian(combined);
-}
+        int temp = nums1.size() + nums2.size();
+        int t = temp / 2;
+        int s = (temp % 2 == 0) ? (t - 1) : t;
+        vector<int> v;
+        v.reserve(t + 1);
 
-double Solution::_GetMedian(vector<int> &sortedArr)
-{
-	int len = (int)sortedArr.size();
-	int i = len / 2;
-	if (len % 2)
-		return sortedArr[i];
-	else
-	{
-		return (double)AVE(sortedArr[i - 1], sortedArr[i]);
-	}
+        int i = 0, j = 0;
+        for (; i < nums1.size() && j < nums2.size();) {
+            if (nums1[i] <= nums2[j])
+                v.push_back(nums1[i++]);
+            else
+                v.push_back(nums2[j++]);
+        }
+
+        while (j < nums2.size()) {
+            if (v.size() > t)
+                break;
+            v.push_back(nums2[j++]);
+        }
+
+        while (i < nums1.size()) {
+            if (v.size() > t)
+                break;
+            v.push_back(nums1[i++]);
+        }
+
+        return double(v[t] + v[s]) / 2;
 }
-#undef AVE
 
 int Solution::sumSubarrayMins(vector<int> &arr)
 {

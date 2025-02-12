@@ -147,6 +147,12 @@ void *MedianTest(void *args)
     d = r - 2.5;
     assert(d < 0.25 && d > -0.25);
 
+    nums1 = {2,2,4,4};
+    nums2 = {2,2,2,4,4};
+    r = solution.FindMedianSortedArrays(nums1, nums2);
+    d = r - 2.0;
+    assert(d < 0.25 && d > -0.25);
+
     printf("MEDIAN TEST PASSED\n");
     RETURN_CODE
 }
