@@ -14,5 +14,5 @@ void *RemoveNodeFromEndTest(void*);
 void *MinimumLengthTest(void*);
 void *DeckRevealedIncreasingTest(void*);
 void *MaximalRectangleTest(void*);
-
+void *MaximumSumTest(void*);
 #endif

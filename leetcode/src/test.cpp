@@ -8,6 +8,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "leetcode.h"
 #include "leetcode.hpp"
@@ -329,6 +330,29 @@ void *MaximalRectangleTest(void *args)
     cols = strlen(input4[0]);
     ans = maximalRectangle(input4, rows, &cols );
     // assert(9 == ans);
+
+    RETURN_CODE
+}
+
+void *MaximumSumTest(void *args)
+{
+    std::vector<int> l1{18,43,36,13,7};
+    std::vector<int> l2{10,12,19,14};
+    std::chrono::high_resolution_clock c;
+    auto start  = c.now();
+
+    int ans = solution.maximumSum(l1);
+    assert(ans == 54);
+
+    ans = solution.maximumSum(l2);
+    assert(ans == -1);
+
+    auto end = c.now();
+    auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+    printf("%llu useconds\n", dur.count());
+
+    printf("--- MAXIMUM SUM TESTS PASSED ---\n");
 
     RETURN_CODE
 }

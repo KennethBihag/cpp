@@ -26,6 +26,7 @@ public:
     int minimumLength(std::string& s);
     std::vector<int> deckRevealedIncreasing(std::vector<int>& deck);
     friend void *EnclosedParenthesesTest(void*);
+    int maximumSum(std::vector<int>& nums);
 };
 
 #endif
