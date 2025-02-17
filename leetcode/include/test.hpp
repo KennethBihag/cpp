@@ -15,4 +15,5 @@ void *MinimumLengthTest(void*);
 void *DeckRevealedIncreasingTest(void*);
 void *MaximalRectangleTest(void*);
 void *MaximumSumTest(void*);
+void *ConstructDistancedSeqTest(void*);
 #endif

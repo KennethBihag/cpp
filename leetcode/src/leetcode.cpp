@@ -451,3 +451,41 @@ std::vector<int> Solution::deckRevealedIncreasing(std::vector<int>& deck){
     std::sort(deck.begin(), deck.end());
     return deckHelper(deck);
 }
+
+static bool IsZero(const int& n) { return n == 0; }
+
+vector<int> Solution::constructDistancedSequence(int n) {
+    vector<int> seq(size_t(2 * n - 1), 0);
+
+    seq[0] = n;
+    if(n > 1)
+        seq[n] = n;
+    else
+        return seq;
+    n--;
+
+    int i = 1;
+    int j = i + n;
+    while (n > 1 && any_of(seq.cbegin(), seq.cend(), IsZero)) {
+        if (j < seq.size()) {
+            if (seq[i] == 0 && seq[j] == 0) {
+                seq[i] = seq[j] = n;
+                i++;
+                n--;
+                j = i + n;
+            } else {
+                i++;
+                j = i + n;
+                continue;
+            }
+        } else {
+            i = 1;
+            j = i + n;
+        }
+    }
+
+    const auto& e = find_if(seq.begin(), seq.end(), IsZero);
+    *e = 1;
+
+    return seq;
+}

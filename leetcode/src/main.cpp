@@ -8,9 +8,10 @@
 int main()
 {
 	thrd_func tests[] = {
-        MaximumSumTest
+        ConstructDistancedSeqTest
 #ifdef ALL_CHALLENGES
         ,
+        MaximumSumTest,
         MaximalRectangleTest,
         DeckRevealedIncreasingTest,
         MinimumLengthTest,

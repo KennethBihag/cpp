@@ -9,9 +9,10 @@
             "compilerPath": "${env:HOMEDRIVE}\\cygwin64\\bin\\gcc.exe"
         },
         {
-            "name": "Win32 - mingw64",
-            "compilerPath": "C:/Program Files/mingw64/bin/g++.exe",
-            "browse": {"path": ["*/"]}
+            "name": "Win32 - mingw32",
+            "compilerPath": "C:/Program Files (x86)/mingw32/bin/g++.exe",
+            "browse": {"path": ["*/"]},
+            "cppStandard": "c++17"
         },
         {
             "name": "Linux",

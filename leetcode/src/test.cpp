@@ -362,3 +362,27 @@ void *MaximumSumTest(void *args)
 
     RETURN_CODE
 }
+
+void *ConstructDistancedSeqTest(void *args){
+    auto printSeq = [](const int n, const std::vector<int>& v){
+        printf("%d: ", n);
+        for(const auto &e : v){
+            printf("%d ", e);
+        }
+        printf("\n*************\n");  
+    };
+
+    auto ans = solution.constructDistancedSequence(1);
+    printSeq(1, ans);
+    ans = solution.constructDistancedSequence(2);
+    printSeq(2, ans);
+    ans = solution.constructDistancedSequence(3);
+    printSeq(3, ans);
+    ans = solution.constructDistancedSequence(4);
+    printSeq(4, ans);
+    ans = solution.constructDistancedSequence(5);
+    printSeq(5, ans);
+    ans = solution.constructDistancedSequence(6);
+    printSeq(6, ans);
+    RETURN_CODE
+}

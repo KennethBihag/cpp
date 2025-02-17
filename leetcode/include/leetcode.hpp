@@ -27,6 +27,7 @@ public:
     std::vector<int> deckRevealedIncreasing(std::vector<int>& deck);
     friend void *EnclosedParenthesesTest(void*);
     int maximumSum(std::vector<int>& nums);
+    std::vector<int> constructDistancedSequence(int);
 };
 
 #endif
