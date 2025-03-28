@@ -50,7 +50,7 @@ int main(const int argc, const char *argv[])
         {
             printf("Couldn't allocate %ld bytes for adapters.\n", asize);
             WSACleanup();
-            return -1;
+            return EXIT_FAILURE;
         }
         int r = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, 0, adapters, &asize);
         if (r == ERROR_BUFFER_OVERFLOW)
@@ -65,9 +65,8 @@ int main(const int argc, const char *argv[])
         else
         {
             printf("Error from GetAdaptersAddresses: %d\n", r);
-            free(adapters);
-            WSACleanup();
-            return -1;
+            CleanUp(adapters);
+            return EXIT_FAILURE;
         }
     } while (!adapters);
 // print adapters
@@ -81,8 +80,10 @@ int main(const int argc, const char *argv[])
             printf("\t%s",
                    address->Address.lpSockaddr->sa_family == AF_INET ? "IPv4" : "IPv6");
             char ap[100];
-            getnameinfo(address->Address.lpSockaddr, address->Address.iSockaddrLength, ap, sizeof(ap), 0, 0, NI_NUMERICHOST);
-            printf("\t%s\n", ap);
+            char bp[100];
+            getnameinfo(address->Address.lpSockaddr, address->Address.iSockaddrLength,
+                        ap, sizeof ap, bp, sizeof bp, NI_NUMERICHOST);
+            printf("\t%s\t%s\n", ap, bp);
             address = address->Next;
         }
         adapter = adapter->Next;
@@ -100,30 +101,83 @@ int main(const int argc, const char *argv[])
             cout << address->ifa_name << '\t';
             cout << (fam == AF_INET ? "IPv4":"IPv6");
             cout << '\t';
-            char ap[128];
+            char ap[128], bp[128];
             const int famsz = fam == AF_INET ?
                 sizeof(sockaddr_in) : sizeof(sockaddr_in6);
-            getnameinfo(address->ifa_addr, famsz, ap, sizeof ap, 0, 0, NI_NUMERICHOST);
-            cout <<'\t' << ap << '\n';
+            getnameinfo(address->ifa_addr, famsz, ap, sizeof ap, bp, sizeof bp,
+                        NI_NUMERICHOST);
+            cout <<'\t' << ap << '\t' << bp << '\n';
         }
         address = address->ifa_next;
     }
 #endif
+    br();
+    // config local address
+    addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
 
-// config local address
-addrinfo hints;
-memset(&hints, 0, sizeof(hints));
-hints.ai_family = AF_INET;
-hints.ai_socktype = SOCK_STREAM;
-hints.ai_flags = AI_PASSIVE;
+    addrinfo *bindAddr;
+    getaddrinfo(0, "8080", &hints, &bindAddr);
 
-addrinfo *bindAddr;
-getaddrinfo(0, "8080", &hints, &bindAddr);
-other::PrintIP(bindAddr);
-
+    // create socket
+    SOCKET srvskt = socket(bindAddr->ai_family, bindAddr->ai_socktype, bindAddr->ai_protocol);
+    if(!ISVLDSCKT(srvskt)){
+        cerr << "socket() failed(" << GETSCKERR() << ")\n";
 #ifdef _WIN32
-// cleanup
-    free(adapters);
-    WSACleanup();
+        CleanUp(adapters);
+#endif
+        return EXIT_FAILURE; 
+    }
+
+    //bind
+    if( bind(srvskt, bindAddr->ai_addr, bindAddr->ai_addrlen) ){
+        cerr << "bind() failed(" << GETSCKERR() << '\n';
+#ifdef _WIN32
+        CleanUp(adapters);
+#endif
+        return EXIT_FAILURE;
+    }
+    other::PrintIP(bindAddr);
+    freeaddrinfo(bindAddr);
+
+// listen
+    if(listen(srvskt, 2) < 0){
+        cerr << "listen() failed(" << GETSCKERR() << '\n';
+        return EXIT_FAILURE;
+    }
+
+// accept
+    cout << "Waiting...\n";
+    sockaddr_storage clientAddr;
+    socklen_t clientAddrLen = sizeof(clientAddr);
+    SOCKET clskt = accept(srvskt, reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrLen);
+    if(!ISVLDSCKT(clskt)){
+        cerr << "accept() failed(" << GETSCKERR() << '\n';
+        return EXIT_FAILURE;
+    }
+    addrinfo clInfo{};
+    clInfo.ai_addr = reinterpret_cast<sockaddr*>(&clientAddr);
+    clInfo.ai_addrlen = clientAddrLen;
+    other::PrintIP(&clInfo);
+// read request
+    char req[1024]; req[1023]='\0';
+    recv(clskt, req, 1023, 0);
+    cout << "Got request";
+    br();
+    cout << req;
+    br();
+
+// send response
+    string responseTime = other::ResponseOk() + "Local time is:" + timeNow;
+    int sentBytes = send(clskt, responseTime.c_str(), responseTime.length(), 0);
+    cout << "Sent " << sentBytes << " bytes.\n";
+    CLOSESKT(clskt);
+
+    CLOSESKT(srvskt);
+#ifdef _WIN32
+    CleanUp(adapters);
 #endif
 }

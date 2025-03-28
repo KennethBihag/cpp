@@ -6,3 +6,6 @@ lib/
 CMakeFiles/
 
 CMakeCache.txt
+*.exe
+*.o
+*.obj

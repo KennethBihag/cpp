@@ -13,6 +13,7 @@
 
 #define ISVLDSCKT(s) ((s) != INVALID_SOCKET)
 #define GETSCKERR() (WSAGetLastError())
+#define CLOSESKT(s) closesocket(s)
 
 #else
 
@@ -27,12 +28,27 @@
 
 #define ISVLDSCKT(s) ((s) >= 0)
 #define GETSCKERR() (errno)
+#define CLOSESKT(s) close(s)
 typedef int SOCKET;
 
 #endif
 
+#include <string>
+
+#if _WIN32
+inline void CleanUp(PIP_ADAPTER_ADDRESSES adapters){
+    free(adapters);
+    WSACleanup();
+}
+#endif
+
+namespace templates{
+    extern const std::string okPath;
+};
+
 namespace other{
     void PrintIP(addrinfo *);
+    std::string &ResponseOk();
 };
 
 #endif
