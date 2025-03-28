@@ -115,7 +115,7 @@ int main(const int argc, const char *argv[])
     // config local address
     addrinfo hints;
     memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
+    hints.ai_family = AF_INET6;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
 
@@ -132,6 +132,13 @@ int main(const int argc, const char *argv[])
         return EXIT_FAILURE; 
     }
 
+    // dual-stack sockets
+    int opt{};
+    int &&x = setsockopt(srvskt, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&opt, sizeof opt);
+    if(x){
+        cerr << "setsockopt() failed(" << GETSCKERR() << '\n';
+        return EXIT_FAILURE;
+    }
     //bind
     if( bind(srvskt, bindAddr->ai_addr, bindAddr->ai_addrlen) ){
         cerr << "bind() failed(" << GETSCKERR() << '\n';
