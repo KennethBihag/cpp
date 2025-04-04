@@ -60,29 +60,31 @@ else
 	@if [ -e lib/lib$(PROJ).so ]; then rm lib/lib$(PROJ).so; fi;
 endif
 
-bcommon:
-	@"$(MAKE)" PROJ=common type=dynamic CC=gcc STD=c11
-bthreading:
-	@"$(MAKE)" PROJ=threading type=dynamic CC=gcc STD=c11
-bleetcodel: bcommon
+# build release, dynamic library: common, threading
+rd%:
+	"$(MAKE)" PROJ=$* type=dynamic CC=gcc STD=c11
+
+bleetcodel: rdcommon
 	@"$(MAKE)" PROJ=leetcode type=dynamic "LIBS=common"\
 	 DEFINES="BUILD_LIB CODEIUM_GEN" NO_WARN="$(NO_WARN)\
 	  -Wno-write-strings"
 
 bfutil:
 	@"$(MAKE)" PROJ=FUtil DBGB=-O0
-bprofiler: bcommon
+
+bprofiler: rdcommon
 ifneq (${OS},Windows_NT)
 	@"$(MAKE)" PROJ=profiler LIBS=common
 else
 	@"$(MAKE)" PROJ=profiler LIBS=common DBGB=-O0
 endif
-btestapp: bcommon
+
+btestapp: rdcommon
 	@"$(MAKE)" PROJ=testapp LIBS=common
-bleetcode: bcommon bthreading
+bleetcode: rdcommon rdthreading
 	@"$(MAKE)" PROJ=leetcode "LIBS=common threading"\
 	 DEFINES="ALL_CHALLENGES CODEIUM_GEN"
-bthreadinge:
+bthreading:
 	@"$(MAKE)" PROJ=threading CC=gcc STD=c11 DEFINES=BUILD_MAIN
 
 tcommon:
@@ -102,3 +104,5 @@ tprofiler: tcommon
 pleetcode: bleetcodel
 	@"$(MAKE)" PROJ=profiler LIBS='leetcode common'\
 	 'DEFINES=STD_THREAD'
+
+.PHONY: clean all

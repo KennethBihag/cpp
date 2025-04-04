@@ -8,22 +8,16 @@ objects := $(subst .cpp,.o,$(objects))
 objects := $(subst .c,.o,$(objects))
 endif
 
-bin/%.exe: $(objects)
+bin/% bin/%.exe: $(objects)
 	$(CC) -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
-bin/%: $(objects)
-	$(CC) -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
-
-lib/static/%.lib: $(objects)
-	ar -rcs -o $@ $(objects)
-lib/static/%.a: $(objects)
-	ar -rcs -o $@ $(objects)
 
 lib/%.dll: $(objects)
 	$(CC) -shared -o $@ $(CFLAGS) -Wl,--out-implib,lib/$*.lib $(objects) $(LDFLAGS)
 lib/%.so: $(objects)
 	@$(CC) -shared -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
 
-$(PROJ)/obj/%.obj: $(PROJ)/src/%.c*
-	$(CC) -c -o $@ $(CFLAGS) $(FPIC) $<
-$(PROJ)/obj/%.o: $(PROJ)/src/%.c*
+lib/static/%.a lib/static/%.lib: $(objects)
+	ar -rcs -o $@ $(objects)
+
+$(PROJ)/obj/%.o $(PROJ)/obj/%.obj: $(PROJ)/src/%.c*
 	$(CC) -c -o $@ $(CFLAGS) $(FPIC) $<
