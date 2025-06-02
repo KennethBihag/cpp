@@ -1,6 +1,5 @@
-#ifndef INCLUDES_HPP
-#define INCLUDES_HPP
-
+#ifndef NETWORKING_H
+#define NETWORKING_H
 #if defined(_WIN32)
 
 #ifndef _WIN32_WINNT
@@ -14,6 +13,13 @@
 #define ISVLDSCKT(s) ((s) != INVALID_SOCKET)
 #define GETSCKERR() (WSAGetLastError())
 #define CLOSESKT(s) closesocket(s)
+
+int StartUp(WSADATA&);
+
+inline void CleanUp(PIP_ADAPTER_ADDRESSES adapters){
+    free(adapters);
+    WSACleanup();
+}
 
 #else
 
@@ -31,24 +37,17 @@
 #define CLOSESKT(s) close(s)
 typedef int SOCKET;
 
+int StartUp();
+
+#endif // _WIN32
+
+#include <iostream>
+
+#ifndef AI_ALL
+#define AI_ALL 0x100
 #endif
 
-#include <string>
-
-#if _WIN32
-inline void CleanUp(PIP_ADAPTER_ADDRESSES adapters){
-    free(adapters);
-    WSACleanup();
-}
-#endif
-
-namespace templates{
-    extern const std::string okPath;
-};
-
-namespace other{
-    void PrintIP(addrinfo *);
-    std::string &ResponseOk();
-};
+void CleanUp();
+void Break(std::ostream&);
 
 #endif
