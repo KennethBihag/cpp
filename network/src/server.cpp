@@ -1,53 +1,63 @@
 #include <iostream>
-#include <string>
 
-#include "Addr.h"
+#include "interfaces.h"
+#include "connection.h"
+
+#include "colored_console.h"
+#include "common.h"
 
 using namespace std;
-using namespace KNT;
+using namespace HydraExpert;
 
 int main(int argc, const char **argv){
-string h, p;
-int f = AF_UNSPEC, sockT = 0;
-
-switch(argc){
-    case 5:
-    {
-        string temp(argv[4]);
-        sockT = temp=="UDP" ? SOCK_DGRAM :
-                temp=="TCP" ? SOCK_STREAM : 0;
-    }
-    case 4:
-    {
-        string temp(argv[3]);
-        f = temp=="v4" ? AF_INET :
-            temp=="v6" ? AF_INET6 : AF_UNSPEC;
-    }
-    case 3:
-        h = argv[2];
-    case 2:
-        if(strcmp("-h",argv[1]) == 0){
-            cout << "Usage: server [service name|port] [hostname|IP address] [v4|v6|any]"
-                    "[TCP|UDP|any]\n";
-            return EXIT_SUCCESS;
-        }
-        else
-            p = argv[1];
-}
-
-cout << "Server starting...\n";
-#ifdef _WIN32
     WSADATA wdData;
     StartUp(wdData);
-#else
-    StartUp();
-#endif
+    try
+    {
+        string host(""), port("");
+        int fam = AF_UNSPEC;
+        int sockType = 0;
 
-Addr &&srv = Server(p, h, f, sockT);
-srv.PrintInfo();
+        switch(argc){
+            case 5:
+                {
+                    string tmp = argv[4];
+                    if((tmp == "t") | (tmp == "T"))
+                        sockType = SOCK_STREAM;
+                    else if((tmp=="u") | (tmp=="U"))
+                        sockType = SOCK_DGRAM;
+                    else
+                        sockType = 0;
+                }
+            case 4:
+                {
+                    string tmp = argv[3];
+                    if((tmp == "v4") | (tmp == "V4"))
+                        fam = AF_INET;
+                    else if((tmp=="v6") | (tmp=="V6"))
+                        fam = AF_INET6;
+                    else
+                        fam = AF_UNSPEC;
+                }
+            case 3:
+                port = argv[2];
+            case 2:
+                host = argv[1];
+            break;
+        }
 
-CleanUp();
-cout << "Server stopped.\n";
+        IConnection &&server = Server(host, port, fam, sockType);
+        cout << "Config: " << server.GetAddrInfoStr() << "\n";
+        cout << "Sock info:" << server.GetSockInfoStr() <<"\n";
+        server.Activate();
+        cout << "Listening...\n";
+        cout << "Activated sock info: " << server.GetSockInfoStr() << "\n";
+    }
+    catch(const runtime_error& err){
+        string errStr(err.what());
+        errStr += "\n";
+        ColoredConsole(Console::RED, cerr, errStr.c_str());
+    }
 
-    return EXIT_SUCCESS;
+    CleanUp();
 }

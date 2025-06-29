@@ -2,6 +2,20 @@
 #define COMMON_H
 
 #ifdef __cplusplus
+
+#include <iostream>
+#include <iomanip>
+
+template<typename T>
+void PrintSize(){
+    std::cout << std::left
+              << std::setw(24) << typeid(T).name() << ":"
+              << std::right
+              << std::setw(4) << sizeof(T) << ":"
+              << std::setw(4) << alignof(T)
+              << std::endl;
+}
+
 extern "C"
 {
 #endif

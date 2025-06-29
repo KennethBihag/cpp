@@ -12,7 +12,7 @@ bin/% bin/%.exe: $(objects)
 	$(CC) -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
 
 lib/%.dll: $(objects)
-	$(CC) -shared -o $@ $(CFLAGS) -Wl,--out-implib,lib/$*.lib $(objects) $(LDFLAGS)
+	$(CC) -shared -o $@ $(CFLAGS) -Wl,--out-implib,lib/$*.dll.a $(objects) $(LDFLAGS)
 lib/%.so: $(objects)
 	@$(CC) -shared -o $@ $(CFLAGS) $(objects) $(LDFLAGS)
 

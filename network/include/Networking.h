@@ -1,6 +1,7 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
-#if defined(_WIN32)
+
+#ifdef _WIN32
 
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
@@ -13,13 +14,9 @@
 #define ISVLDSCKT(s) ((s) != INVALID_SOCKET)
 #define GETSCKERR() (WSAGetLastError())
 #define CLOSESKT(s) closesocket(s)
+#define GETSYSERROR() (GetLastError())
 
 int StartUp(WSADATA&);
-
-inline void CleanUp(PIP_ADAPTER_ADDRESSES adapters){
-    free(adapters);
-    WSACleanup();
-}
 
 #else
 
@@ -35,19 +32,28 @@ inline void CleanUp(PIP_ADAPTER_ADDRESSES adapters){
 #define ISVLDSCKT(s) ((s) >= 0)
 #define GETSCKERR() (errno)
 #define CLOSESKT(s) close(s)
+#define GETSYSERROR() (errno)
 typedef int SOCKET;
 
 int StartUp();
 
 #endif // _WIN32
 
-#include <iostream>
+#include <sstream>
+#include <unordered_map>
 
 #ifndef AI_ALL
 #define AI_ALL 0x100
 #endif
 
 void CleanUp();
-void Break(std::ostream&);
+void ThrowError(const std::string&, int) noexcept(false);
+void ThrowNetworkError(const std::string&) noexcept(false);
+std::stringstream FileAsSStream(const char*);
+extern std::unordered_map<int, std::string> g_familyMap;
+extern std::unordered_map<int, std::string> g_sockMap;
+extern std::unordered_map<int, std::string> g_protoMap;
+extern std::unordered_map<int, std::string> g_flagMap;
+inline const int g_rcvLim = 1024;
 
 #endif

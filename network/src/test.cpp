@@ -9,6 +9,26 @@
 using namespace std;
 using namespace HydraExpert;
 
+const char *getMsg = R"(GET / HTTP/1.1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Cache-Control: max-age=0
+Connection: keep-alive
+If-Modified-Since: Fri, 07 Mar 2025 12:38:16 GMT
+If-None-Match: W/"976-195709d10c6"
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+sec-ch-ua: "Microsoft Edge";v="137", "Chromium";v="137", "Not/A)Brand";v="24"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "Windows"
+
+)";
+
 int main(int argc, const char **argv){
     WSADATA wdData;
     StartUp(wdData);
@@ -17,8 +37,11 @@ int main(int argc, const char **argv){
         string host(""), port("");
         int fam = AF_UNSPEC;
         int sockType = 0;
+        int flags = AI_PASSIVE | AI_ALL;
 
         switch(argc){
+            case 6:
+                flags = atoi(argv[5]);
             case 5:
                 {
                     string tmp = argv[4];
@@ -46,26 +69,22 @@ int main(int argc, const char **argv){
             break;
         }
 
-        IConnection &&client = Client(host, port, fam, sockType);
-        cout << "Config: " << client.GetAddrInfoStr() << "\n";
-        cout << "Sock info:" << client.GetSockInfoStr() <<"\n";
+        // cout << Interfaces::GetInterfaces();
+        Client client(host, port, fam, sockType);
+        cout << client.GetAddrInfoStr();
+        cout << "*******\n";
+        cout << client.GetSockInfoStr() <<"\n";
         client.Activate();
-        cout << "Activated sock info: " << client.GetSockInfoStr() << "\n";
+        cout << client.GetSockInfoStr() << "\n";
         char buff[g_rcvLim]{};
-        stringstream ssTmp = FileAsSStream("S:/cpp/network/resource/get.txt");
-        const char *ssTmpBuf = ssTmp.str().c_str();
-        sprintf(buff, "%s", ssTmpBuf);
-        int bytes = client.Send(buff, strlen(ssTmpBuf));
-        cout << "Sent: " << bytes << " bytes\n";
+        sprintf(buff, "%s", getMsg);
+        cout << "Sent: " << client.Send(buff, 128) << " bytes\n";
         memset(buff, 0, g_rcvLim);
-        bytes = client.Receive(buff);
-        cout << "Received: " << bytes << " bytes\n";
+        cout << "Received: " << client.Receive(buff) << " bytes\n";
         ColoredConsole(Console::GRN, cout, buff);
     }
-    catch(const runtime_error& err){
-        string errStr(err.what());
-        errStr += "\n";
-        ColoredConsole(Console::RED, cerr, errStr.c_str());
+    catch(...){
+        cerr << "Oooops!\n";
     }
 
     CleanUp();

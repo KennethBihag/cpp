@@ -8,14 +8,14 @@ project(CNetworking
 set(CMAKE_CXX_STANDARD REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(include)
-set(LIBSRC lib/networking.cpp lib/Addr.cpp)
-add_library(network ${LIBSRC} )
+include_directories(include S:/cpp/common/include)
+set(LIBSRC lib/networking.cpp lib/interfaces.cpp lib/socket.cpp lib/socket_factory.cpp lib/connection.cpp)
+add_library(network SHARED ${LIBSRC} )
 add_executable(server src/server.cpp)
 add_executable(client src/client.cpp)
-target_compile_options(network PRIVATE "-Wall" "-Werror" "-Wno-error=misleading-indentation")
-target_compile_options(server PRIVATE "-Wall" "-Werror")
-target_compile_options(client PRIVATE "-Wall" "-Werror")
+target_compile_options(network PRIVATE "-Wall" )
+target_compile_options(server PRIVATE "-Wall" )
+target_compile_options(client PRIVATE "-Wall" )
 
 if("$ENV{DESKTOP_SESSION}" STREQUAL "ubuntu")
     message("Building for Ubuntu")
@@ -24,6 +24,15 @@ else()
     target_link_libraries(network PUBLIC ws2_32 iphlpapi)
 endif()
 
+# find_library(CMN_LIB NAMES libcommon PATHS S:/cpp/lib/ )
+add_library(common SHARED IMPORTED)
+set_target_properties(common
+    PROPERTIES
+        IMPORTED_IMPLIB S:/cpp/build/libcommon.dll.a
+        IMPORTED_LOCATION S:/cpp/lib/libcommon.dll
+)
+
+target_link_libraries(network PUBLIC common)
 target_link_libraries(server PRIVATE network)
 target_link_libraries(client PRIVATE network)
 
