@@ -28,7 +28,7 @@ endif()
 add_library(common SHARED IMPORTED)
 set_target_properties(common
     PROPERTIES
-        IMPORTED_IMPLIB S:/cpp/build/libcommon.dll.a
+        IMPORTED_IMPLIB S:/cpp/lib/libcommon.dll.a
         IMPORTED_LOCATION S:/cpp/lib/libcommon.dll
 )
 
