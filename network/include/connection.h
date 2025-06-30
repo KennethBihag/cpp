@@ -14,7 +14,7 @@ namespace Knt {
 
 
 class IConnection {
-public:
+protected:
     std::unique_ptr<CSocket> m_pISocket;
     std::unique_ptr<SocketFactory> m_pSF;
 
@@ -32,6 +32,7 @@ public:
 };
 
 class Client: public IConnection{
+    friend class Server;
     std::unique_ptr<CSocket> m_upPeer;
 public:
     Client(const std::string&, const std::string&, int = AF_UNSPEC,

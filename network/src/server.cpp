@@ -59,8 +59,10 @@ int main(int argc, const char **argv){
         char buffr[g_rcvLim]{};
         Server *srv = dynamic_cast<Server*>(&server);
         srv->Accept();
-        server.Receive(buffr);
-        Logger::Log(Logger::Out, "Received", buffr);
+        int received = server.Receive(buffr);
+        string temp = to_string(received) + " bytes.\n";
+        temp += buffr;
+        Logger::Log(Logger::Out, "Received", temp);
         sprintf(buffr, "%s", "Hello from server!");
         server.Send(buffr, strlen(buffr));
     }

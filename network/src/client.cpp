@@ -66,6 +66,7 @@ int main(int argc, const char **argv){
         bytes = client.Receive(buff);
         ssTmp.str(""); ssTmp.clear();
         ssTmp << bytes << " bytes\n";
+        ssTmp << buff;
         Logger::Log(Logger::Out, "Received", ssTmp.str());
     }
     catch(const runtime_error& err){

@@ -33,6 +33,7 @@ namespace Knt {
         CSocket();
         CSocket(const addrinfo&);
         CSocket(SOCKET);
+        CSocket(SOCKET, sockaddr*, int, int, State);
         ~CSocket();
         const std::string InfoStr() const;
     }; // class ISocket
