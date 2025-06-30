@@ -62,7 +62,7 @@ endif
 
 # build release, dynamic library: common, threading
 rd%:
-	"$(MAKE)" PROJ=$* type=dynamic
+	"$(MAKE)" PROJ=$* type=dynamic DEFINES=EXP_BUILD
 
 bleetcodel: rdcommon
 	@"$(MAKE)" PROJ=leetcode type=dynamic "LIBS=common"\

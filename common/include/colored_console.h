@@ -4,16 +4,28 @@
 #include <iostream>
 #include <iomanip>
 
+#include <windows.h>
+
 enum class Console: int {
-    BLK, BLU, GRN, CYN,RED, DFLT=7
+    BLK, BLU, GRN, CYN,RED, VLT, YLW, DFLT=7
 };
 
+inline const HANDLE g_OutConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+inline const HANDLE g_LogConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+inline const HANDLE g_ErrConsole = GetStdHandle(STD_ERROR_HANDLE);
+
+#ifdef _WIN32
 #ifdef EXP_BUILD
-__declspec(dllexport)
+#define COMMON_API __declspec(dllexport)
 #else
-__declspec(dllimport)
+#define COMMON_API __declspec(dllimport)
 #endif
-void ColoredConsole(Console c, std::ostream &out, const char*);
+#else
+#define COMMON_API 
+#endif
+
+COMMON_API void ColoredConsole(Console c, std::ostream &out, const char*);
+COMMON_API void SetConsoleColor(Console c, const HANDLE handle);
 
 
 #endif

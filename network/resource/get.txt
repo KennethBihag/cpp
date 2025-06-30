@@ -1,6 +1,9 @@
-GET / HTTP/1.1
+POST / HTTP/1.1
 Accept: */*
 Accept-Encoding: *
 Accept-Language: en-US,en;
-Connection: keep-alive
+Connection: close
+Host: mangapark.io
+Upgrade-Insecure-Requests: 1
 
+Baho ka tae!

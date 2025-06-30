@@ -3,7 +3,7 @@
 #include "interfaces.h"
 #include "connection.h"
 
-#include "colored_console.h"
+#include "logger.h"
 #include "common.h"
 
 using namespace std;
@@ -47,25 +47,29 @@ int main(int argc, const char **argv){
         }
 
         IConnection &&client = Client(host, port, fam, sockType);
-        cout << "Config: " << client.GetAddrInfoStr() << "\n";
-        cout << "Sock info:" << client.GetSockInfoStr() <<"\n";
+
+        Logger::Log(Logger::Inf, "Config", client.GetAddrInfoStr());
+        Logger::Log(Logger::Inf, "Socket", client.GetSockInfoStr());
         client.Activate();
-        cout << "Activated sock info: " << client.GetSockInfoStr() << "\n";
+        Logger::Log(Logger::Out, "Connected", client.GetSockInfoStr());
+
         char buff[g_rcvLim]{};
         stringstream ssTmp = FileAsSStream("S:/cpp/network/resource/get.txt");
-        const char *ssTmpBuf = ssTmp.str().c_str();
-        sprintf(buff, "%s", ssTmpBuf);
-        int bytes = client.Send(buff, strlen(ssTmpBuf));
-        cout << "Sent: " << bytes << " bytes\n";
+        size_t ssTmpSz = GetStreamSize(ssTmp);
+        ssTmp.read(buff, g_rcvLim-1);
+        ssTmp.str(""); ssTmp.clear();
+        int bytes = client.Send(buff, strlen(buff));
+        ssTmp << bytes << " bytes\n";
+        Logger::Log(Logger::Out, "Sent", ssTmp.str());
+
         memset(buff, 0, g_rcvLim);
         bytes = client.Receive(buff);
-        cout << "Received: " << bytes << " bytes\n";
-        ColoredConsole(Console::GRN, cout, buff);
+        ssTmp.str(""); ssTmp.clear();
+        ssTmp << bytes << " bytes\n";
+        Logger::Log(Logger::Out, "Received", ssTmp.str());
     }
     catch(const runtime_error& err){
-        string errStr(err.what());
-        errStr += "\n";
-        ColoredConsole(Console::RED, cerr, errStr.c_str());
+        Logger::Log(err);
     }
 
     CleanUp();

@@ -3,11 +3,15 @@
 #include "interfaces.h"
 #include "connection.h"
 
-#include "colored_console.h"
+#include "logger.h"
 #include "common.h"
 
 using namespace std;
 using namespace HydraExpert;
+
+namespace HydraExpert{
+    char log[1024];
+}
 
 int main(int argc, const char **argv){
     WSADATA wdData;
@@ -47,16 +51,21 @@ int main(int argc, const char **argv){
         }
 
         IConnection &&server = Server(host, port, fam, sockType);
-        cout << "Config: " << server.GetAddrInfoStr() << "\n";
-        cout << "Sock info:" << server.GetSockInfoStr() <<"\n";
+        Logger::Log(Logger::Inf, "Config", server.GetAddrInfoStr());
+        Logger::Log(Logger::Inf, "Socket", server.GetSockInfoStr());
         server.Activate();
-        cout << "Listening...\n";
-        cout << "Activated sock info: " << server.GetSockInfoStr() << "\n";
+        Logger::Log(Logger::Out, "Bound and Listening", server.GetSockInfoStr());
+        
+        char buffr[g_rcvLim]{};
+        Server *srv = dynamic_cast<Server*>(&server);
+        srv->Accept();
+        server.Receive(buffr);
+        Logger::Log(Logger::Out, "Received", buffr);
+        sprintf(buffr, "%s", "Hello from server!");
+        server.Send(buffr, strlen(buffr));
     }
-    catch(const runtime_error& err){
-        string errStr(err.what());
-        errStr += "\n";
-        ColoredConsole(Console::RED, cerr, errStr.c_str());
+    catch(const exception& err){
+        Logger::Log(err);
     }
 
     CleanUp();

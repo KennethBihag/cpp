@@ -23,12 +23,12 @@ public:
     IConnection();
     IConnection(const std::string&, const std::string&, int, int, int);
     virtual ~IConnection();
-    virtual int Send(const char (&)[g_rcvLim], size_t) const = 0;
-    virtual int Receive(char (&)[g_rcvLim]) const = 0;
+    virtual int Send(const char (&)[g_rcvLim], size_t) = 0;
+    virtual int Receive(char (&)[g_rcvLim]) = 0;
     const std::string GetSockInfoStr() const;
     const std::string GetAddrInfoStr() const;
-    void Activate(decltype(bind));
-    virtual void Activate() = 0;
+    void Activate(decltype(bind)) const;
+    virtual void Activate() const = 0;
 };
 
 class Client: public IConnection{
@@ -36,20 +36,22 @@ class Client: public IConnection{
 public:
     Client(const std::string&, const std::string&, int = AF_UNSPEC,
       int = 0);
-    void Activate() override;
-    int Send(const char (&)[g_rcvLim], size_t) const override final;
-    int Receive(char (&)[g_rcvLim]) const override final;
+    Client(CSocket*);
+    void Activate() const override;
+    int Send(const char (&)[g_rcvLim], size_t) override final;
+    int Receive(char (&)[g_rcvLim]) override final;
     ~Client();
 };
 
 class Server: public IConnection{
-    std::vector<std::unique_ptr<CSocket>> m_vupPeers;
+    std::vector<std::unique_ptr<Client>> m_vupPeers;
 public:
     Server(const std::string& = "", const std::string& = "",
       int = AF_UNSPEC, int = 0);
-    void Activate() override;
-    int Send(const char (&)[g_rcvLim], size_t) const override final;
-    int Receive(char (&)[g_rcvLim]) const override final;
+    void Activate() const override;
+    void Accept();
+    int Send(const char (&)[g_rcvLim], size_t) override final;
+    int Receive(char (&)[g_rcvLim]) override final;
 };
 
 }

@@ -1,12 +1,11 @@
 #include "colored_console.h"
 
-#include <windows.h>
-
-using std::ostream;
-
-void ColoredConsole(Console c, ostream &out, const char *msg){
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, (int)c);
+void ColoredConsole(Console c, std::ostream &out, const char *msg){
+    SetConsoleColor(c, g_OutConsole);
     out << msg;
-    SetConsoleTextAttribute(hConsole, int(Console::DFLT));
+    SetConsoleColor(Console::DFLT, g_OutConsole);
 } 
+
+void SetConsoleColor(Console c, const HANDLE handle){
+    SetConsoleTextAttribute(handle, (int)c);
+}
