@@ -5,7 +5,6 @@
 #include <string.h>
 
 // encryption
-
 #define MULN 2
 #define ADDN 10
 int encrypt_char(char c, int k)
@@ -14,7 +13,6 @@ int encrypt_char(char c, int k)
 }
 
 // files
-
 #define EXPECT_FILE_SIZE 128
 const char *load_file_to_buffer(const char *filename)
 {
@@ -47,7 +45,6 @@ const char *get_file_ext(const char *filename)
 }
 
 //array functions
-
 void print_intarr_elems(int *array, int length)
 {
     printf("%d",array[0]);

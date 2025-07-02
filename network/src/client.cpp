@@ -3,8 +3,8 @@
 #include "interfaces.h"
 #include "connection.h"
 
-#include "logger.h"
-#include "common.h"
+#include "logger.hpp"
+#include "common.hpp"
 
 using namespace std;
 using namespace HydraExpert;
@@ -55,7 +55,7 @@ int main(int argc, const char **argv){
 
         char buff[g_rcvLim]{};
         stringstream ssTmp = FileAsSStream("S:/cpp/network/resource/get.txt");
-        size_t ssTmpSz = GetStreamSize(ssTmp);
+        GetStreamSize(ssTmp);
         ssTmp.read(buff, g_rcvLim-1);
         ssTmp.str(""); ssTmp.clear();
         int bytes = client.Send(buff, strlen(buff));

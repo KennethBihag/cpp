@@ -3,7 +3,7 @@
 #include "interfaces.h"
 #include "connection.h"
 
-#include "colored_console.h"
+#include "colored_console.hpp"
 #include "common.h"
 
 using namespace std;
@@ -37,11 +37,8 @@ int main(int argc, const char **argv){
         string host(""), port("");
         int fam = AF_UNSPEC;
         int sockType = 0;
-        int flags = AI_PASSIVE | AI_ALL;
 
         switch(argc){
-            case 6:
-                flags = atoi(argv[5]);
             case 5:
                 {
                     string tmp = argv[4];

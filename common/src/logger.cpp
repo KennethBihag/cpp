@@ -1,9 +1,7 @@
-#include "logger.h"
+#include "logger.hpp"
 
 using std::string; using std::stringstream;
-using std::cerr;
-using std::clog;
-using std::cout;
+using std::cerr; using std::clog; using std::cout;
 
 const string IndentBody(const string &body){
     stringstream formatted(string("\t"));

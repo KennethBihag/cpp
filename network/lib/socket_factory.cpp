@@ -5,7 +5,7 @@
 
 #include "interfaces.h"
 
-#include "colored_console.h"
+#include "colored_console.hpp"
 
 #include "usings.h"
 

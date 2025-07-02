@@ -3,7 +3,7 @@
 #include "interfaces.h"
 #include "connection.h"
 
-#include "logger.h"
+#include "logger.hpp"
 #include "common.h"
 
 using namespace std;

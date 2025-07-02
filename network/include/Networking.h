@@ -56,12 +56,4 @@ extern std::unordered_map<int, std::string> g_protoMap;
 extern std::unordered_map<int, std::string> g_flagMap;
 inline const int g_rcvLim = 1024;
 
-inline int GetStreamSize(std::iostream &strm){
-    auto b = strm.tellg();
-    strm.seekg(0, std::ios_base::seekdir::_S_end);
-    auto e = strm.tellg();
-    strm.seekg(b);
-    return e-b;
-}
-
 #endif

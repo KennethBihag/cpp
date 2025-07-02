@@ -2,7 +2,7 @@
 #include "interfaces.h"
 #include "usings.h"
 
-#include "logger.h"
+#include "logger.hpp"
 
 using namespace HydraExpert;
 
