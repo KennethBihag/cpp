@@ -16,19 +16,20 @@ void bubblesort_test(int argc, const char **argv)
 		return;
 	}
 
-	int o[argc - 1];
-	int olength = sizeof(o) / sizeof(o[0]);
+	int* o = malloc((argc - 1) * sizeof(int));
+	int olength = argc - 1;
 	for (int i = 0; i < olength; i++)
 	{
 		sscanf(argv[i + 1], "%d", o + i);
 	}
 	int *copied = bubblesort_int(o, olength, 1);
+	free(o);
 	printf("ORIG: ");
 	print_intarr_elems(o, olength);
 	printf("NEW: ");
 	print_intarr_elems(copied, olength);
 	free(copied);
-	float p[argc - 1];
+	float* p = malloc((argc - 1) * sizeof(float));
 	for (int i = 0; i < olength; i++)
 	{
 		p[i] = (float)atof(*(argv + i + 1));
@@ -36,6 +37,7 @@ void bubblesort_test(int argc, const char **argv)
 	float *copied2 = bubblesort_flt(p, olength, -1);
 	printf("ORIG: ");
 	print_fltarr_elems(p, olength);
+	free(p);
 	printf("NEW: ");
 	print_fltarr_elems(copied2, olength);
 	free(copied2);
@@ -50,12 +52,12 @@ void mergesort_test(int argc, const char **argv)
 		printf("Usage: <int> ...\n");
 		return;
 	}
-	int o[argc - 1];
-	int olength = sizeof(o) / sizeof(o[0]);
+	int* o = malloc((argc - 1) * sizeof(int));
+	int olength = argc - 1;
 	for (int i = 0; i < olength; i++)
 		sscanf(argv[i + 1], "%d", o + i);
 	mergesort_int(o, olength, 1);
-
+	free(o);
 	return;
 }
 
@@ -63,7 +65,7 @@ void *permute_test(void *arg)
 {
 	const int len = *(const int*)arg;
 	const char *const numbers =
-		(const char *)(arg + sizeof(int));
+		(const char *)((char*)arg + sizeof(int));
 	int r = 0, c = 0;
 	char *res = permute_ch(numbers, len, &r, &c);
 	int orders = 0;

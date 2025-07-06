@@ -1,5 +1,7 @@
 #include "logger.hpp"
 
+#include <sstream>
+
 using std::string; using std::stringstream;
 using std::cerr; using std::clog; using std::cout;
 
