@@ -9,39 +9,28 @@ SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_C_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-SET(SOURCES
-    src/colored_console.cpp
-    src/common.c src/common.cpp
-    src/logger.cpp
-    src/permute.c
-    src/singly_linked_list.c
-    src/sort.c
-    src/tests.c)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src LIB_SRCS)
+set(TST_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/tests.c ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+remove(LIB_SRCS ${TST_SRCS})
 
-OPTION(RELBUILD "Release or debug?" ON)
-if(RELBUILD)
-    message("Building for release")
-    SET(CMAKE_BUILD_TYPE Release)
-    add_library(common SHARED ${SOURCES})
+if(CMAKE_BUILD_TYPE MATCHES Release|RelWithDebInfo)
+    message("Building for ${CMAKE_BUILD_TYPE}")
+    add_library(common SHARED ${LIB_SRCS})
     target_compile_definitions(common PUBLIC SHARED)
     target_compile_definitions(common PRIVATE EXP_BUILD)
-else()
-    message(("Building for debug"))
-    SET(CMAKE_BUILD_TYPE Debug)
-    add_library(common STATIC ${SOURCES})
+    set(BUILD_RPATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/shared)
+elseif(CMAKE_BUILD_TYPE MATCHES Debug)
+    message("Building for debug")
+    add_library(common STATIC ${LIB_SRCS})
     target_compile_definitions(common PUBLIC "COMMON_API=")
-endif(RELBUILD)
+endif()
+add_executable(test_common ${TST_SRCS})
 
-target_include_directories(common PUBLIC include)
+target_include_directories(common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(common.test src/main.cpp)
-target_link_libraries(common.test PRIVATE common)
+target_link_libraries(test_common PRIVATE common)
 
-set_target_properties(common PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../lib/static
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../lib/shared
-)
-
-set_target_properties(common.test PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../bin
-)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../mkdir.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../setlibdirs.cmake)
+SetLibDirs(common)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)

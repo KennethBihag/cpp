@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "exports.hpp"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -11,8 +13,8 @@ extern "C"
     
     // Prints all elements of an array with a desired string format per element,
     // separated by a space
-    void print_intarr_elems(int *array,int length);
-    void print_fltarr_elems(float *array, int length);
+    COMMON_API void print_intarr_elems(int *array,int length);
+    COMMON_API void print_fltarr_elems(float *array, int length);
 #ifdef __cplusplus
 }
 #endif

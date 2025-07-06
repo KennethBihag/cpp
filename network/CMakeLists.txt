@@ -8,16 +8,13 @@ project(CNetworking
 set(CMAKE_CXX_STANDARD REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(include S:/cpp/common/include)
+include_directories(include ${CMAKE_CURRENT_SOURCE_DIR}/../common/include)
 set(LIBSRC lib/networking.cpp lib/interfaces.cpp lib/socket.cpp lib/socket_factory.cpp lib/connection.cpp)
 add_library(network SHARED ${LIBSRC} )
 add_executable(server src/server.cpp)
 add_executable(client src/client.cpp)
-add_executable(network.test src/test.cpp)
-# set(COMPILE_OPTIONS "-tae")
+add_executable(test_network src/test.cpp)
 target_compile_options(network PUBLIC "-Wall" )
-# target_compile_options(server PRIVATE "-Wall" )
-# target_compile_options(client PRIVATE "-Wall" )
 
 if("$ENV{DESKTOP_SESSION}" STREQUAL "ubuntu")
     message("Building for Ubuntu")
@@ -26,29 +23,27 @@ else()
     target_link_libraries(network PUBLIC ws2_32 iphlpapi)
 endif()
 
-# find_library(CMN_LIB NAMES libcommon PATHS S:/cpp/lib/ )
 add_library(common SHARED IMPORTED)
 set_target_properties(common
     PROPERTIES
-        IMPORTED_IMPLIB S:/cpp/lib/static/libcommon.dll.a
-        IMPORTED_LOCATION S:/cpp/lib/shared/libcommon.dll
+        IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/../lib/static/libcommon.dll.a
 )
-target_compile_definitions(common INTERFACE SHARED)
+
+target_compile_definitions(network PUBLIC SHARED)
 
 target_link_libraries(network PUBLIC common)
 target_link_libraries(server PRIVATE network)
 target_link_libraries(client PRIVATE network)
-target_link_libraries(network.test PRIVATE network)
+target_link_libraries(test_network PRIVATE network)
 
-set(CMAKE_BUILD_TYPE Debug)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../mkdir.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../setlibdirs.cmake)
+SetLibDirs(network)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-set_target_properties(network
-    PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY S:/cpp/lib/shared
-        ARCHIVE_OUTPUT_DIRECTORY S:/cpp/lib/static
+set(SHARED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../lib/shared)
+install(
+    TARGETS network
+    RUNTIME DESTINATION ${SHARED_DIR}
+    LIBRARY DESTINATION ${SHARED_DIR}
 )
-set_target_properties(server client network.test
-    PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY S:/cpp/bin
-)
-
