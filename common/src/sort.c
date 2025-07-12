@@ -104,8 +104,8 @@ void mergesort_asc(int *origArray, unsigned int length, int *level)
 	// break part
 	int iMid = length % 2 ? length / 2 : length / 2 - 1;
 	int leftSize = iMid + 1, rightSize = length - iMid - 1;
-	int* leftArr = malloc(leftSize * sizeof(int));
-	int* rightArr = malloc(rightSize * sizeof(int));
+	int* leftArr = (int*)malloc(leftSize * sizeof(int));
+	int* rightArr = (int*)malloc(rightSize * sizeof(int));
 	
 	memcpy(leftArr, origArray, leftSize * sizeof(int));
 	if (length % 2 == 0)

@@ -1,7 +1,7 @@
 #include "colored_console.hpp"
 
 
-void ColoredConsole(Console c, std::ostream &out, const char *msg){
+COMMON_API void ColoredConsole(Console c, std::ostream &out, const char *msg){
 #ifdef _WIN32
     SetConsoleColor(c, g_OutConsole);
     out << msg;

@@ -16,7 +16,7 @@ void bubblesort_test(int argc, const char **argv)
 		return;
 	}
 
-	int* o = malloc((argc - 1) * sizeof(int));
+	int* o = (int*)malloc((argc - 1) * sizeof(int));
 	int olength = argc - 1;
 	for (int i = 0; i < olength; i++)
 	{
@@ -29,7 +29,7 @@ void bubblesort_test(int argc, const char **argv)
 	printf("NEW: ");
 	print_intarr_elems(copied, olength);
 	free(copied);
-	float* p = malloc((argc - 1) * sizeof(float));
+	float* p = (float*)malloc((argc - 1) * sizeof(float));
 	for (int i = 0; i < olength; i++)
 	{
 		p[i] = (float)atof(*(argv + i + 1));
@@ -52,7 +52,7 @@ void mergesort_test(int argc, const char **argv)
 		printf("Usage: <int> ...\n");
 		return;
 	}
-	int* o = malloc((argc - 1) * sizeof(int));
+	int* o = (int*)malloc((argc - 1) * sizeof(int));
 	int olength = argc - 1;
 	for (int i = 0; i < olength; i++)
 		sscanf(argv[i + 1], "%d", o + i);

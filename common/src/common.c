@@ -45,7 +45,7 @@ const char *get_file_ext(const char *filename)
 }
 
 //array functions
-void print_intarr_elems(int *array, int length)
+COMMON_API void print_intarr_elems(int *array, int length)
 {
     printf("%d",array[0]);
     for(int i=1; i<length; ++i)
@@ -54,7 +54,7 @@ void print_intarr_elems(int *array, int length)
     return;
 }
 
-void print_fltarr_elems(float *array, int length)
+COMMON_API void print_fltarr_elems(float *array, int length)
 {
     printf("%f",array[0]);
     for(int i=1; i<length; ++i)

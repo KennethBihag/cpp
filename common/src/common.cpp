@@ -1,6 +1,6 @@
 #include "common.hpp"
 
-int GetStreamSize(std::iostream &strm){
+COMMON_API int GetStreamSize(std::iostream &strm){
     auto b = strm.tellg();
 #ifndef _WINDOWS
     strm.seekg(0, std::ios_base::seekdir(2));

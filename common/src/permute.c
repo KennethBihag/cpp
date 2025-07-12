@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include <stdio.h>
 
-int *permute(const int *const nums, int len, int *rrows, int *rcols)
+COMMON_API int *permute(const int *const nums, int len, int *rrows, int *rcols)
 {
 	if (len < 0 || nums == NULL)
 		assert("Array must not be empty!");
@@ -47,7 +47,7 @@ int *permute(const int *const nums, int len, int *rrows, int *rcols)
 	}
 }
 
-char *permute_ch(const char *const nums, int len, int *rrows, int *rcols)
+COMMON_API char *permute_ch(const char *const nums, int len, int *rrows, int *rcols)
 {
 	if (len < 0 || nums == NULL)
 		assert("Array must not be empty!");

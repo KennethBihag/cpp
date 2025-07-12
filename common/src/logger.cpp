@@ -16,7 +16,7 @@ const string IndentBody(const string &body){
     return formatted.str();
 }
 
-void Logger::Log(LogType logType, const string &label, const string &body){
+COMMON_API void Logger::Log(LogType logType, const string &label, const string &body){
     stringstream logMsgStrm;
     logMsgStrm << label << ":\n\t";
     logMsgStrm << IndentBody(body);
