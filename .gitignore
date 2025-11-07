@@ -9,3 +9,5 @@ CMakeCache.txt
 *.exe
 *.o
 *.obj
+*.pdb
+*.ilk
