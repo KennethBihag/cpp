@@ -1,50 +1,59 @@
 #include "networking.h"
 
 #include <iostream>
-#include <sstream>
-#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
-using std::clog;
-using std::exception; using std::runtime_error;
+#include "endpoint.h"
+
+using std::cerr; using std::clog;
 using std::string; using std::stringstream;
 using std::unordered_map;
 
-unordered_map<int, const string> g_familyMap = {
+const unordered_map<int, string> g_familyMap = {
 		{AF_INET, "IPv4"}, {AF_INET6, "IPv6"}, {AF_UNSPEC, "ANY"}
 };
-unordered_map<int, const string> g_sockMap = {
+const unordered_map<int, string> g_sockMap = {
 		{SOCK_DGRAM, "UDP"}, {SOCK_STREAM, "TCP"}, {0, "ANY"}
 };
-unordered_map<int, const string> g_protoMap = {
+const unordered_map<int, string> g_protoMap = {
 		{IPPROTO_UDP, "UDP PROTO"}, {IPPROTO_TCP, "TCP PROTO"}, {0, "ANY"}
 };
-unordered_map<int, const string> g_flagMap = {
-		{AI_ALL, "ALL"}, {AI_PASSIVE, "PASSIVE"}, {0, "NONE"}
+const unordered_map<int, string> g_flagMap = {
+		{4, "ALL"}, {AI_PASSIVE, "PASSIVE"}, {0, "NONE"}, {256, "ALL"}
 };
 
-/* const std::string Networking::GetAllAddrinfoStr(const addrinfo& ai){
-	stringstream ssOut;
-	const addrinfo *pAi = &ai;
-	int i=0;
-	while(pAi){
-		++i;
-		ssOut << i << " " << GetAddrinfoStr(*pAi);
-		ssOut << "\n";
-		if(pAi == ai.ai_next) break;
-		pAi = ai.ai_next;
+WSAData gWSAData;
+
+namespace Networking {
+	void StartUp() {
+		int error = (WSAStartup(MAKEWORD(2,2), &gWSAData));
+		if(error){
+			cerr << "WSAStartup failed!\n";
+			exit(error);
+		}
 	}
-	return ssOut.str();
-} */
 
-/* const std::string Networking::GetSockaddrStr(const addrinfo& ai){
+	void CleanUp() { WSACleanup(); }
 
-	stringstream ssOut;
-	ssOut << "sockaddr @ " << std::hex << ai.ai_addr << std::dec << "{";
-	ssOut << "host: " << hostname << "/" << hostname2;
-	ssOut << ", service: " << service << "/" << service2;
-	ssOut << "}";
+	Config* ConfigServer(const std::string &host, const std::string &port, int family,
+							int sockType, unsigned short backLog, int msTimeout)
+	{
+		addrinfo hints { .ai_flags=AI_PASSIVE, .ai_family=family,
+										 .ai_socktype=sockType, .ai_protocol=0 };
+		addrinfo *config = nullptr;
+		int error = getaddrinfo( host.c_str(), port.empty()?"0":port.c_str(),
+														 &hints, &config );
+		if(error){
+			cerr << __func__ << ": getaddrinfo failed\n";
+			exit(error);
+		}
+		addrinfo *now = config;
+		while(now){
+			EndPoint ep(now->ai_addr, now->ai_addrlen);
+			now = now->ai_next;
+		}
 
-	return ssOut.str();
-} */
+		return new Config{hints, config};
+	}
+};

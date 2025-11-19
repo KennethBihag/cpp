@@ -8,15 +8,17 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 	clog << "Hydra Expert 1.0.0\n";
+  clog << "Usage: hydraexpert [host name] [service/port] [backlog (n)] ";
+  clog << "[time out (ms)]\n";
 	string host = "";
 	string port = "";
 	unsigned short backLog = 1;
-	unsigned short msTimeout = 500;
+	int msTimeout = -1;
 
 	switch (argc)
 	{
 	case 5:
-		msTimeout = (unsigned short)atoi(argv[4]);
+		msTimeout = atoi(argv[4]);
 	case 4:
 		backLog = (unsigned short)atoi(argv[3]);
 	case 3:
@@ -25,6 +27,9 @@ int main(int argc, char *argv[])
 		host = argv[1];
 		break;
 	}
-	HydraExpert hydraExpert(host, port, backLog, msTimeout, HydraExpert::ANY);
+	HydraExpert hydraExpert(host, port, backLog, msTimeout,
+													HydraExpert::ANY);
+  cout << __FUNCTION__ << ":" << __LINE__ << endl;
+  hydraExpert.Start();
 	return EXIT_SUCCESS;
 }

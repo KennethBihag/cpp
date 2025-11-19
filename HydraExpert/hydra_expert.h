@@ -4,11 +4,11 @@
 #include <string>
 
 struct HydraExpert {
-  enum Family {ANY, IPV4, IPV6};
-  HydraExpert();
-  ~HydraExpert();
+	enum Family {ANY, IPV4, IPV6};
 	HydraExpert(std::string host, std::string service, unsigned short backLog,
-							unsigned short millisTimeout, Family family = IPV4);
+							int millisTimeout, Family family = IPV4);
+	~HydraExpert();
+  void Start();
 };
 
 #endif

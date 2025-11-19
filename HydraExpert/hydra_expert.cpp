@@ -1,38 +1,48 @@
 #include "hydra_expert.h"
-#include "networking.h"
 
 #include <iostream>
-#include <stdexcept>
 #include <string>
+#include <unordered_map>
+
+#include "networking.h"
+#include "server.h"
+#include "socket.h"
 
 using std::clog;
-using std::runtime_error;
 using std::string;
+using std::unordered_map;
 
-WSAData gWSAData;
+Config *gConfig = nullptr;
+Server *gServer = nullptr;
 
-HydraExpert::HydraExpert(){
-	if(WSAStartup(MAKEWORD(2,2), &gWSAData)){
-		int wsaErr = WSAGetLastError();
-		string errStr = "WSAStartup failed! Code:";
-		errStr += std::to_string(wsaErr);
-		throw runtime_error(errStr);
-	}
-}
-
-HydraExpert::~HydraExpert(){
-	WSACleanup();
-}
+static const unordered_map<HydraExpert::Family, int> g_eFamilyMap =
+{
+	{HydraExpert::ANY, AF_UNSPEC},
+	{HydraExpert::IPV4, AF_INET},
+	{HydraExpert::IPV6, AF_INET6}
+};
 
 HydraExpert::HydraExpert(std::string host, std::string service,
-  unsigned short backLog, unsigned short millisTimeout, Family eFamily)
- : HydraExpert()
+	unsigned short backLog, int millisTimeout, Family eFamily)
 {
-  int family;
-  switch(eFamily){
-    case Family::ANY: family = AF_UNSPEC; break;
-    case Family::IPV4: family = AF_INET; break;
-    case Family::IPV6: family = AF_INET6; break;
-  }
-  Server server(host, service, family, SOCK_STREAM, backLog, millisTimeout);
+	Networking::StartUp();
+	clog << "StartUp succeeded\n";
+	gConfig = Networking::ConfigServer(host, service, g_eFamilyMap.at(eFamily),
+																					 SOCK_STREAM, backLog, millisTimeout);
+	Socket socket(gConfig);
+	clog << "Config succeeded\n";
+	socket.Activate(bind);
+  clog << "Bind succeeded\n";
+  gServer = new Server(socket, backLog);
+  clog << "Created server\n";
+}
+
+void HydraExpert::Start(){
+  gServer->Start();
+  clog << "Started server\n";
+  gServer->Process();
+}
+
+HydraExpert::~HydraExpert() {
+	Networking::CleanUp();
 }
