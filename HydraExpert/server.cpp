@@ -1,5 +1,6 @@
 #include "server.h"
 
+#include <iomanip>
 #include <iostream>
 #include <mutex>
 #include <thread>
@@ -41,23 +42,32 @@ void Server::Start(){
 
 int HandleGet(Server *svr, Socket *ptr){
     Socket *client = (Socket*)ptr;
-    clog << "Accepted socket " << client->m_fd << "\n";
+    clog << "Accepted [" << client->m_fd << "]\n";
     gMutex.lock();
     svr->m_clientMap[client->m_fd] = client;
     gMutex.unlock();
-    char message[2048]{};
-    client->Receive(message, sizeof(message));
-    clog << "Received from " << client->m_fd << "\n" << message << "\n";
-    client->Send(HTTP::m_Template, strlen(HTTP::m_Template));
-    clog << "Sent to " << client->m_fd << "\n";
-    closesocket(client->m_fd);
-    clog << "Closed " << client->m_fd << "\n";
-    gMutex.lock();
-    svr->m_clientMap.erase(client->m_fd);
-    gMutex.unlock();
-    delete client;
-    clog << "Deleted client " << client->m_fd << "\n";
-
+    int sent = 0;
+    char fdStr[6];
+    snprintf(fdStr, 6, "[%d]", client->m_fd);
+GET_MESSAGE:
+    char message[256]{};
+    int got = client->Receive(message, sizeof(message));
+    clog << fdStr << " sent " << got << "\n";
+    if(got < 1){
+      closesocket(client->m_fd);
+      clog << fdStr << " closed\n";
+      gMutex.lock();
+      svr->m_clientMap.erase(client->m_fd);
+      gMutex.unlock();
+      clog << fdStr << " deleted\n";
+      delete client;
+      goto END;
+    }
+    clog << fdStr << " " << message << "\n";
+    sent = client->Send(HTTP::m_Template, strlen(HTTP::m_Template));
+    clog << fdStr << " got " << sent << "\n";
+    goto GET_MESSAGE;
+END:
     return EXIT_SUCCESS;
 }
 
