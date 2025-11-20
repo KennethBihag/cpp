@@ -16,6 +16,8 @@ public:
   ~Server();
   void Start();
   void Process();
+
+  friend int HandleGet(Server*, Socket*);
 };
 
 #endif
