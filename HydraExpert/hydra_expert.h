@@ -9,6 +9,7 @@ struct HydraExpert {
 							int millisTimeout, Family family = IPV4);
 	~HydraExpert();
   void Start();
+  void SetRootPath(const std::string&);
 };
 
 #endif

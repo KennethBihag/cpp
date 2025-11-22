@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	}
 	HydraExpert hydraExpert(host, port, backLog, msTimeout,
 													HydraExpert::ANY);
-  cout << __FUNCTION__ << ":" << __LINE__ << endl;
+  hydraExpert.SetRootPath("S:/front-end");
   hydraExpert.Start();
 	return EXIT_SUCCESS;
 }

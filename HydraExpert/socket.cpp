@@ -76,7 +76,8 @@ Socket* Socket::Accept() const {
   ret.m_fd = accept(m_fd, ret.m_sockaddr, &len);
   if(ret.m_fd == INVALID_SOCKET){
     cerr << __func__ << ": accept failed\n";
-    exit(EXIT_FAILURE);
+    delete client;
+    client = nullptr;
   }
 
   return client;

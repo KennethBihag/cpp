@@ -14,6 +14,7 @@ using std::unordered_map;
 
 Config *gConfig = nullptr;
 Server *gServer = nullptr;
+string gRootPath;
 
 static const unordered_map<HydraExpert::Family, int> g_eFamilyMap =
 {
@@ -37,12 +38,16 @@ HydraExpert::HydraExpert(std::string host, std::string service,
   clog << "Created server\n";
 }
 
+HydraExpert::~HydraExpert() {
+	Networking::CleanUp();
+}
+
 void HydraExpert::Start(){
   gServer->Start();
   clog << "Started server\n";
   gServer->Process();
 }
 
-HydraExpert::~HydraExpert() {
-	Networking::CleanUp();
+void HydraExpert::SetRootPath(const string &path) {
+  gRootPath = path;
 }
