@@ -6,6 +6,7 @@
 
 namespace HTTP {
   enum Method {GET, POST, PUT};
+  enum ContentType {ANY, HTML, CSS, JS};
   extern const char *const m_Template;
   extern const char *const m_NotFound;
   extern std::string GetIndexDoc();
@@ -21,6 +22,7 @@ namespace HTTP {
     std::string m_host;
     std::string m_path;
     std::stringstream m_body;
+    ContentType m_type;
     bool m_keepAlive;
     bool m_valid;
   };

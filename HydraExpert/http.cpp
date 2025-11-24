@@ -11,80 +11,98 @@ using namespace std;
 
 extern string gRootPath;
 
-/* const char *const HTTP::m_Template = 
-R"(HTTP/1.1 200 OK
-Host: localhost:8080
-Connection: Close
-Content-type: text/html; charset=UTF-8
+namespace HTTP
+{
+    const char *const m_Template =
+        "HTTP/1.1 200 OK\r\n"
+        "Access-ranges: bytes\r\n"
+        "Content-type: text/html; charset=UTF-8\r\n"
+        "Content-length: ";
 
-)"; */
+    const char *const g_Template0 =
+        "HTTP/1.1 200 OK\r\n"
+        "Access-ranges: bytes\r\n"
+        "Content-length: ";
 
-namespace HTTP {
-const char *const m_Template = 
-"HTTP/1.1 200 OK\r\n"
-"Content-type: text/html; charset=UTF-8\r\n"
-"Content-length: ";
+    const char *const m_NotFound =
+        "HTTP/1.1 404 NOT FOUND\r\n\r\n";
 
-const char *const m_NotFound = 
-"HTTP/1.1 404 NOT FOUND\r\n\r\n";
+    const char *const s_delim = "\r\n";
+    const char *const s_end = "\r\n\r\n";
 
-const char *const s_delim = "\r\n";
-const char *const s_end = "\r\n\r\n";
+    const unordered_map<string, Method> g_MethodMap = {
+        {"GET", GET}, {"POST", POST}, {"PUT", PUT}};
 
-const unordered_map<string, Method> g_MethodMap = {
-  {"GET", GET}, {"POST", POST}, {"PUT", PUT}
-};
+    string GetDoc(const string &path)
+    {
+        ifstream docStrm(gRootPath + path, ios_base::binary);
+        if (!docStrm.is_open())
+            return m_NotFound;
+        docStrm.seekg(0, ios_base::end);
+        long long sz = docStrm.tellg();
+        docStrm.seekg(0);
+        char *bf = new char[sz + 1]{0};
+        int i = 0;
+        char c;
+        while ((c = (char)docStrm.get()) != EOF)
+            bf[i++] = c;
+        docStrm.close();
+        string ret;
+        if (path.find_last_of(".html") == path.length() - 5)
+            ret.assign(m_Template);
+        else
+            ret.assign(g_Template0);
+        ret += to_string(sz);
+        ret += "\r\n\r\n";
+        ret += bf;
+        return ret;
+    }
 
-string GetDoc(const string &path){
-  ifstream docStrm(gRootPath + path, ios_base::binary);
-  if(!docStrm.is_open())
-    return m_NotFound;
-  docStrm.seekg(0,ios_base::end);
-  long long sz = docStrm.tellg();
-  docStrm.seekg(0);
-  char *bf = new char[sz+1]{0};
-  int i=0; char c;
-  while((c = (char)docStrm.get()) != EOF)
-    bf[i++] = c;
-  docStrm.close();
-  string ret(m_Template);
-  ret += to_string( sz );
-  ret += "\r\n\r\n";
-  ret += bf;
-  return ret;
-}
+    string GetIndexDoc()
+    {
+        return GetDoc("/index.html");
+    }
 
-string GetIndexDoc() {
-  return GetDoc("/index.html");
-}
+    Request::Request(const char *msg, int len)
+        : m_raw(msg), m_valid(false)
+    {
+        const unsigned char lineSz = 128;
+        const unsigned char tokSz = lineSz/3;
+        const unsigned char t2Pos = tokSz,
+                            t3pos = t2Pos + tokSz;
+        char line[lineSz]{};
+        char tokens[lineSz]{};
+        m_raw.getline(line, lineSz-1);
+        char fmt[32];
+        snprintf(fmt, sizeof(fmt), "%%%hus %%%hus %%%hus\r",
+            tokSz, tokSz, tokSz);
+        sscanf(line, fmt, tokens, tokens+t2Pos, tokens+t3pos);
+        clog << line << endl;
+        m_method = g_MethodMap.at(tokens);
+        m_path.assign(tokens+t2Pos);
+        if(strcmp((tokens+t3pos),"HTTP/1.1")){
+            cerr << "Protocol " << (tokens+t3pos) << " unrecognized\n";
+            return;
+        }
 
-  Request::Request(const char *msg, int len)
-  : m_raw(msg)
-  {
-    clog << __FUNCTION__ << endl;
-    string token;
-
-    m_raw >> token;
-    clog << "\tMethod:" << token << ",\n";
-    m_method = g_MethodMap.at(token);
-      switch(m_method){
-      case GET:
+        char *key = tokens, *val = tokens+t2Pos;
+        snprintf(fmt, sizeof(fmt), "%%%hu[-a-zA-Z]: %%%hus\r", tokSz, tokSz*2);
+        memset(line, 0, lineSz);
+        while(m_raw.getline(line, lineSz-1)){
+            int ret = sscanf(line, fmt, key, val);
+            if(ret < 2){
+              cerr << "Error parsing request\n";
+              return;
+            }
+            if(strcasecmp(key,"host")==0) {
+              m_host.assign(val);
+            } else if(strcasecmp(key,"connection")){
+              strcasecmp(val,"keep-alive")==0 ?
+                m_keepAlive=true : m_keepAlive=false;
+            }
+            memset(line, 0, lineSz);
+            memset(tokens, 0, sizeof(tokens));
+        }
         m_valid = true;
-      break;
-      default:
-        cerr << "HTTP method not supported\n";
-        m_valid = false;
-        return;
     }
-
-    m_raw >> m_path;
-    clog << "\tDoc:" << m_path << ",\n";
-    m_raw >> token;
-    clog << "\tProtocol:" << token << ",\n";
-    clog << "\tother:\n";
-    while(m_raw >> token){
-      clog << " " << token;
-    }
-    clog << endl;
-  }
 }
