@@ -40,8 +40,8 @@ int *bubblesort_int(int *origArray, unsigned int length, int order)
 	int *sorted = (int *)malloc(length * sizeof(int));
 	memcpy(sorted, origArray, (size_t)(length * sizeof(int)));
 
-	for (int i = 0; i < length - 1; i++)
-		for (int j = 0; j < length - 1; j++)
+	for (unsigned int i = 0; i < length - 1; i++)
+		for (unsigned int j = 0; j < length - 1; j++)
 			if (order <= 0)
 			{
 				if (sorted[j] < sorted[j + 1])
@@ -61,8 +61,8 @@ float *bubblesort_flt(float *origArray, unsigned int length, int order)
 	float *sorted = (float *)malloc(length * sizeof(float));
 	memcpy(sorted, origArray, (size_t)(length * sizeof(float)));
 
-	for (int i = 0; i < length - 1; i++)
-		for (int j = 0; j < length - 1; j++)
+	for (unsigned int i = 0; i < length - 1; i++)
+		for (unsigned int j = 0; j < length - 1; j++)
 			if (order <= 0)
 			{
 				if (sorted[j] < sorted[j + 1])
@@ -103,7 +103,7 @@ void mergesort_asc(int *origArray, unsigned int length, int *level)
 	printf("LEVEL%d\n", *level);
 	// break part
 	int iMid = length % 2 ? length / 2 : length / 2 - 1;
-	int leftSize = iMid + 1, rightSize = length - iMid - 1;
+	unsigned int leftSize = iMid + 1, rightSize = length - iMid - 1;
 	int* leftArr = (int*)malloc(leftSize * sizeof(int));
 	int* rightArr = (int*)malloc(rightSize * sizeof(int));
 	
@@ -128,7 +128,7 @@ void mergesort_asc(int *origArray, unsigned int length, int *level)
 #endif
 	mergesort_asc(rightArr, rightSize, level);
 	// sort and merge part
-	int i = 0, j = 0, k = 0;
+	unsigned int i = 0, j = 0, k = 0;
 	for (; k < length && i < leftSize && j < rightSize; ++k)
 	{
 		if (leftArr[i] < rightArr[j])

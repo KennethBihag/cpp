@@ -23,9 +23,9 @@ void bubblesort_test(int argc, const char **argv)
 		sscanf(argv[i + 1], "%d", o + i);
 	}
 	int *copied = bubblesort_int(o, olength, 1);
-	free(o);
 	printf("ORIG: ");
 	print_intarr_elems(o, olength);
+	free(o);
 	printf("NEW: ");
 	print_intarr_elems(copied, olength);
 	free(copied);

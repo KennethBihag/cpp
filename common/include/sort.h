@@ -5,8 +5,8 @@
 #ifndef SORT_H
 #define SORT_H
 // does not work for pointer types
-// #define bubblesort(...) _Generic((VA_ARG1(__VA_ARGS__)),\
-// 	int*: bubblesort_int, float*: bubblesort_flt)(__VA_ARGS__)
+/* #define bubblesort(...) _Generic((VA_ARG1(__VA_ARGS__)),\
+    int*: bubblesort_int, float*: bubblesort_flt)(__VA_ARGS__) */
 
 #include "exports.hpp"
 

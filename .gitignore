@@ -11,3 +11,7 @@ CMakeCache.txt
 *.obj
 *.pdb
 *.ilk
+*.a
+*.lib
+*.dll
+*.so
