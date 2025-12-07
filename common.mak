@@ -12,6 +12,9 @@ ALL_SRC_OBJECTS := $(subst .c,-c.o,$(ALL_SRC_OBJECTS))
 all:
 # 	@echo If this is called, make another makefile including this
 
+src/pch.hpp.gch: include/pch.hpp
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -x c++-header $< -o $@
+
 %-c.o: %.c
 	$(CXX) -o $@ -c $(CXXFLAGS) $(DEFINES) $(INCLUDE) $^
 %-cpp.o: %.cpp
