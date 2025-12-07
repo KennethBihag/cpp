@@ -16,5 +16,5 @@ test: src/main-cpp.o src/tests-c.o libcommon.a
 
 boost_test: libcommon.a
 	@mingw32-make INCLUDE="$(INCLUDE) $(BOOSTINCL)" -f../common.mak\
-	    src/boost_test-cpp.o
+	    DEFINES='-DBOOST_TEST_MODULE="Common Library Unit Test"' src/boost_test-cpp.o
 	$(CXX) -o main_boost $(BOOSTOBJ) -L. -lcommon

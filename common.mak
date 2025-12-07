@@ -13,9 +13,9 @@ all:
 # 	@echo If this is called, make another makefile including this
 
 %-c.o: %.c
-	$(CXX) -o $@ -c $(CXXFLAGS) $(INCLUDE) $^
+	$(CXX) -o $@ -c $(CXXFLAGS) $(DEFINES) $(INCLUDE) $^
 %-cpp.o: %.cpp
-	$(CXX) -o $@ -c $(CXXFLAGS) $(INCLUDE) $^
+	$(CXX) -o $@ -c $(CXXFLAGS) $(DEFINES) $(INCLUDE) $^
 
 clean:
 	rm -f $(ALL_SRC_OBJECTS)
