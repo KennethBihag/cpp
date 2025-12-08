@@ -54,4 +54,13 @@ test_suite *init_unit_test_suite(int /*argc*/, char * /*argv*/[])
     framework::master_test_suite().add(BOOST_TEST_CASE(&test_permute));
     return 0;
 }
+#else
+
+using gTypes = tuple<char, short, int, long, long long, float, double, string>;
+BOOST_AUTO_TEST_CASE_TEMPLATE(templated_test, T, gTypes)
+{
+    size_t typeSz = sizeof(T);
+    BOOST_TEST(typeSz < 6ULL);
+}
+
 #endif
