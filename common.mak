@@ -21,8 +21,12 @@ src/pch.hpp.gch: include/pch.hpp
 	$(CXX) -o $@ -c $(CXXFLAGS) $(DEFINES) $(INCLUDE) $^
 
 clean:
+ifeq (MINGW64,${MSYSTEM})
 	rm -f $(ALL_SRC_OBJECTS)
 	rm -f *.exe *.lib *.so *.a *.dll
+else
+	del /f $(subst /,\,$(ALL_SRC_OBJECTS)) *.exe *.lib *.so *.a *.dll
+endif
 
 .PHONY: clean all
 .INTERMEDIATE:

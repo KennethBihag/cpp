@@ -1,5 +1,9 @@
 INCLUDE =
+ifeq (MINGW64,$(MSYSTEM))
 BOOSTINCL = $(shell find ../boost/libs -name include -type d)
+else
+BOOSTINCL = $(shell dir /b /s /ad ..\\boost\\libs | findstr "include$$")
+endif
 BOOSTINCL := $(addprefix -I,$(BOOSTINCL))
 BOOSTTEST = boost_unit_test_framework-gcc13-mt-x64-1_89
 BOOSTOPTS = DEFINES='-DBOOST_TEST_MODULE="Common Library Unit Test" -DUSE_BOOST_DLL -Wno-attributes'
