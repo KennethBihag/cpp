@@ -46,29 +46,26 @@ inline void TestPermuteInt(){
 
 #ifdef BOOST_TEST_MODULE
 
-BOOST_DATA_TEST_CASE(
-    test_permute_dataset,
-    data::make(gLens) ^ gArrs ^ gOrders,
-    len, arr, exp)
-{
-    TestPermute(len, arr, exp);
-}
-
-BOOST_AUTO_TEST_CASE(basic_test)
-{
+BOOST_AUTO_TEST_CASE(basic_test){
     BasicTest();
 }
 
-BOOST_AUTO_TEST_CASE(test_permute_int)
-{
-    TestPermuteInt();
+BOOST_DATA_TEST_CASE(
+  test_permute_dataset,
+  data::make(gLens) ^ gArrs ^ gOrders,
+  len, arr, exp){
+    TestPermute(len, arr, exp);
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(templated_test, T, gTypes)
-{
+BOOST_AUTO_TEST_SUITE(PermuteTestSuite)
+BOOST_AUTO_TEST_CASE(test_permute_int){
+    TestPermuteInt();
+}
+BOOST_AUTO_TEST_CASE_TEMPLATE(templated_test, T, gTypes){
     size_t typeSz = sizeof(T);
     BOOST_TEST(typeSz < 6ULL);
 }
+BOOST_AUTO_TEST_SUITE_END()
 
 #else
 
@@ -82,10 +79,18 @@ void ParamsTestPermute(const tuple<int, int*, int>& params){
 test_suite *init_unit_test_suite(int, char**)
 {
     cout << "Manual registration!\n";
-    framework::master_test_suite().add(BOOST_PARAM_TEST_CASE(
-      &ParamsTestPermute, gParamsPermute, gParamsPermute + 4));
+    auto ts1 = BOOST_TEST_SUITE("PermuteTestParamSuite");
+    auto ts2 = BOOST_TEST_SUITE("PermuteTestSuite");
+
     framework::master_test_suite().add(BOOST_TEST_CASE(&BasicTest));
-    framework::master_test_suite().add(BOOST_TEST_CASE(&TestPermuteInt));
+
+    ts1->add(BOOST_PARAM_TEST_CASE(
+      &ParamsTestPermute, gParamsPermute, gParamsPermute + 4));
+    ts2->add(BOOST_TEST_CASE(&TestPermuteInt));
+
+    framework::master_test_suite().add(ts1);
+    framework::master_test_suite().add(ts2);
+
     return 0;
 }
 
@@ -96,6 +101,7 @@ bool MainHelper(){
 };
 
 int main(int argc, char *argv[]){
+    cout << "Linked with Boost::Test DLL\n";
     return unit_test_main(MainHelper, argc, argv);
 }
 #endif
