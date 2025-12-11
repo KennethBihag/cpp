@@ -11,3 +11,6 @@
 
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/data/monomorphic.hpp>
+#ifndef BOOST_TEST_MODULE
+#include <boost/test/parameterized_test.hpp>
+#endif
