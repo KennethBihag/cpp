@@ -54,6 +54,17 @@ test_suite *init_unit_test_suite(int /*argc*/, char * /*argv*/[])
     framework::master_test_suite().add(BOOST_TEST_CASE(&test_permute));
     return 0;
 }
+
+#ifdef USE_BOOST_DLL
+bool mainHelper(){
+    init_unit_test_suite(0, nullptr);
+    return &framework::master_test_suite() != nullptr;
+};
+int main(int argc, char *argv[]){
+    return unit_test_main(mainHelper, argc, argv);
+}
+#endif
+
 #else
 
 using gTypes = tuple<char, short, int, long, long long, float, double, string>;
