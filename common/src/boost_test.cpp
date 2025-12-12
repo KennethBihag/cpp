@@ -1,5 +1,18 @@
 #include <pch.hpp>
 
+#define BOOST_TEST_MODULE Common Library Unit Test
+#ifdef USE_BOOST_DLL
+#define BOOST_TEST_DYN_LINK
+#include <boost/test/unit_test.hpp>
+#else
+#include <boost/test/included/unit_test.hpp>
+#endif
+#ifndef BOOST_TEST_MODULE
+#include <boost/test/parameterized_test.hpp>
+#endif
+#include <boost/test/data/test_case.hpp>
+#include <boost/test/data/monomorphic.hpp>
+
 #include "permute.h"
 
 using namespace std;
