@@ -1,0 +1,6 @@
+exe: bin_dir
+	cl /Fe../bin/testapp.exe /EHsc /I./ /std:c++17 /Wall\
+	 src/main.cpp
+bin_dir:
+	if not exist ..\\bin mkdir ..\\bin
+  
