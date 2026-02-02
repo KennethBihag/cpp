@@ -1,4 +1,8 @@
 {
+    "Cmd":{
+        "Vcvars" : "vcvarsall.bat x64",
+        "Vcdll" : "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll"
+    },
     "cmake.configureOnOpen": false,
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.cStandard": "c11",
@@ -14,7 +18,7 @@
         "binDir": "${workspaceFolder}/bin",
         "staticLib": "${workspaceFolder}/lib/static",
         "dynamicLib": "${workspaceFolder}/lib",
-        "dfltOut" : "sample"
+        "dfltOut": "sample"
     },
     "files.associations": {
         "*.embeddedhtml": "html",
@@ -101,5 +105,32 @@
         "xutility": "cpp",
         "socket.h": "c"
     },
-    "C_Cpp.clang_format_sortIncludes": true
+    "C_Cpp.clang_format_sortIncludes": true,
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+            "args": [
+                "-noe",
+                "-c",
+                "&{Import-Module \"${config:Cmd.Vcdll}\" ; Enter-VsDevShell 4d5ad0a6}; cd ${workspaceFolder}"
+            ]
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [
+                "/k",
+                "${config:Cmd.Vcvars}"
+            ],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash",
+            "icon": "terminal-git-bash"
+        }
+    }
 }
