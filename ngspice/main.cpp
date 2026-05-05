@@ -16,7 +16,18 @@ int my_ng_getstat(char* output, int id, void* userdata) {
 int my_send_data(vecvaluesall* vva, int spv, int id, void* ptr) {
     for (int i = 0; i < vva->veccount; ++i) {
         auto &val = vva->vecsa[i];
-        std::cout << "VecVal " << val->creal << " " << val->cimag << "i" << endl;
+        std::cout << val->creal << "; ";
+    }
+    cout << endl;
+    return EXIT_SUCCESS;
+}
+
+int my_send_init(vecinfoall* via, int id, void* ptr) {
+    cout << "my_send_init:\nName; Type; Count;\n";
+    for (int i = 0; i < via->veccount; ++i) {
+        auto &v = via->vecs[i];
+        vector_info &vi = *ngGet_Vec_Info(v->vecname);
+        cout << vi.v_name << "; " << vi.v_type << "; " << vi.v_length << "\n";
     }
     return EXIT_SUCCESS;
 }
@@ -24,7 +35,8 @@ int my_send_data(vecvaluesall* vva, int spv, int id, void* ptr) {
 int main(int argc, char* argv[]) {
 	cout << "SPICE Wrapper Running...\n";
 	char *spcCmd = (char*)"plot";
-	int ret = ngSpice_Init(my_ng_getchar, my_ng_getstat,0,my_send_data,0,0,0 );
+    void *myObj = spcCmd;
+	int ret = ngSpice_Init(my_ng_getchar, my_ng_getstat,0,my_send_data,my_send_init,0, myObj);
     cout << endl;
     const char* circ[] = {
         "test",
@@ -52,10 +64,24 @@ int main(int argc, char* argv[]) {
 
     ngSpice_Circ((char**)circ2);
     cout << endl;
+    auto printVecs = [&](){
+        auto currPlot = ngSpice_CurPlot();
+        auto allVecs = ngSpice_AllVecs(currPlot);
+        cout << "Vectors: ";
+        while (true) {
+            cout << *allVecs << ";";
+            ++allVecs;
+            if (!*allVecs)
+                break;
+        }
+        cout << endl;
+    };
+    cout << "Before sim\n";
+    printVecs();
     ngSpice_Command((char*)"tran 1us 800us");
+    cout << "After sim\n";
+    printVecs();
     cout << endl;
-    ngSpice_Command((char*)"print v(2,3)");
-
-
+    //ngSpice_Command((char*)"print v(2,3)");
 	return EXIT_SUCCESS;
 }
