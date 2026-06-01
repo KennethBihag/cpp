@@ -1,0 +1,38 @@
+VCPKGDIR  = D:\vcpkg\installed\x64-windows
+OCLLIBDIR = $(VCPKGDIR)\lib
+LIBS      = OpenCL
+NEW_INC   = include $(VCPKGDIR)\include
+DEFINES   = CL_TARGET_OPENCL_VERSION=100
+
+CXXFLAGS = /nologo /O2 /EHsc /std:c++17 /Wall
+LDFLAGS  = /link /libpath:$(OCLLIBDIR) $(patsubst %,%.lib,$(LIBS))
+NEW_INC  = $(patsubst %,/I%,$(NEW_INC))
+DEFINES  = $(patsubst %,/D%,$(DEFINES))
+
+PCH_NAME = pch
+PCH_HDR = include\$(PCH_NAME).h
+PCH_SRC  = src\$(PCH_NAME).cpp
+PCH_OUT  = obj\$(PCH_NAME).pch
+sources = main
+sources = $(patsubst %,src\\%.cpp, $(sources))
+objects = $(patsubst src\\%.cpp,obj\\%.obj, $(sources))
+
+all: $(PCH_OUT) $(objects) bin
+	cl /Fe:bin\OpenCLPractice $(objects) obj\$(PCH_NAME).obj $(LDFLAGS)
+
+{src}.cpp{obj}.obj:
+	cl /c $(NEW_INC) $(CXXFLAGS) $(DEFINES) /Yu$(PCH_NAME).h /Fp$(PCH_OUT) /Fo$@ $<
+
+$(PCH_OUT): $(PCH_HDR) obj
+	cl /c $(NEW_INC) $(CXXFLAGS) $(DEFINES) /Yc$(PCH_NAME).h /Fp$@ /Foobj\$(PCH_NAME).obj $(PCH_SRC)
+
+.SILENT:
+bin lib obj :
+	mkdir $@
+
+clean:
+	cmd /C "if exist bin rmdir /S /Q bin"
+	cmd /C "if exist lib rmdir /S /Q lib"
+	cmd /C "if exist obj rmdir /S /Q obj"
+
+.PHONY: clean all
