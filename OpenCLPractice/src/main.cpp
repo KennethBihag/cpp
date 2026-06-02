@@ -44,6 +44,20 @@ static inline double BenchMark(clock_t& cStart) {
     return sDur;
 }
 
+template<typename T, size_t N>
+static inline void PrintIntVecElems(T(&idxs)[N], int *arr){
+    for (auto &i : idxs)
+        cout << arr[i] << " ";
+}
+
+template<typename T, size_t N>
+static inline array<int, N> GetIntVecElems(T(&idxs)[N], int *arr){
+    array<int, N> ret;
+    for(size_t i=0; i<N; ++i)
+        ret[i] = arr[idxs[i]];
+    return ret;
+}
+
 int main()
 {
     printf("Elements per array: %lu\n", gsz);
@@ -133,10 +147,14 @@ int main()
     VecProcessCpu();
     sDur = BenchMark(cStart);
     printf("CPU: Added arrays in %.4lfs\n", sDur);
-    printf("CPU: Answer : %d : %d : %d\n", C.get()[1], C.get()[128], C.get()[4096]);
-    memset(C.get(), 0, gszSz);
-    printf("RESET: Answer : %d : %d : %d\n", C.get()[1], C.get()[128], C.get()[4096]);
 
+    default_random_engine re;
+    uniform_int_distribution<unsigned long> dist(0, gsz-1);
+    unsigned long rndIdx[5];
+    for(auto &i : rndIdx)
+        i = dist(re);
+    auto cpuAns = GetIntVecElems(rndIdx, C.get());
+    memset(C.get(), 0, gszSz);
 // GPU
 //// CONTEXT
 #ifdef _WIN32
@@ -178,7 +196,10 @@ int main()
     printf("GPU: Processed arrays in %.4lfs\n", sDur);
 //// READ BACK
     CL_err = clEnqueueReadBuffer(clCmdQue, gpuC, CL_TRUE, 0, gszSz, C.get(), 0, NULL, NULL); AssertCL();
-    printf("GPU: Answer : %d : %d : %d\n", C.get()[1], C.get()[128], C.get()[4096]);
+    auto gpuAns = GetIntVecElems(rndIdx, C.get());
+    auto res = cpuAns == gpuAns;
+    assert(res);
+
 // CLEANUP
     clReleaseKernel(clKrnl);
     clReleaseProgram(clProg);

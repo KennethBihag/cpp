@@ -1,13 +1,14 @@
 #ifndef PCH_H
 #define PCH_H
 
-#include <string.h>
+#include <cassert>
+#include <cmath>
+#include <cstring>
+#include <ctime>
 
 #include <fstream>
 #include <iostream>
-#include <cassert>
-#include <cmath>
-#include <ctime>
+#include <random>
 #include <array>
 #include <set>
 #include <sstream>
