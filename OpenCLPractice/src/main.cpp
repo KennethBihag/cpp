@@ -188,8 +188,8 @@ int main()
     CL_err = clSetKernelArg(clKrnl, 1, sizeof(gpuB), &gpuB); AssertCL();
     CL_err = clSetKernelArg(clKrnl, 2, sizeof(gpuC), &gpuC); AssertCL();
 //// EXECUTE
-    size_t glWSzs[]{gsz};
-    CL_err = clEnqueueNDRangeKernel(clCmdQue, clKrnl, 1, NULL, glWSzs, NULL, 0, NULL, NULL); AssertCL();
+    size_t glWSzs[]{512, 538624}, lcWSzs[]{16, 32};
+    CL_err = clEnqueueNDRangeKernel(clCmdQue, clKrnl, 2, NULL, glWSzs, lcWSzs, 0, NULL, NULL); AssertCL();
     cStart = clock();
     clFinish(clCmdQue);
     sDur = BenchMark(cStart);
