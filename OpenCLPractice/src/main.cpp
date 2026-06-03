@@ -14,17 +14,10 @@ if(CL_err != CL_SUCCESS) \
     cerr << "CL_err = " << CL_err << endl; \
 assert(CL_err == CL_SUCCESS);
 
-void CL_CALLBACK eventHandler(cl_event, cl_int status, void* userData) {
+void CL_CALLBACK eventHandler(cl_event, cl_int, void* userData) {
     time_t t; time(&t);
     const char *name = (const char*)userData;
-    const char *statStr = nullptr;
-    switch(status) {
-    case CL_QUEUED: statStr = "QUEUED"; break;
-    case CL_SUBMITTED: statStr = "SUBMITTED"; break;
-    case CL_RUNNING: statStr = "RUNNING"; break;
-    case CL_COMPLETE: statStr = "COMPLETE"; break;
-    }
-    printf("Event %s is %s @ ", name, statStr);
+    printf("Event %s completed on ", name);
 #ifdef _WIN32
     char timeStr[64]{};
     ctime_s(timeStr, sizeof(timeStr), &t);
@@ -190,8 +183,7 @@ int main()
 ////// COPY
     CL_err = clEnqueueWriteBuffer(clCmdQue, gpuA, CL_FALSE, 0, gszSz, A.get(), 0, NULL, ev); AssertCL();
     CL_err = clEnqueueWriteBuffer(clCmdQue, gpuB, CL_FALSE, 0, gszSz, B.get(), 0, NULL, ev+1); AssertCL();
-    for(size_t i=0; i<2; ++i) {
-        CL_err = clSetEventCallback(ev[i], CL_RUNNING, eventHandler, (void*)evNames[i].c_str()); AssertCL();
+    for(size_t i=0; i<2; ++i){
         CL_err = clSetEventCallback(ev[i], CL_COMPLETE, eventHandler, (void*)evNames[i].c_str()); AssertCL();
     }
 //// KERNEL PROGRAM SETUP
@@ -208,8 +200,7 @@ int main()
     CL_err = clEnqueueNDRangeKernel(clCmdQue, clKrnl, 2, NULL, glWSzs, lcWSzs, 2, ev, ev+2); AssertCL();
 //// READ BACK
     CL_err = clEnqueueReadBuffer(clCmdQue, gpuC, CL_FALSE, 0, gszSz, C.get(), 1, ev+2, ev+3); AssertCL();
-    for(size_t i=2; i<4; ++i) {
-        CL_err = clSetEventCallback(ev[i], CL_RUNNING, eventHandler, (void*)evNames[i].c_str()); AssertCL();
+    for(size_t i=2; i<4; ++i){
         CL_err = clSetEventCallback(ev[i], CL_COMPLETE, eventHandler, (void*)evNames[i].c_str()); AssertCL();
     }
     clWaitForEvents(4, ev);
