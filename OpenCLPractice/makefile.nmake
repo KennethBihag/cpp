@@ -4,7 +4,7 @@ LIBS      = OpenCL
 NEW_INC   = include $(VCPKGDIR)\include
 DEFINES   = CL_TARGET_OPENCL_VERSION=100
 
-CXXFLAGS = /nologo /O2 /EHsc /std:c++17 /Wall
+CXXFLAGS = /nologo /O2 /EHsc /std:c++17 /Wall /wd4710 /wd4711
 LDFLAGS  = /link /libpath:$(OCLLIBDIR) $(patsubst %,%.lib,$(LIBS))
 NEW_INC  = $(patsubst %,/I%,$(NEW_INC))
 DEFINES  = $(patsubst %,/D%,$(DEFINES))

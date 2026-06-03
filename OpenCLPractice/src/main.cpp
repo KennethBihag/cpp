@@ -2,7 +2,7 @@
 
 using namespace std;
 
-#define QRY_ITEM(k) {k,#k}
+#define QRY_ITEM(k) {cl_device_info(k),#k}
 
 cl_int CL_err = CL_SUCCESS;
 constexpr unsigned long gsz = 1024*1024*1052/sizeof(int);
@@ -10,9 +10,9 @@ constexpr unsigned long gszSz = gsz * sizeof(int);
 shared_ptr<int[]> A(new int[gsz]), B(new int[gsz]), C(new int[gsz]);
 
 #define AssertCL() \
-assert(CL_err == CL_SUCCESS); \
 if(CL_err != CL_SUCCESS) \
-    cerr << "CL_err = " << CL_err << endl;
+    cerr << "CL_err = " << CL_err << endl; \
+assert(CL_err == CL_SUCCESS);
 
 static string FileToText(string path) {
     ifstream kernelFile(path);
@@ -30,10 +30,10 @@ static string FileToText(string path) {
 }
 
 static inline void VecProcessCpu() {
-    int *A = ::A.get(), *B = ::B.get();
-    int *C = ::C.get();
+    int *pA = ::A.get(), *pB = ::B.get();
+    int *pC = ::C.get();
     for (unsigned long i = 0; i < gsz; i++) {
-        C[i] = A[i] * 2 + B[i] - 5;
+        pC[i] = pA[i] * 2 + pB[i] - 5;
     }
 }
 
@@ -72,7 +72,7 @@ int main()
     CL_err = clGetPlatformIDs(numPlatforms, platforms.data(), NULL); AssertCL();
 
     string s;
-    array queries{
+    vector<cl_platform_info> queries{
             CL_PLATFORM_NAME,
             CL_PLATFORM_VERSION,
             CL_PLATFORM_VENDOR,
@@ -96,7 +96,7 @@ int main()
     }
 
     cl_uint numDev;
-    int devTyp = CL_DEVICE_TYPE_GPU;
+    cl_device_type devTyp = CL_DEVICE_TYPE_GPU;
     CL_err = clGetDeviceIDs(platforms[0], devTyp, 0, NULL, &numDev);
     AssertCL();
     vector<cl_device_id> devIds((size_t)numDev, cl_device_id());
@@ -107,20 +107,21 @@ int main()
     CL_err = clGetDeviceInfo(devIds[0], CL_DEVICE_NAME, s.size(), s.data(), NULL); AssertCL();
     printf("\tName: %s\n", s.c_str());
 
-    map<int, string> numQrs{
+    map<cl_device_info, string> numQrs{
         QRY_ITEM(CL_DEVICE_MAX_COMPUTE_UNITS),
         QRY_ITEM(CL_DEVICE_GLOBAL_MEM_SIZE),
         QRY_ITEM(CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS),
         QRY_ITEM(CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE),
         QRY_ITEM(CL_DEVICE_LOCAL_MEM_SIZE),
-        QRY_ITEM(CL_DEVICE_MAX_MEM_ALLOC_SIZE)
+        QRY_ITEM(CL_DEVICE_MAX_MEM_ALLOC_SIZE),
+        QRY_ITEM(CL_DEVICE_MAX_WORK_GROUP_SIZE),
     };
     for (auto& p : numQrs) {
         cl_ulong val = 0;
         CL_err = clGetDeviceInfo(devIds[0], p.first, sizeof(val), &val, NULL); AssertCL();
-        printf("\t%-40s: %-16lu", p.second.c_str(), val);
+        printf("\t%-40s: %-16llu", p.second.c_str(), (unsigned long long)val);
         if (p.second.find("_MEM_") != string::npos) {
-            double memMb = val;
+            double memMb = (double)val;
             printf(" : %-12.2lfKB : %8.2lfMB", memMb/pow(2,10), memMb/pow(2,20));
         }
         printf("\n");
@@ -136,8 +137,8 @@ int main()
 
     for (unsigned long i = 0; i < gsz; ++i) {
         unsigned long j = 2*i;
-        A[i] = j;
-        B[i] = j+1;
+        A[i] = int(j);
+        B[i] = int(j+1);
     }
     //memset(C.get(), -1, gsz * sizeof(int));
     double sDur = BenchMark(cStart);
@@ -157,14 +158,8 @@ int main()
     memset(C.get(), 0, gszSz);
 // GPU
 //// CONTEXT
-#ifdef _WIN32
-#pragma warning(disable:4996)
-#endif
     cl_context clCtxt = clCreateContext(NULL, 1, devIds.data(), NULL, NULL, &CL_err); AssertCL();
     cl_command_queue clCmdQue = clCreateCommandQueue(clCtxt, devIds[0], (cl_command_queue_properties)0, &CL_err); AssertCL();
-#ifdef _WIN32
-    #pragma warning(enable:4996)
-#endif
 //// DATA
 ////// CREATE
     cl_mem gpuA, gpuB, gpuC;
