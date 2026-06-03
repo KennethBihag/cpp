@@ -1,6 +1,8 @@
 #ifndef PCH_H
 #define PCH_H
 
+#define CL_TARGET_OPENCL_VERSION 220
+
 #include <cassert>
 #include <cmath>
 #include <cstring>

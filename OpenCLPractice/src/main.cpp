@@ -14,6 +14,22 @@ if(CL_err != CL_SUCCESS) \
     cerr << "CL_err = " << CL_err << endl; \
 assert(CL_err == CL_SUCCESS);
 
+void CL_CALLBACK eventHandler(cl_event, cl_int status, void* userData) {
+    time_t t; time(&t);
+    const char *name = (const char*)userData;
+    const char *statStr = nullptr;
+    switch(status) {
+    case CL_QUEUED: statStr = "QUEUED"; break;
+    case CL_SUBMITTED: statStr = "SUBMITTED"; break;
+    case CL_RUNNING: statStr = "RUNNING"; break;
+    case CL_COMPLETE: statStr = "COMPLETE"; break;
+    }
+    printf("Event %s is %s @ ", name, statStr);
+    char timeStr[64]{};
+    ctime_s(timeStr, sizeof(timeStr), &t);
+    printf("%s\n", timeStr);
+}
+
 static string FileToText(string path) {
     ifstream kernelFile(path);
     if(!kernelFile)
@@ -157,6 +173,7 @@ int main()
     auto cpuAns = GetIntVecElems(rndIdx, C.get());
     memset(C.get(), 0, gszSz);
 // GPU
+    cl_event ev[4]{}; string evNames[] = {"CopyA", "CopyB", "KernelExec", "ReadBack"};
 //// CONTEXT
     cl_context clCtxt = clCreateContext(NULL, 1, devIds.data(), NULL, NULL, &CL_err); AssertCL();
     cl_command_queue clCmdQue = clCreateCommandQueue(clCtxt, devIds[0], (cl_command_queue_properties)0, &CL_err); AssertCL();
@@ -167,12 +184,12 @@ int main()
     gpuB = clCreateBuffer(clCtxt, CL_MEM_READ_ONLY, gszSz, NULL, &CL_err); AssertCL();
     gpuC = clCreateBuffer(clCtxt, CL_MEM_WRITE_ONLY, gszSz, NULL, &CL_err); AssertCL();
 ////// COPY
-    CL_err = clEnqueueWriteBuffer(clCmdQue, gpuA, CL_FALSE, 0, gszSz, A.get(), 0, NULL, NULL); AssertCL();
-    CL_err = clEnqueueWriteBuffer(clCmdQue, gpuB, CL_FALSE, 0, gszSz, B.get(), 0, NULL, NULL); AssertCL();
-    cStart = clock();
-    clFinish(clCmdQue);
-    sDur = BenchMark(cStart);
-    printf("GPU: Copied data in %.4lfs\n", sDur);
+    CL_err = clEnqueueWriteBuffer(clCmdQue, gpuA, CL_FALSE, 0, gszSz, A.get(), 0, NULL, ev); AssertCL();
+    CL_err = clEnqueueWriteBuffer(clCmdQue, gpuB, CL_FALSE, 0, gszSz, B.get(), 0, NULL, ev+1); AssertCL();
+    for(size_t i=0; i<2; ++i) {
+        CL_err = clSetEventCallback(ev[i], CL_RUNNING, eventHandler, (void*)evNames[i].c_str()); AssertCL();
+        CL_err = clSetEventCallback(ev[i], CL_COMPLETE, eventHandler, (void*)evNames[i].c_str()); AssertCL();
+    }
 //// KERNEL PROGRAM SETUP
     const char *kernelSrcStr = kernelSrc.c_str();
     const char **kernelSources = &kernelSrcStr;
@@ -184,13 +201,14 @@ int main()
     CL_err = clSetKernelArg(clKrnl, 2, sizeof(gpuC), &gpuC); AssertCL();
 //// EXECUTE
     size_t glWSzs[]{512, 538624}, lcWSzs[]{16, 32};
-    CL_err = clEnqueueNDRangeKernel(clCmdQue, clKrnl, 2, NULL, glWSzs, lcWSzs, 0, NULL, NULL); AssertCL();
-    cStart = clock();
-    clFinish(clCmdQue);
-    sDur = BenchMark(cStart);
-    printf("GPU: Processed arrays in %.4lfs\n", sDur);
+    CL_err = clEnqueueNDRangeKernel(clCmdQue, clKrnl, 2, NULL, glWSzs, lcWSzs, 2, ev, ev+2); AssertCL();
 //// READ BACK
-    CL_err = clEnqueueReadBuffer(clCmdQue, gpuC, CL_TRUE, 0, gszSz, C.get(), 0, NULL, NULL); AssertCL();
+    CL_err = clEnqueueReadBuffer(clCmdQue, gpuC, CL_FALSE, 0, gszSz, C.get(), 1, ev+2, ev+3); AssertCL();
+    for(size_t i=2; i<4; ++i) {
+        CL_err = clSetEventCallback(ev[i], CL_RUNNING, eventHandler, (void*)evNames[i].c_str()); AssertCL();
+        CL_err = clSetEventCallback(ev[i], CL_COMPLETE, eventHandler, (void*)evNames[i].c_str()); AssertCL();
+    }
+    clWaitForEvents(4, ev);
     auto gpuAns = GetIntVecElems(rndIdx, C.get());
     auto res = cpuAns == gpuAns;
     assert(res);
