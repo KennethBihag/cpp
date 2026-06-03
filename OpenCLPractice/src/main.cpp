@@ -25,8 +25,12 @@ void CL_CALLBACK eventHandler(cl_event, cl_int status, void* userData) {
     case CL_COMPLETE: statStr = "COMPLETE"; break;
     }
     printf("Event %s is %s @ ", name, statStr);
+#ifdef _WIN32
     char timeStr[64]{};
     ctime_s(timeStr, sizeof(timeStr), &t);
+#else
+    char *timeStr = ctime(&t);
+#endif
     printf("%s\n", timeStr);
 }
 

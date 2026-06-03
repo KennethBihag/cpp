@@ -2,7 +2,7 @@ LIBS    = OpenCL
 INCLUDE = include
 DEFINES = CL_TARGET_OPENCL_VERSION=100
 
-CXXFLAGS = -O2 -std=c++17 -Wall -Wno-comment
+CXXFLAGS = -O2 -std=c++17 -Wall -Wno-comment -Wno-deprecated-declarations
 LDFLAGS  = $(addprefix -l,$(LIBS))
 INCLUDE  := $(addprefix -I,$(INCLUDE))
 DEFINES  := $(addprefix -D,$(DEFINES))
