@@ -14,17 +14,21 @@ if(CL_err != CL_SUCCESS) \
     cerr << "CL_err = " << CL_err << endl; \
 assert(CL_err == CL_SUCCESS);
 
-void CL_CALLBACK eventHandler(cl_event, cl_int, void* userData) {
-    time_t t; time(&t);
-    const char *name = (const char*)userData;
-    printf("Event %s completed on ", name);
+void CL_CALLBACK eventHandler(cl_event, cl_int, void* userData) noexcept {
+    try{
+        time_t t; time(&t);
+        const char *name = (const char*)userData;
+        printf("Event %s completed on ", name);
 #ifdef _WIN32
-    char timeStr[64]{};
-    ctime_s(timeStr, sizeof(timeStr), &t);
+        char timeStr[64]{};
+        ctime_s(timeStr, sizeof(timeStr), &t);
 #else
-    char *timeStr = ctime(&t);
+        char *timeStr = ctime(&t);
 #endif
-    printf("%s\n", timeStr);
+        printf("%s\n", timeStr);
+    } catch(...){
+
+    }
 }
 
 static string FileToText(string path) {
@@ -173,7 +177,7 @@ int main()
     cl_event ev[4]{}; string evNames[] = {"CopyA", "CopyB", "KernelExec", "ReadBack"};
 //// CONTEXT
     cl_context clCtxt = clCreateContext(NULL, 1, devIds.data(), NULL, NULL, &CL_err); AssertCL();
-    cl_command_queue clCmdQue = clCreateCommandQueue(clCtxt, devIds[0], (cl_command_queue_properties)0, &CL_err); AssertCL();
+    cl_command_queue clCmdQue = clCreateCommandQueue(clCtxt, devIds[0], CL_QUEUE_PROFILING_ENABLE, &CL_err); AssertCL();
 //// DATA
 ////// CREATE
     cl_mem gpuA, gpuB, gpuC;
@@ -204,6 +208,13 @@ int main()
         CL_err = clSetEventCallback(ev[i], CL_COMPLETE, eventHandler, (void*)evNames[i].c_str()); AssertCL();
     }
     clWaitForEvents(4, ev);
+
+    cl_ulong clStart{}, clEnd{};
+    CL_err = clGetEventProfilingInfo(ev[2], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &clStart, NULL); AssertCL();
+    CL_err = clGetEventProfilingInfo(ev[2], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &clEnd, NULL); AssertCL();
+    auto clDur = (double)(clEnd-clStart) / 1e9;
+    printf("GPU: Added arrays in %.4lfs\n", clDur);
+
     auto gpuAns = GetIntVecElems(rndIdx, C.get());
     auto res = cpuAns == gpuAns;
     assert(res);
