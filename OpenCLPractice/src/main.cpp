@@ -8,6 +8,7 @@ cl_int CL_err = CL_SUCCESS;
 constexpr unsigned long gsz = 1024*1024*1052/sizeof(int);
 constexpr unsigned long gszSz = gsz * sizeof(int);
 shared_ptr<int[]> A(new int[gsz]), B(new int[gsz]), C(new int[gsz]);
+shared_ptr<long long[]> D(new long long[1]);
 
 #define AssertCL() \
 if(CL_err != CL_SUCCESS) \
@@ -52,6 +53,33 @@ static inline void VecProcessCpu() {
     for (unsigned long i = 0; i < gsz; i++) {
         pC[i] = pA[i] * 2 + pB[i] - 5;
     }
+}
+
+static inline void VecAddCpu(){
+    int *pA = ::A.get();
+    long long sum = 0;
+    for (unsigned long i = 0; i < gsz; i++) {
+        sum += pA[i];
+    }
+    D[0] = sum;
+}
+
+static long long VecAddHelper(int *arr, size_t s, size_t e){
+    switch(e-s){
+    case 0:
+        return arr[s];
+    case 1:
+        return (long long)arr[s] + (long long)arr[e];
+    }
+    size_t mid = (e+1-s)/2 + s;
+    long long s1 = VecAddHelper(arr, s, mid-1);
+    long long s2 = VecAddHelper(arr, mid, e);
+    return s1 + s2;
+}
+
+static inline void VecAddCpu2(){
+    int *pA = ::A.get();
+    D[0] = VecAddHelper(pA, 0, gsz-1);
 }
 
 static inline double BenchMark(clock_t& cStart) {
@@ -157,7 +185,7 @@ int main()
         A[i] = int(j);
         B[i] = int(j+1);
     }
-    //memset(C.get(), -1, gsz * sizeof(int));
+    D[0] = 0;
     double sDur = BenchMark(cStart);
     printf("Initialized arrays in %.4lfs\n", sDur);
 //// COMPUTE
@@ -165,6 +193,13 @@ int main()
     VecProcessCpu();
     sDur = BenchMark(cStart);
     printf("CPU: Added arrays in %.4lfs\n", sDur);
+
+    cStart = clock();
+    VecAddCpu();
+    sDur = BenchMark(cStart);
+    printf("CPU: Reduced array in %.4lfs\n", sDur);
+    printf("Sum of A: %lld\n", D[0]);
+
 
     default_random_engine re;
     uniform_int_distribution<unsigned long> dist(0, gsz-1);
